@@ -1,0 +1,54 @@
+{
+	"ImportPath": "finder-go",
+	"GoVersion": "go1.8",
+	"GodepVersion": "v79",
+	"Deps": [
+		{
+			"ImportPath": "github.com/bkaradzic/go-lz4",
+			"Comment": "v1.0.0-1-g7224d8d",
+			"Rev": "7224d8d8f27ef618c0a95f1ae69dbb0488abc33a"
+		},
+		{
+			"ImportPath": "github.com/cooleric/curator",
+			"Rev": "d8d20d4187c8729f310722cceece825fab4f52d9"
+		},
+		{
+			"ImportPath": "github.com/cooleric/go-zookeeper/zk",
+			"Rev": "77d7ab8968c9ada3eabe0d4ce8cf381b4ff0775a"
+		},
+		{
+			"ImportPath": "github.com/davecgh/go-spew/spew",
+			"Comment": "v1.1.0-9-gecdeabc",
+			"Rev": "ecdeabc65495df2dec95d7c4a4c3e021903035e5"
+		},
+		{
+			"ImportPath": "github.com/pmezard/go-difflib/difflib",
+			"Comment": "v1.0.0",
+			"Rev": "792786c7400a136282c1664665ae0a8db921c6c2"
+		},
+		{
+			"ImportPath": "github.com/stretchr/objx",
+			"Rev": "1a9d0bb9f541897e62256577b352fdbc1fb4fd94"
+		},
+		{
+			"ImportPath": "github.com/stretchr/testify/assert",
+			"Comment": "v1.1.4-72-g2aa2c17",
+			"Rev": "2aa2c176b9dab406a6970f6a55f513e8a8c8b18f"
+		},
+		{
+			"ImportPath": "github.com/stretchr/testify/mock",
+			"Comment": "v1.1.4-72-g2aa2c17",
+			"Rev": "2aa2c176b9dab406a6970f6a55f513e8a8c8b18f"
+		},
+		{
+			"ImportPath": "github.com/stretchr/testify/require",
+			"Comment": "v1.1.4-72-g2aa2c17",
+			"Rev": "2aa2c176b9dab406a6970f6a55f513e8a8c8b18f"
+		},
+		{
+			"ImportPath": "github.com/stretchr/testify/suite",
+			"Comment": "v1.1.4-72-g2aa2c17",
+			"Rev": "2aa2c176b9dab406a6970f6a55f513e8a8c8b18f"
+		}
+	]
+}

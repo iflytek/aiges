@@ -1,0 +1,19 @@
+title = "calc cfg"
+
+[common]
+[common.rmq]
+topic   =   "lic_lkc_gz"
+rmq_server = ["10.1.87.19"]
+port    =   "10800"
+sender_nums = 40
+time_out = 1000
+
+[common.log]
+level = "error,critical,info"
+path = "./log/calc.log"
+maxsize = 10000
+maxrolls = 30
+
+[common.queue]
+queue_size = 102400
+queue_wait_time = 10 

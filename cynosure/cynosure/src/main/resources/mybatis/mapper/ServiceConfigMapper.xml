@@ -1,0 +1,597 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.iflytek.ccr.polaris.cynosure.mapper.ServiceConfigMapper">
+    <!--服务配置实体-->
+    <resultMap id="ServiceConfig_ResultMap" type="com.iflytek.ccr.polaris.cynosure.domain.ServiceConfig">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="VARCHAR"/>
+        <result column="version_id" property="versionId" jdbcType="VARCHAR"/>
+        <result column="gray_group_id" property="grayId" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="path" property="path" jdbcType="VARCHAR"/>
+        <result column="content" property="content" jdbcType="LONGVARBINARY"/>
+        <result column="md5" property="md5" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--服务配置、版本、服务、集群、项目信息实体-->
+    <resultMap id="ConfigJoinVersionJoinServiceJoinClusterJoinProject_ResultMap"
+               type="com.iflytek.ccr.polaris.cynosure.domain.ServiceConfig">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="VARCHAR"/>
+        <result column="version_id" property="versionId" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="gray_group_id" property="grayId" jdbcType="VARCHAR"/>
+        <result column="path" property="path" jdbcType="VARCHAR"/>
+        <result column="content" property="content" jdbcType="LONGVARBINARY"/>
+        <result column="md5" property="md5" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <association property="serviceVersion" javaType="com.iflytek.ccr.polaris.cynosure.domain.ServiceVersion">
+            <id column="service_version_id" property="id" jdbcType="VARCHAR"/>
+            <result column="service_version_version" property="version" jdbcType="VARCHAR"/>
+            <result column="service_version_service_id" property="serviceId" jdbcType="VARCHAR"/>
+            <result column="service_version_user_id" property="userId" jdbcType="VARCHAR"/>
+            <result column="service_version_description" property="description" jdbcType="VARCHAR"/>
+            <result column="service_version_create_time" property="createTime" jdbcType="TIMESTAMP"/>
+            <result column="service_version_update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        </association>
+        <association property="service" javaType="com.iflytek.ccr.polaris.cynosure.domain.Service">
+            <id column="service_id" property="id" jdbcType="VARCHAR"/>
+            <result column="service_name" property="name" jdbcType="VARCHAR"/>
+            <result column="service_description" property="description" jdbcType="VARCHAR"/>
+            <result column="service_user_id" property="userId" jdbcType="VARCHAR"/>
+            <result column="service_group_id" property="groupId" jdbcType="VARCHAR"/>
+            <result column="service_create_time" property="createTime" jdbcType="TIMESTAMP"/>
+            <result column="service_update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        </association>
+        <association property="cluster" javaType="com.iflytek.ccr.polaris.cynosure.domain.Cluster">
+            <id column="service_group_id" property="id" jdbcType="VARCHAR"/>
+            <result column="service_group_name" property="name" jdbcType="VARCHAR"/>
+            <result column="service_group_description" property="description" jdbcType="VARCHAR"/>
+            <result column="service_group_user_id" property="userId" jdbcType="VARCHAR"/>
+            <result column="service_group_create_time" property="createTime" jdbcType="TIMESTAMP"/>
+            <result column="service_group_update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+            <result column="service_group_project_id" property="projectId" jdbcType="VARCHAR"/>
+        </association>
+        <association property="project" javaType="com.iflytek.ccr.polaris.cynosure.domain.Project">
+            <id column="project_id" property="id" jdbcType="VARCHAR"/>
+            <result column="project_name" property="name" jdbcType="VARCHAR"/>
+            <result column="project_description" property="description" jdbcType="VARCHAR"/>
+            <result column="project_user_id" property="userId" jdbcType="VARCHAR"/>
+            <result column="project_create_time" property="createTime" jdbcType="TIMESTAMP"/>
+            <result column="project_update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        </association>
+    </resultMap>
+
+    <!--服务配置列名-->
+    <sql id="ServiceConfig_Column_List">
+        id, user_id, version_id, gray_group_id, name, path, content,md5,description, create_time, update_time
+    </sql>
+
+    <!--新增服务配置-->
+    <insert id="insert" parameterType="com.iflytek.ccr.polaris.cynosure.domain.ServiceConfig">
+        insert into tb_service_config (id, user_id, version_id,gray_group_id,
+        name, path, description, create_time,
+        update_time, content,md5)
+        values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR},
+        #{versionId,jdbcType=VARCHAR},#{grayId,jdbcType=VARCHAR},
+        #{name,jdbcType=VARCHAR}, #{path,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR},
+        #{createTime,jdbcType=TIMESTAMP},
+        #{updateTime,jdbcType=TIMESTAMP}, #{content,jdbcType=LONGVARBINARY}, #{md5,jdbcType=VARCHAR})
+    </insert>
+
+    <!--批量新增服务配置-->
+    <insert id="batchInsert" parameterType="java.util.List">
+        insert into tb_service_config (id, user_id, version_id, gray_group_id,
+        name, path, description, create_time,
+        update_time, content,md5)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.id},#{item.userId},#{item.versionId},#{item.grayId},#{item.name},#{item.path},#{item.description},#{item.createTime},#{item.updateTime},#{item.content},
+            #{item.md5})
+        </foreach>
+    </insert>
+
+    <!--批量更新服务配置-->
+    <update id="batchUpdate" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" separator=";">
+            update tb_service_config
+            <set>
+                <if test="item.updateTime != null">
+                    update_time = #{item.updateTime,jdbcType=TIMESTAMP},
+                </if>
+                <if test="item.content != null">
+                    content = #{item.content,jdbcType=LONGVARBINARY},
+                </if>
+                <if test="item.md5 != null">
+                    md5 = #{item.md5,jdbcType=VARCHAR},
+                </if>
+                <if test="item.description != null">
+                    description = #{item.description,jdbcType=VARCHAR},
+                </if>
+            </set>
+            <where>
+                <if test="item.id != null">
+                    and id = #{item.id,jdbcType=VARCHAR}
+                </if>
+            </where>
+        </foreach>
+    </update>
+
+    <!--删除服务配置-->
+    <delete id="deleteById" parameterType="java.lang.String">
+        delete from tb_service_config
+        where id = #{id,jdbcType=VARCHAR}
+    </delete>
+
+    <!--通过ids删除服务配置-->
+    <delete id="deleteByIds" parameterType="java.util.List">
+        delete from tb_service_config
+        where id in
+        <foreach collection="list" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!--更新服务配置-->
+    <update id="updateById" parameterType="com.iflytek.ccr.polaris.cynosure.domain.ServiceConfig">
+        update tb_service_config
+        <set>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="versionId != null">
+                version_id = #{versionId,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="path != null">
+                path = #{path,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                description = #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="content != null">
+                content = #{content,jdbcType=LONGVARBINARY},
+            </if>
+            <if test="md5 != null">
+                md5 = #{md5,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+
+    <!--通过id查询服务配置-->
+    <select id="findById" resultMap="ServiceConfig_ResultMap" parameterType="java.lang.String">
+        select
+        <include refid="ServiceConfig_Column_List"/>
+        from tb_service_config
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+
+    <!--查询服务配置信息-->
+    <select id="find" resultMap="ServiceConfig_ResultMap"
+            parameterType="com.iflytek.ccr.polaris.cynosure.domain.ServiceConfig">
+        select
+        <include refid="ServiceConfig_Column_List"/>
+        from tb_service_config
+        <where>
+            <if test="name != null">
+                and name = #{name,jdbcType=VARCHAR}
+            </if>
+            <if test="versionId != null">
+                and version_id = #{versionId,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <!--查询最新版本的配置信息-->
+    <select id="findNewList" resultMap="ServiceConfig_ResultMap" parameterType="java.util.Map">
+        select
+        <include refid="ServiceConfig_Column_List"/>
+        from tb_service_config
+        where version_id=(
+        select max(id) from tb_service_version
+        where service_id = #{serviceId,jdbcType=VARCHAR}
+        )
+    </select>
+
+    <!--查询服务配置列表-->
+    <select id="findListByMap" resultMap="ServiceConfig_ResultMap" parameterType="java.util.Map">
+        select
+        <include refid="ServiceConfig_Column_List"/>
+        from tb_service_config
+        <where>
+            <if test="ids != null and ids.size()>0">
+                and tb_service_config.id in
+                <foreach collection="ids" item="id" index="index"
+                         open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <!--查询服务配置总数-->
+    <select id="findTotalCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        select count(*)
+        from
+        tb_service_config
+        join
+        (
+        select id _id,service_id from tb_service_version
+        <where>
+            <if test="versionName != null">
+                and version = #{versionName,jdbcType=VARCHAR}
+            </if>
+        </where>
+        ) tb_service_version
+        on tb_service_config.version_id=tb_service_version._id
+        join
+        (
+        select id _id,group_id from tb_service
+        <where>
+            <if test="serviceName != null">
+                and name = #{serviceName,jdbcType=VARCHAR}
+            </if>
+        </where>
+        ) tb_service
+        on tb_service_version.service_id=tb_service._id
+        join
+        (
+        select id _id,project_id from tb_service_group
+        <where>
+            <if test="clusterName != null">
+                and name = #{clusterName,jdbcType=VARCHAR}
+            </if>
+        </where>
+        ) tb_service_group
+        on tb_service.group_id=tb_service_group._id
+        join
+        (select id _id from tb_project
+        <where>
+            <if test="projectName != null">
+                and name = #{projectName,jdbcType=VARCHAR}
+            </if>
+        </where>
+        ) tb_project
+        on tb_service_group.project_id=tb_project._id
+        WHERE tb_service_config.gray_group_id = #{grayId,jdbcType=VARCHAR}
+    </select>
+
+    <!--查询服务配置列表-->
+    <select id="findList" resultMap="ServiceConfig_ResultMap" parameterType="java.util.Map">
+        select
+        <include refid="ServiceConfig_Column_List"/>
+        from tb_service_config
+        join
+        (
+        select id _id,service_id from tb_service_version
+        <where>
+            <if test="versionName != null">
+                and version = #{versionName,jdbcType=VARCHAR}
+            </if>
+        </where>
+        ) tb_service_version
+        on tb_service_config.version_id=tb_service_version._id
+        join
+        (
+        select id _id,group_id from tb_service
+        <where>
+            <if test="serviceName != null">
+                and name = #{serviceName,jdbcType=VARCHAR}
+            </if>
+        </where>
+        ) tb_service
+        on tb_service_version.service_id=tb_service._id
+        join
+        (
+        select id _id,project_id from tb_service_group
+        <where>
+            <if test="clusterName != null">
+                and name = #{clusterName,jdbcType=VARCHAR}
+            </if>
+        </where>
+        ) tb_service_group
+        on tb_service.group_id=tb_service_group._id
+        join
+        (select id _id from tb_project
+        <where>
+            <if test="projectName != null">
+                and name = #{projectName,jdbcType=VARCHAR}
+            </if>
+        </where>
+        ) tb_project
+        on tb_service_group.project_id=tb_project._id
+        <where>
+            <if test="versionId != null">
+                and version_id = #{versionId,jdbcType=VARCHAR}
+            </if>
+            <if test="grayId != null">
+                and gray_group_id = #{grayId,jdbcType=VARCHAR}
+            </if>
+            <if test="names != null and names.size()>0">
+                and name in
+                <foreach collection="names" item="name" index="index"
+                         open="(" separator="," close=")">
+                    #{name}
+                </foreach>
+            </if>
+        </where>
+        order by convert(id,SIGNED) desc
+        <if test="startIndex !=null and pagesize !=null">
+            limit #{startIndex},#{pagesize}
+        </if>
+    </select>
+
+    <!--根据版本Id查询该版本下的配置集合-->
+    <select id="findConfigsByVersionId" resultMap="ServiceConfig_ResultMap" parameterType="java.util.Map">
+        select
+        <include refid="ServiceConfig_Column_List"/>
+        from tb_service_config
+        <where>
+            <if test="versionId != null">
+                and version_id = #{versionId,jdbcType=VARCHAR}
+            </if>
+            <if test="grayId != null">
+                and gray_group_id = #{grayId,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+
+    <!--通过map查询配置、版本、服务、集群、项目信息-->
+    <select id="findConfigJoinVersionJoinServiceJoinClusterJoinProjectByMap"
+            resultMap="ConfigJoinVersionJoinServiceJoinClusterJoinProject_ResultMap" parameterType="java.util.Map">
+        select tb_service_config.*,
+        tb_service_version.id service_version_id,
+        tb_service_version.version service_version_version,
+        tb_service_version.service_id service_version_service_id,
+        tb_service_version.user_id service_version_user_id,
+        tb_service_version.description service_version_description,
+        tb_service_version.create_time service_version_create_time,
+        tb_service_version.update_time service_version_update_time,
+        tb_service.id service_id,
+        tb_service.name service_name,
+        tb_service.description service_description,
+        tb_service.user_id service_user_id,
+        tb_service.group_id service_group_id,
+        tb_service.create_time service_create_time,
+        tb_service.update_time service_update_time,
+        tb_service_group.id service_group_id,
+        tb_service_group.name service_group_name,
+        tb_service_group.description service_group_description,
+        tb_service_group.user_id service_group_user_id,
+        tb_service_group.create_time service_group_create_time,
+        tb_service_group.update_time service_group_update_time,
+        tb_service_group.project_id service_group_project_id,
+        tb_project.id project_id,
+        tb_project.name project_name,
+        tb_project.description project_description,
+        tb_project.user_id project_user_id,
+        tb_project.create_time project_create_time,
+        tb_project.update_time project_update_time
+        from tb_service_config
+        join tb_service_version
+        on tb_service_config.version_id=tb_service_version.id
+        join tb_service
+        on tb_service_version.service_id=tb_service.id
+        join tb_service_group
+        on tb_service_group.id=tb_service.group_id
+        join tb_project
+        on tb_project.id=tb_service_group.project_id
+        <where>
+            <if test="id != null">
+                and tb_service_config.id = #{id,jdbcType=VARCHAR}
+            </if>
+            <if test="ids != null and ids.size()>0">
+                and tb_service_config.id in
+                <foreach collection="ids" item="id" index="index"
+                         open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <!--通过ids查询配置列表信息-->
+    <select id="findListByIds" resultMap="ServiceConfig_ResultMap" parameterType="java.util.List">
+        select
+        <include refid="ServiceConfig_Column_List"/>
+        from tb_service_config
+        <where>
+            <if test="ids != null and ids.size()>0">
+                and tb_service_config.id in
+                <foreach collection="ids" item="id" index="index"
+                         open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+    </select>
+    <!--通过ids查询灰度配置列表信息-->
+    <select id="findListByGrayIds" resultMap="ServiceConfig_ResultMap" parameterType="java.util.List">
+        select
+        <include refid="ServiceConfig_Column_List"/>
+        from tb_service_config
+        <where>
+            <if test="ids != null and ids.size()>0">
+                and tb_service_config.gray_group_id in
+                <foreach collection="ids" item="id" index="index"
+                         open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <!--通过id查询灰度配置列表信息-->
+    <select id="findListByGrayId" resultMap="ServiceConfig_ResultMap" parameterType="java.lang.String">
+        select
+        <include refid="ServiceConfig_Column_List"/>
+        from tb_service_config
+        WHERE tb_service_config.gray_group_id=#{grayId,jdbcType=VARCHAR}
+    </select>
+    <!--删除灰度配置-->
+    <delete id="deleteByGrayId" parameterType="java.lang.String">
+        delete from tb_service_config
+        where gray_group_id = #{grayId,jdbcType=VARCHAR}
+    </delete>
+
+    <!--查询灰度配置总数-->
+    <select id="findGrayTotalCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        select count(*) from tb_service_config
+        join
+        (
+        select id _id,version_id from tb_gray_group
+        <where>
+            <if test="grayName != null">
+                and tb_gray_group.name = #{grayName,jdbcType=VARCHAR}
+            </if>
+        </where>
+        ) tb_gray_group
+        on tb_service_config.gray_group_id=tb_gray_group._id
+        join
+        (
+        select id _id,service_id from tb_service_version
+        <where>
+            <if test="versionName != null">
+                and version = #{versionName,jdbcType=VARCHAR}
+            </if>
+        </where>
+        ) tb_service_version
+        on tb_service_config.version_id=tb_service_version._id
+        join
+        (
+        select id _id,group_id from tb_service
+        <where>
+            <if test="serviceName != null">
+                and name = #{serviceName,jdbcType=VARCHAR}
+            </if>
+        </where>
+        ) tb_service
+        on tb_service_version.service_id=tb_service._id
+        join
+        (
+        select id _id,project_id from tb_service_group
+        <where>
+            <if test="clusterName != null">
+                and name = #{clusterName,jdbcType=VARCHAR}
+            </if>
+        </where>
+        ) tb_service_group
+        on tb_service.group_id=tb_service_group._id
+        join
+        (select id _id from tb_project
+        <where>
+            <if test="projectName != null">
+                and name = #{projectName,jdbcType=VARCHAR}
+            </if>
+        </where>
+        ) tb_project
+        on tb_service_group.project_id=tb_project._id
+    </select>
+
+    <!--查询服务灰度配置列表-->
+    <select id="findGrayList" resultMap="ServiceConfig_ResultMap" parameterType="java.util.Map">
+        select
+        id, user_id, tb_service_config.version_id, gray_group_id, name, path, content,md5,description, create_time,
+        update_time
+        from tb_service_config
+        join
+        (
+        select id _id,tb_gray_group.version_id from tb_gray_group
+        <where>
+            <if test="grayName != null">
+                and tb_gray_group.name = #{grayName,jdbcType=VARCHAR}
+            </if>
+        </where>
+        ) tb_gray_group
+        on tb_service_config.gray_group_id=tb_gray_group._id
+        join
+        (
+        select id _id,service_id from tb_service_version
+        <where>
+            <if test="versionName != null">
+                and version = #{versionName,jdbcType=VARCHAR}
+            </if>
+        </where>
+        ) tb_service_version
+        on tb_service_config.version_id=tb_service_version._id
+        join
+        (
+        select id _id,group_id from tb_service
+        <where>
+            <if test="serviceName != null">
+                and name = #{serviceName,jdbcType=VARCHAR}
+            </if>
+        </where>
+        ) tb_service
+        on tb_service_version.service_id=tb_service._id
+        join
+        (
+        select id _id,project_id from tb_service_group
+        <where>
+            <if test="clusterName != null">
+                and name = #{clusterName,jdbcType=VARCHAR}
+            </if>
+        </where>
+        ) tb_service_group
+        on tb_service.group_id=tb_service_group._id
+        join
+        (select id _id from tb_project
+        <where>
+            <if test="projectName != null">
+                and name = #{projectName,jdbcType=VARCHAR}
+            </if>
+        </where>
+        ) tb_project
+        on tb_service_group.project_id=tb_project._id
+        <where>
+            <if test="versionId != null">
+                and version_id = #{versionId,jdbcType=VARCHAR}
+            </if>
+            <if test="names != null and names.size()>0">
+                and name in
+                <foreach collection="names" item="name" index="index"
+                         open="(" separator="," close=")">
+                    #{name}
+                </foreach>
+            </if>
+        </where>
+        order by convert(id,SIGNED) desc
+        <if test="startIndex !=null and pagesize !=null">
+            limit #{startIndex},#{pagesize}
+        </if>
+    </select>
+
+    <!--查询服务配置，校验版本下只有一个同类型同名配置-->
+    <select id="findOnlyConfig" resultMap="ServiceConfig_ResultMap"
+            parameterType="com.iflytek.ccr.polaris.cynosure.domain.ServiceConfig">
+        select
+        <include refid="ServiceConfig_Column_List"/>
+        from tb_service_config
+        <where>
+            <if test="name != null">
+                and name = #{name,jdbcType=VARCHAR}
+            </if>
+            <if test="versionId != null">
+                and version_id = #{versionId,jdbcType=VARCHAR}
+            </if>
+            <if test="grayId != null">
+                and gray_group_id = #{grayId,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+</mapper>

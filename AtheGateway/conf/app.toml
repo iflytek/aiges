@@ -1,0 +1,33 @@
+[server]
+#host = "10.1.107.8"    # 和xsf.toml中要保持一致
+netCard = ""    # 监听的网卡id  默认网卡0
+port = "8082"   # 监听端口号
+mock = false  #  enable mock mode
+pipe_depth=5    #  sort pipe line length
+[auth]
+enable_appid_check=true  # 开启appid校验
+[xsf]
+from="webgate-ws"
+server_port="9027"    # xsf server端口   和xsg.toml要保持一致
+location="dx"
+call_retry=2    #xsf
+enable_respsort=false #对响应结果排序
+dc="dz"
+[session]
+scan_interver=60     #全局session扫描时间
+timeout_interver=15   #消息发送超时间隔
+handshake_timeout=4  #handshake 超时时间
+session_timeout= 60
+session_close_wait=5
+
+[log]
+file="/log/server/webgate-ws.log"
+level="error"
+size=100   #max log size :MB
+count=10  #max log file num
+caller=true #控制日志是否刷行号
+batch=100 #刷日志的最小条数
+async = true      #是否启用异步日志。1是0否。缺省1。
+[schema]
+enable=true  #是否开启schema校验
+services=["svc"]   # 配置加载的AI能力

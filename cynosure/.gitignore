@@ -1,0 +1,10 @@
+*.idea
+*.iml
+*.class
+*.log
+*.jar
+*.DS_Store
+# Eclipse
+.classpath
+.project
+.settings/

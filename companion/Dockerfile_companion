@@ -1,0 +1,8 @@
+FROM 172.16.59.153/develop/centos7-java8:1.8.0_121
+MAINTAINER yjhuang3@iflytek.com
+COPY ./companion-parent/ /opt/server
+WORKDIR /opt/server/
+RUN mv netstat ip /usr/bin
+CMD sh watchdog.sh
+STOPSIGNAL  3
+

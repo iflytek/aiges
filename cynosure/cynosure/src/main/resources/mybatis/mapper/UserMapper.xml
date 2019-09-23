@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.iflytek.ccr.polaris.cynosure.mapper.UserMapper">
+    <!--用户实体-->
+    <resultMap id="User_ResultMap" type="com.iflytek.ccr.polaris.cynosure.domain.User">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="account" property="account" jdbcType="VARCHAR"/>
+        <result column="password" property="password" jdbcType="VARCHAR"/>
+        <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+        <result column="phone" property="phone" jdbcType="VARCHAR"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="role_type" property="roleType" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <!--用户列名-->
+    <sql id="User_Column_List">
+        id, account, password, user_name, phone, email, create_time, update_time,role_type
+    </sql>
+
+    <!--新增用户-->
+    <insert id="insert" parameterType="com.iflytek.ccr.polaris.cynosure.domain.User">
+        insert into tb_user (id, account, password,
+        user_name, phone, email,
+        create_time, update_time, role_type
+        )
+        values (#{id,jdbcType=VARCHAR}, #{account,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
+        #{userName,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR},
+        #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{roleType,jdbcType=TINYINT}
+        )
+    </insert>
+
+    <!--通过id删除用户-->
+    <delete id="deleteById" parameterType="java.lang.String">
+        delete from tb_user
+        where id = #{id,jdbcType=VARCHAR}
+    </delete>
+
+    <!--通过id更新用户-->
+    <update id="updateById" parameterType="com.iflytek.ccr.polaris.cynosure.domain.User">
+        update tb_user
+        <set>
+            <if test="account != null">
+                account = #{account,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="userName != null">
+                user_name = #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                phone = #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null">
+                email = #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+
+    <!--通过账号查询用户信息-->
+    <select id="findByAccount" resultMap="User_ResultMap" parameterType="java.lang.String">
+        select
+        <include refid="User_Column_List"/>
+        from tb_user
+        where account = #{account,jdbcType=VARCHAR}
+    </select>
+
+    <!--通过id查询用户信息-->
+    <select id="findById" resultMap="User_ResultMap" parameterType="java.lang.String">
+        select
+        <include refid="User_Column_List"/>
+        from tb_user
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+
+    <!--查询用户总数-->
+    <select id="findTotalCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        select count(*) from tb_user where role_type=2
+        <if test="userName != null">
+            and user_name = #{userName,jdbcType=VARCHAR}
+        </if>
+    </select>
+
+    <!--查询用户列表-->
+    <select id="findList" resultMap="User_ResultMap" parameterType="java.util.Map">
+        select
+        <include refid="User_Column_List"/>
+        from tb_user where role_type=2
+        <if test="userName != null">
+            and user_name = #{userName,jdbcType=VARCHAR}
+        </if>
+        order by convert(id,SIGNED) desc
+        <if test="startIndex !=null and pagesize !=null">
+            limit #{startIndex},#{pagesize}
+        </if>
+    </select>
+</mapper>

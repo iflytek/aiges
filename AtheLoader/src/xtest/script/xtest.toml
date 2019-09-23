@@ -1,0 +1,51 @@
+[xtest]
+#测试目标服务配置，配置格式如下,注意分割符的差异. 业务1@ip1:port1;ipn:portn,业务2@ip2:port2;ipn:portn
+taddrs="AIservice@127.0.0.1:5090;sms@127.0.0.1:5091"
+trace-ip = "172.16.51.13"
+
+[svcMode]
+service = "AIservice"           # 请求目标服务名称, eg:sms
+timeout = 1000                  # 服务超时时间, 对应服务端waitTime
+multiThr = 100                  # 请求并发数
+loopCnt = 10000                 # 请求总次数
+reqMode = 0                     # 服务请求模式. 0:非会话模式 1:会话模式
+reqPara = "k1=v1;k2=v2;k3=v3"   # 服务请求参数对, 多个参数对以";"分隔
+linearMs = 5000                 # 并发压测线性增长区间,单位:ms
+
+
+[upstream]
+inputSrc = "path"               # 上行数据流数据源, 配置文件路径(配置为目录则循环读取目录中文件)
+sliceOn = 1                     # 切片开关, 0:关闭切换, !0:开启切片
+sliceSize = 1280                # 上行数据切片大小,用于会话模式: byte
+interval = 40                   # 上行数据发包间隔,用于会话模式: ms. 注：动态校准,每个包间隔非严格interval
+type = "audio"                  # 数据类型
+format = "audio/L16;rate=16000" # 数据格式
+encoding = "raw"                # 数据编码
+describe = "k=v;k=v"            # 数据描述信息
+
+
+[upstream-N]                    # 用于实现多数据流上行配置, 对于多个数据流可按照upstream-N规则叠加配置
+inputSrc = "path-N"             # 同upstream
+sliceSize = 1280                # 同upstream
+interval = 40                   # 同upstream, 注:多个upstream发包间隔相同时,数据流发送包合并
+type = "audio"                  # 同upstream
+format = "audio/L16;rate=16000" # 同upstream
+encoding = "raw"                # 同upstream
+describe = "k=v;k=v"            # 同upstream
+
+
+[downstream]                    # 下行数据流存储输出
+output = 0                      # 输出方式： 0:输出至公共文件outputDst 1:以独立文件形式输出至目录outputDst(文件名:sid+**) 2：输出至终端
+outputDst = "./log/result"          # 响应数据输出目标, 若output=0则配置目录, output=1则配置文件
+
+
+[log]
+file = "./log/xtest.log"              # 日志文件名
+level = "debug"                 # 日志打印等级
+size = 100                      # 日志文件大小
+count = 20                      # 日志备份数量
+async = 0                       # 异步开关
+die = 30
+
+[trace]
+able = 0

@@ -1,0 +1,36 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "Gn3ZZMmleC9qp/GGirDF6WJatBE=",
+			"path": "flume",
+			"revision": ""
+		},
+		{
+			"checksumSHA1": "8WukX0p/46MPMH8BH/N7+BMiApg=",
+			"path": "flume/thrift_source_protocol-remote",
+			"revision": ""
+		},
+		{
+			"checksumSHA1": "+Bs194kDynADvQIiOxsWBEX5EuE=",
+			"path": "git.apache.org/thrift.git/lib/go/thrift",
+			"revision": ""
+		},
+		{
+			"checksumSHA1": "dBt0GZPqmudAsHMoELhqIlItvNc=",
+			"path": "github.com/golang/snappy",
+			"revision": "553a641470496b2327abcac10b36396bd98e45c9",
+			"revisionTime": "2017-02-15T23:32:05Z"
+		},
+		{
+			"checksumSHA1": "5vIEzy4zUd21SFQMiF4qsSDY+mA=",
+			"path": "github.com/linkedin/goavro",
+			"revision": "fa8f6a30176ce945e115db0afad95ede93725eec",
+			"revisionTime": "2018-04-27T20:19:34Z",
+			"version": "v2.3.0",
+			"versionExact": "v2.3.0"
+		}
+	],
+	"rootPath": "genitus/flange"
+}

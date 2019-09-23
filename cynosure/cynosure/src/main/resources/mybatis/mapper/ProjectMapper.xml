@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.iflytek.ccr.polaris.cynosure.mapper.ProjectMapper">
+    <!--项目实体-->
+    <resultMap id="Project_ResultMap" type="com.iflytek.ccr.polaris.cynosure.domain.Project">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--项目、集群-->
+    <resultMap id="ProjectJoinCluster_ResultMap" type="com.iflytek.ccr.polaris.cynosure.domain.Project">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <collection property="clusterList" ofType="com.iflytek.ccr.polaris.cynosure.domain.Cluster">
+            <id column="cluster_id" property="id" jdbcType="VARCHAR"/>
+            <result column="cluster_name" property="name" jdbcType="VARCHAR"/>
+            <result column="cluster_description" property="description" jdbcType="VARCHAR"/>
+            <result column="cluster_user_id" property="userId" jdbcType="VARCHAR"/>
+            <result column="cluster_create_time" property="createTime" jdbcType="TIMESTAMP"/>
+            <result column="cluster_update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+            <result column="cluster_project_id" property="projectId" jdbcType="VARCHAR"/>
+        </collection>
+    </resultMap>
+
+    <!--项目列名-->
+    <sql id="Project_Column_List">
+      id, name, description, user_id, create_time, update_time
+    </sql>
+
+    <!--新增项目-->
+    <insert id="insert" parameterType="com.iflytek.ccr.polaris.cynosure.domain.Project">
+        insert into tb_project (id, name, description,
+          user_id, create_time, update_time
+        )
+        values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR},
+          #{userId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+        )
+    </insert>
+
+    <!--删除项目-->
+    <delete id="deleteById" parameterType="java.lang.String">
+        delete from tb_project
+        where id = #{id,jdbcType=VARCHAR}
+    </delete>
+
+    <!--更新项目-->
+    <update id="updateById" parameterType="com.iflytek.ccr.polaris.cynosure.domain.Project">
+        update tb_project
+        <set>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                description = #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+
+    <!--通过id查询项目信息-->
+    <select id="findById" resultMap="Project_ResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Project_Column_List"/>
+        from tb_project
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+
+    <!--通过项目名称查询项目信息-->
+    <select id="findByName" resultMap="Project_ResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Project_Column_List"/>
+        from tb_project
+        where name = #{name,jdbcType=VARCHAR}
+    </select>
+
+    <!--查询项目总数-->
+    <select id="findTotalCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        select count(*)
+        from tb_project
+        join (select * from tb_project_member
+        <where>
+            <if test="userId != null">
+                and user_id = #{userId,jdbcType=VARCHAR}
+            </if>
+        </where>
+        ) tb_project_member
+        on tb_project.id=tb_project_member.project_id
+        <where>
+            <if test="name != null">
+                and name = #{name,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <!--查询项目列表-->
+    <select id="findList" resultMap="Project_ResultMap" parameterType="java.util.Map">
+        select
+        <include refid="Project_Column_List"/>
+        from tb_project
+        join (select project_id from tb_project_member
+        <where>
+            <if test="userId != null">
+                and user_id = #{userId,jdbcType=VARCHAR}
+            </if>
+        </where>
+        ) tb_project_member
+        on tb_project.id=tb_project_member.project_id
+        <where>
+            <if test="name != null">
+                and name = #{name,jdbcType=VARCHAR}
+            </if>
+        </where>
+        <!-- order by create_time desc -->
+        order by update_time desc
+        <if test="startIndex !=null and pagesize !=null">
+            limit #{startIndex},#{pagesize}
+        </if>
+    </select>
+
+    <!--通过id查询项目和集群列表-->
+    <select id="findProjectAndClusterListById" resultMap="ProjectJoinCluster_ResultMap"
+            parameterType="java.lang.String">
+        select tb_project.*,
+        tb_service_group.id cluster_id,
+        tb_service_group.name cluster_name,
+        tb_service_group.description cluster_description,
+        tb_service_group.user_id cluster_user_id,
+        tb_service_group.create_time cluster_create_time,
+        tb_service_group.update_time cluster_update_time,
+        tb_service_group.project_id  cluster_project_id
+        from tb_project left join tb_service_group
+        on tb_project.id=tb_service_group.project_id
+        where tb_project.id = #{id,jdbcType=VARCHAR}
+    </select>
+</mapper>

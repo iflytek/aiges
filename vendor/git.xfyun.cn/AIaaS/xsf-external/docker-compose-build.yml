@@ -1,0 +1,32 @@
+version: "2.2"
+services:
+  xsf-server:
+    build:
+      context: ./../
+      dockerfile: ./xsf/Dockerfile-build
+    working_dir: /root/src/git.xfyun.cn/AIaaS/xsf-external/lab/basic/server
+    network_mode: "host"
+    restart: "no"
+    cpus: 10
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 65535
+        hard: 65535
+    entrypoint: './server'
+    command: '-m 1 -c server.toml -p xsf -g xsf -s xsf-server -u "http://10.1.87.69:6868"'
+
+  xrpc-proxy:
+    image: "172.16.59.153/aiaas/metrics:proxy_1.1.0"
+    network_mode: "host"
+    restart: "no"
+    cpus: 72
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 65535
+        hard: 65535
+    entrypoint: './proxy'
+    command: './proxy -group "3s" -prj "metrics" -srv "xrpc-proxy" -url  "http://10.1.87.69:6868"'
+
+#docker-compose up --scale xsf-server=1

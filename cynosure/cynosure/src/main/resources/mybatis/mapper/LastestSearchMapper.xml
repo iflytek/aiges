@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.iflytek.ccr.polaris.cynosure.mapper.LastestSearchMapper">
+    <!--最近搜索实体-->
+    <resultMap id="LastestSearch_ResultMap" type="com.iflytek.ccr.polaris.cynosure.domain.LastestSearch">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="VARCHAR"/>
+        <result column="url" property="url" jdbcType="VARCHAR"/>
+        <result column="pre_condition" property="preCondition" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--最近搜索实体列名-->
+    <sql id="LastestSearch_Column_List">
+        id, user_id, url, pre_condition, create_time, update_time
+    </sql>
+
+    <!--新增-->
+    <insert id="insert" parameterType="com.iflytek.ccr.polaris.cynosure.domain.LastestSearch">
+        insert into tb_lastest_search (id, user_id, url,
+        pre_condition, create_time, update_time
+        )
+        values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR},
+        #{preCondition,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+        )
+    </insert>
+
+    <!--更新-->
+    <update id="update" parameterType="com.iflytek.ccr.polaris.cynosure.domain.LastestSearch">
+        update tb_lastest_search
+        <set>
+            <if test="preCondition != null">
+                pre_condition = #{preCondition,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where user_id = #{userId,jdbcType=VARCHAR}
+        and url = #{url,jdbcType=VARCHAR}
+    </update>
+
+    <!--查询-->
+    <select id="find" resultMap="LastestSearch_ResultMap"
+            parameterType="com.iflytek.ccr.polaris.cynosure.domain.LastestSearch">
+        select
+        <include refid="LastestSearch_Column_List"/>
+        from tb_lastest_search
+        <where>
+            <if test="userId != null">
+                and user_id = #{userId,jdbcType=VARCHAR}
+            </if>
+            <if test="url != null">
+                and url = #{url,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </select>
+</mapper>

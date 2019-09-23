@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package catch;
+
+message MetaData {
+	string type = 1;                    // 数据类型;
+    string format = 2;				    // 数据编码格式;
+    string encoding = 3;				// 数据压缩格式;
+    bytes data = 4;				        // 数据;
+}
+
+message MetaDoubt {
+    int32 score = 1;                          // 置信度评估得分
+    string sid = 2;                         // 请求sid
+    map<string, string> params = 3;         // 请求参数对
+    map<string, string> doubt = 4;          // 请求可疑参数对
+    repeated MetaData datalist = 5;         // 数据实体
+}
+
+message MetaTrust {
+    string sid = 1;
+    map<string, string> params = 2;
+}
+
+message CatchReport {
+    string event = 1;
+    string service = 2;
+    string address = 3;
+    string summary = 4;
+    string pid = 5;
+    bytes stackc = 6;
+    bytes stackgo = 7;
+    repeated MetaDoubt doubtlist = 8;
+    repeated MetaTrust trustlist = 9;
+}

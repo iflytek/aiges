@@ -1,0 +1,6 @@
+
+FROM gcr.io/distroless/cc:latest
+
+COPY build/AtheGateway /usr/local/bin
+
+ENTRYPOINT ["/usr/local/bin/AtheGateway"]

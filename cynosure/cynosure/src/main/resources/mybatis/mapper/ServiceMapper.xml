@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.iflytek.ccr.polaris.cynosure.mapper.ServiceMapper">
+    <!--服务实体-->
+    <resultMap id="Service_ResultMap" type="com.iflytek.ccr.polaris.cynosure.domain.Service">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="VARCHAR"/>
+        <result column="group_id" property="groupId" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--服务、服务版本实体-->
+    <resultMap id="ServiceJoinVersion_ResultMap" type="com.iflytek.ccr.polaris.cynosure.domain.Service">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="is_open" property="isOpen" jdbcType="BIT"/>
+        <result column="in_service" property="inService" jdbcType="BIT"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="VARCHAR"/>
+        <result column="group_id" property="groupId" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <collection property="serviceVersionList" ofType="com.iflytek.ccr.polaris.cynosure.domain.ServiceVersion">
+            <id column="service_version_id" property="id" jdbcType="VARCHAR"/>
+            <result column="service_version_version" property="version" jdbcType="VARCHAR"/>
+            <result column="service_version_service_id" property="serviceId" jdbcType="VARCHAR"/>
+            <result column="service_version_user_id" property="userId" jdbcType="VARCHAR"/>
+            <result column="service_version_description" property="description" jdbcType="VARCHAR"/>
+            <result column="service_version_create_time" property="createTime" jdbcType="TIMESTAMP"/>
+            <result column="service_version_update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        </collection>
+    </resultMap>
+
+    <!--服务、服务组、项目实体-->
+    <resultMap id="ServiceJoinServiceGroupJoinProject_ResultMap" type="com.iflytek.ccr.polaris.cynosure.domain.Service">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="is_open" property="isOpen" jdbcType="BIT"/>
+        <result column="in_service" property="inService" jdbcType="BIT"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="VARCHAR"/>
+        <result column="group_id" property="groupId" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <association property="serviceGroup" javaType="com.iflytek.ccr.polaris.cynosure.domain.Cluster">
+            <id column="service_group_id" property="id" jdbcType="VARCHAR"/>
+            <result column="service_group_name" property="name" jdbcType="VARCHAR"/>
+            <result column="service_group_description" property="description" jdbcType="VARCHAR"/>
+            <result column="service_group_is_open" property="isOpen" jdbcType="BIT"/>
+            <result column="service_group_user_id" property="userId" jdbcType="VARCHAR"/>
+            <result column="service_group_create_time" property="createTime" jdbcType="TIMESTAMP"/>
+            <result column="service_group_update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+            <result column="service_group_project_id" property="projectId" jdbcType="VARCHAR"/>
+        </association>
+        <association property="project" javaType="com.iflytek.ccr.polaris.cynosure.domain.Project">
+            <id column="project_id" property="id" jdbcType="VARCHAR"/>
+            <result column="project_name" property="name" jdbcType="VARCHAR"/>
+            <result column="project_description" property="description" jdbcType="VARCHAR"/>
+            <result column="project_user_id" property="userId" jdbcType="VARCHAR"/>
+            <result column="project_create_time" property="createTime" jdbcType="TIMESTAMP"/>
+            <result column="project_update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        </association>
+    </resultMap>
+
+    <!--服务列名-->
+    <sql id="Service_Column_List">
+        id, name, description, user_id, group_id, create_time, update_time
+    </sql>
+
+    <!--保存服务-->
+    <insert id="insert" parameterType="com.iflytek.ccr.polaris.cynosure.domain.Service">
+        insert into tb_service (id, name, description, user_id,
+        group_id, create_time, update_time
+        )
+        values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR},
+        #{userId,jdbcType=VARCHAR},
+        #{groupId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+        )
+    </insert>
+
+    <!--删除服务-->
+    <delete id="deleteById" parameterType="java.lang.String">
+        delete from tb_service
+        where id = #{id,jdbcType=VARCHAR}
+    </delete>
+
+    <!--更新服务-->
+    <update id="updateById" parameterType="com.iflytek.ccr.polaris.cynosure.domain.Service">
+        update tb_service
+        <set>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                description = #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="groupId != null">
+                group_id = #{groupId,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+
+    <!--通过id查询服务-->
+    <select id="findById" resultMap="Service_ResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Service_Column_List"/>
+        from tb_service
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+
+    <!--查询服务信息-->
+    <select id="find" resultMap="Service_ResultMap" parameterType="com.iflytek.ccr.polaris.cynosure.domain.Service">
+        select
+        <include refid="Service_Column_List"/>
+        from tb_service
+        <where>
+            <if test="name != null">
+                and name = #{name,jdbcType=VARCHAR}
+            </if>
+            <if test="groupId != null">
+                and group_id = #{groupId,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <!--查询服务总数-->
+    <select id="findTotalCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        select count(*) from tb_service
+        join
+        (
+        select id _id,project_id from tb_service_group
+        <where>
+            <if test="clusterName != null">
+                and name = #{clusterName,jdbcType=VARCHAR}
+            </if>
+        </where>
+        ) tb_service_group
+        on tb_service.group_id=tb_service_group._id
+        join
+        (
+        select id _id from tb_project
+        <where>
+            <if test="projectName != null">
+                and name = #{projectName,jdbcType=VARCHAR}
+            </if>
+        </where>
+        ) tb_project
+        on tb_service_group.project_id=tb_project._id
+    </select>
+
+    <!--查询服务列表-->
+    <select id="findList" resultMap="Service_ResultMap" parameterType="java.util.Map">
+        select
+        <include refid="Service_Column_List"/>
+        from tb_service
+        join
+        (
+        select id _id,project_id from tb_service_group
+        <where>
+            <if test="clusterName != null">
+                and name = #{clusterName,jdbcType=VARCHAR}
+            </if>
+        </where>
+        ) tb_service_group
+        on tb_service.group_id=tb_service_group._id
+        join
+        (
+        select id _id from tb_project
+        <where>
+            <if test="projectName != null">
+                and name = #{projectName,jdbcType=VARCHAR}
+            </if>
+        </where>
+        ) tb_project
+        on tb_service_group.project_id=tb_project._id
+       <!--  order by convert(id,SIGNED) desc -->
+       order by update_time desc
+        <if test="startIndex !=null and pagesize !=null">
+            limit #{startIndex},#{pagesize}
+        </if>
+    </select>
+
+    <!--查询服务列表-->
+    <select id="findServiceList" resultMap="Service_ResultMap" parameterType="java.util.Map">
+        select
+        <include refid="Service_Column_List"/>
+        from tb_service
+        <where>
+            <if test="clusterIds != null and clusterIds.size()>0">
+                and group_id in
+                <foreach collection="clusterIds" item="id" index="index"
+                         open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+        order by update_time desc 
+    </select>
+
+    <!--通过id查询版本列表-->
+    <select id="findServiceVersionListById" resultMap="ServiceJoinVersion_ResultMap" parameterType="java.lang.String">
+        select tb_service.* ,
+        tb_service_version.id service_version_id,
+        tb_service_version.version service_version_version,
+        tb_service_version.service_id service_version_service_id,
+        tb_service_version.user_id service_version_user_id,
+        tb_service_version.description service_version_description,
+        tb_service_version.create_time service_version_create_time,
+        tb_service_version.update_time service_version_update_time
+        from tb_service left join tb_service_version
+        on tb_service.id=tb_service_version.service_id
+        where tb_service.id = #{id,jdbcType=VARCHAR}
+    </select>
+
+    <!--查询服务、服务组、项目信息-->
+    <select id="findServiceJoinGroupJoinProjectByMap" resultMap="ServiceJoinServiceGroupJoinProject_ResultMap"
+            parameterType="java.util.Map">
+        select tb_service.* ,
+        tb_service_group.id service_group_id,
+        tb_service_group.name service_group_name,
+        tb_service_group.description service_group_description,
+        tb_service_group.is_open service_group_is_open,
+        tb_service_group.user_id service_group_user_id,
+        tb_service_group.create_time service_group_create_time,
+        tb_service_group.update_time service_group_update_time,
+        tb_service_group.project_id service_group_project_id,
+        tb_project.id project_id,
+        tb_project.name project_name,
+        tb_project.description project_description,
+        tb_project.user_id project_user_id,
+        tb_project.create_time project_create_time,
+        tb_project.update_time project_update_time
+        from tb_service
+        join tb_service_group
+        on tb_service_group.id=tb_service.group_id
+        join tb_project
+        on tb_project.id=tb_service_group.project_id
+        <where>
+            <if test="serviceId != null">
+                and tb_service.id = #{serviceId,jdbcType=VARCHAR}
+            </if>
+            <if test="service != null">
+                and tb_service.name = #{service,jdbcType=VARCHAR}
+            </if>
+            <if test="group != null">
+                and tb_service_group.name = #{group,jdbcType=VARCHAR}
+            </if>
+            <if test="project != null">
+                and tb_project.name = #{project,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+</mapper>

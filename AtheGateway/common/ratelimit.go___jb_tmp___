@@ -1,0 +1,160 @@
+package common
+
+import (
+	"sync"
+	"time"
+)
+
+const(
+	PolicyLocal = "local"
+	PolicyRedis = "redis"
+)
+
+const (
+	LimitByAppid = "limitByAppid"
+	LimitByIp    = "limitByip"
+
+)
+
+const KeyPrefix = "webgate-ws-ratelimit-"
+
+const(
+	MaxData int64 = 0x7fffffffffffffff
+)
+
+var (
+	limitDataBase LimitDataBase
+)
+
+type RateMeta struct {
+	Ip string
+	Appid string
+}
+
+type Ratelimit struct {
+	ConcurrencyLimit int64
+	Appid         string
+	Ip string
+	LimitBy       string
+	Policy        string
+	RedisHost     string
+	RedisPassword string
+	FaultTolerant bool
+	RedisTimeout  time.Duration
+	limitDataBase LimitDataBase
+}
+
+
+
+
+func (r *Ratelimit)Init() error {
+	if r.ConcurrencyLimit <=0{
+		r.ConcurrencyLimit = MaxData
+	}
+	
+	return nil
+}
+
+func (r *Ratelimit)Passed()bool  {
+	//
+	if !r.checkLimit(r.ConcurrencyLimit,r.generateKey(),r.limitDataBase.Limit){
+		return false
+	}
+
+	return true
+}
+
+func (r *Ratelimit)checkLimit(limit int64,key string,fun func(string)(int64,error))bool  {
+	if limit<=0{
+		return true
+	}
+	count,err:=fun(key)
+	if err !=nil{
+		if r.FaultTolerant{
+			return true
+		}
+		return false
+	}
+	if count<limit{
+		return false
+	}
+	return true
+}
+
+func (r *Ratelimit) generateKey() string {
+	if r.LimitBy == LimitByAppid {
+		return KeyPrefix+r.Appid
+	}
+	return KeyPrefix+r.Ip
+}
+
+
+
+func generateKey(pip string)string  {
+	return KeyPrefix+pip
+}
+
+func (r *Ratelimit)ReleasePersonal()  {
+	r.limitDataBase.Release(r.generateKey())
+}
+
+func (r *Ratelimit)ReleaseGlobal(key string)  {
+	r.limitDataBase.Release(key)
+}
+
+type LimitDataBase interface {
+	Limit(key string)(int64,error)
+	Release(key string)(int64,error)
+}
+
+type LocalDataBase struct {
+	data sync.Map
+}
+
+
+type RateLimitCache struct {
+	cache sync.Map
+}
+
+func (c *RateLimitCache)Get(key string) *Ratelimit {
+	r,ok:= c.cache.Load(key)
+	if ok{
+		return r.(*Ratelimit)
+	}
+	return nil
+}
+
+func (c *RateLimitCache)Set(val *Ratelimit)  {
+	if val.Ip=="" && val.Appid==""{
+		c.cache.Store("global",val)
+		return
+	}
+	key:=val.generateKey()
+	c.cache.Store(key,val)
+}
+
+type RateLimtManager struct {
+	globalCache *RateLimitCache  // 全局的ratelimit 配置
+	personalCache *RateLimitCache // 私有的ratelimit配置
+}
+
+func (rm *RateLimtManager)GetRateLimit(appid string,ip string)*Ratelimit  {
+	rl:=rm.personalCache.Get(generateKey(appid))
+	if rl ==nil{
+		rl = rm.personalCache.Get(generateKey(ip))
+	}
+	if rl == nil{
+		rl = rm.globalCache.Get("global")
+	}
+	return rl
+}
+
+func CheckLimitRate(appid string,ip string,rl *Ratelimit) bool {
+	if rl == nil{
+		return true
+	}
+
+	return false
+}
+
+

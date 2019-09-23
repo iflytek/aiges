@@ -1,0 +1,12 @@
+syntax = "proto2";
+
+package  lbClientPb;
+
+//引擎上报的信息
+message lbReport{
+	optional string addr=1; //引擎的ipport
+	optional int32 totalInst=2; //引擎的总实例数
+	optional int32 idleInst=3; 	//引擎的空闲实例数
+	optional int32 bestInst=4;	//引擎最佳的实例数
+	map<string,string> param=5; //传入的参数
+}

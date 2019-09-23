@@ -1,0 +1,59 @@
+new
+-----------------------------------
+{
+  "SubSvcMap": {
+    "xox": {
+      "AddrMap": null
+    },
+    "xux": {
+      "AddrMap": {
+        "x.x.x.x:oooo": {
+          "Addr": "x.x.x.x:oooo",
+          "Timestamp": 1542005397984167886,
+          "BestInst": 0,
+          "IdleInst": 0,
+          "TotalInst": 0
+        },
+        "x.x.x.x:yyyy": {
+          "Addr": "x.x.x.x:yyyy",
+          "Timestamp": 1542005398175404814,
+          "BestInst": 0,
+          "IdleInst": 0,
+          "TotalInst": 0
+        }
+      }
+    }
+  }
+}
+
+old
+-----------------------------------
+{
+  "Svc": "svc",
+  "Defsub": "sms",
+  "Ttl": 3000000000,
+  "SvcMap": {
+    "sms": {
+      "SubSvcMap": {
+        "172.21.210.17:5090": {
+          "Addr": "172.21.210.17:5090",
+          "Timestamp": 1542005538706541253,
+          "BestInst": 250,
+          "IdleInst": 233,
+          "TotalInst": 250
+        },
+        "172.21.210.17:5091": {
+          "Addr": "172.21.210.17:5091",
+          "Timestamp": 1542005538927438480,
+          "BestInst": 250,
+          "IdleInst": 233,
+          "TotalInst": 250
+        }
+      }
+    }
+  },
+  "Threshold": 90,
+  "RmqTopic": "mc_svc",
+  "RmqGroup": "lbv2",
+  "MonitorInterval": 10000
+}

@@ -1,0 +1,17 @@
+[lb_srv]
+conn-timeout = 1000
+conn-pool-size=1 #设置连接池大小
+#taddrs="xsf-lbv2@10.1.87.67:27660"
+taddrs="xsf-lbv2@127.0.0.1:1995"
+
+[log]
+level = "error"
+file = "lb_ctl.log"
+size = 100
+count = 20
+die = 30
+
+[trace]
+ip = "172.16.51.13"
+able = 0
+dump = 0

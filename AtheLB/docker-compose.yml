@@ -1,0 +1,12 @@
+version: "3"
+services:
+  hermes:
+    image: 172.16.59.153/aiaas/hermes:test.0.0.0
+    network_mode: "host"
+    restart: "no"
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 65535
+        hard: 65535
+    entrypoint: ./lbv2 -m 1 -c lbv2.toml -p xsf -s xsf-lbv2 -u http://10.1.87.69:6868 -g xsf

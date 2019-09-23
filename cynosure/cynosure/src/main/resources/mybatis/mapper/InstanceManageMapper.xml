@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.iflytek.ccr.polaris.cynosure.mapper.InstanceManageMapper">
+    <!--服务版本实体-->
+    <resultMap id="GrayGroup_ResultMap" type="com.iflytek.ccr.polaris.cynosure.domain.GrayGroup">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="version_id" property="versionId" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="content" property="content" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--灰度组列名-->
+    <sql id="GrayGroup_Column_List">
+      id, version_id, user_id, name, description, content, create_time, update_time
+    </sql>
+
+    <!--更新灰度组-->
+    <update id="updateById" parameterType="com.iflytek.ccr.polaris.cynosure.domain.GrayGroup">
+        update tb_gray_group
+        <set>
+            <if test="versionId != null">
+                version_id = #{versionId,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null">
+                content = #{content,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+
+    <!--查询所有推送实例-->
+    <select id="findTotal" resultType="java.lang.String" parameterType="java.lang.String">
+        select content
+        from tb_gray_group
+        <where>
+            <if test="versionId != null">
+                and version_id = #{versionId,jdbcType=VARCHAR}
+            </if>
+            <if test="grayGroupId != null">
+                and tb_gray_group.id != #{grayGroupId,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </select>
+</mapper>

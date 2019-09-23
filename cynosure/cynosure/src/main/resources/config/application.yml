@@ -1,0 +1,143 @@
+#tomcat配置
+server:
+  port: 8095
+  tomcat:
+    max-threads: 3000
+    max-connections: 3000
+#  ssl:
+#    key-store: classpath:keystore.p12
+#    key-store-password: iflytek
+#    keyStoreType: PKCS12
+#    keyAlias: tomcat
+
+#http请求的端口号
+httpport: 8096
+
+spring:
+  #druid配置10.1.86.212:6603/ifly_cynosure_2
+  datasource:
+    url: jdbc:mysql://10.1.87.66:3306/ifly_cynosure_2?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true
+    username: test
+    password: password
+    driver-class-name: com.mysql.jdbc.Driver
+    platform: mysql
+    type: com.alibaba.druid.pool.DruidDataSource
+    # 下面为连接池的补充设置，应用到上面所有数据源中
+    # 初始化大小，最小，最大
+    initialSize: 10
+    minIdle: 10
+    maxActive: 30
+    # 配置获取连接等待超时的时间
+    maxWait: 60000
+    # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+    timeBetweenEvictionRunsMillis: 60000
+    # 配置一个连接在池中最小生存的时间，单位是毫秒
+    minEvictableIdleTimeMillis: 30000
+    validationQuery: select 'x'
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    # 打开PSCache，并且指定每个连接上PSCache的大小
+    poolPreparedStatements: true
+    maxPoolPreparedStatementPerConnectionSize: 20
+    # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
+    filters: stat,wall,slf4j
+    # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=10
+    # 合并多个DruidDataSource的监控数据
+    #useGlobalDataSourceStat: true
+
+  #出现错误时, 直接抛出异常
+  mvc:
+      throw-exception-if-no-handler-found: true
+      #关闭默认的favicon.ico
+      favicon:
+        enabled: false
+  #不要为工程中的资源文件建立映射
+  resources:
+      add-mappings: false
+
+  #session设置
+  session:
+      store-type: redis
+      cookie:
+        name: polaris_cynosure
+
+  #redis配置
+  redis:
+      # Redis数据库索引（默认为0）
+      database: 0
+#      cluster:
+#        nodes: 172.16.154.235:6479,172.16.154.235:6480,172.16.154.235:6481
+      # Redis服务器地址
+      host: 10.1.86.212
+      # Redis服务器连接端口
+      port: 6379
+#      # Redis服务器连接密码（默认为空）
+      password:
+      # 连接超时时间（毫秒）
+      timeout: 0
+      pool:
+          # 连接池最大连接数（使用负值表示没有限制）
+          max-active: 100
+          # 连接池最大阻塞等待时间（使用负值表示没有限制）
+          max-wait: -1
+          # 连接池中的最大空闲连接
+          max-idle: 8
+          # 连接池中的最小空闲连接
+          min-idle: 0
+
+  http:
+     #文件大小设置
+     multipart:
+       max-file-size: 1MB
+       max-request-size: 10MB
+       enabled: true
+     #配置response编码
+     encoding:
+       force: true
+
+  #缓存类型
+  cache:
+    type: guava
+
+
+#mybatis配置
+mybatis:
+    config-locations: classpath:mybatis/mybatis-config.xml
+    mapper-locations: classpath:mybatis/mapper/*.xml
+    type-aliases-package: com.iflytek.ccr.polaris.cynosure.domain
+
+#pagehelper分页插件
+pagehelper:
+    helperDialect: mysql
+    reasonable: true
+    supportMethodsArguments: true
+    params: count=countSql
+
+#日志配置
+logging:
+  config: classpath:config/logback-spring.xml
+  level:
+      com.iflytek.ccr.polaris.cynosure.mapper: DEBUG
+
+#健康检查管理
+management:
+  health:
+    redis:
+      enabled: false
+
+#配置路径
+configPath: /polaris/config/
+#服务发现路径
+servicePath: /polaris/service/
+#会话共享
+sessionShare: 1
+#druid监控配置
+ip: 172.16.59.2,127.0.0.1
+
+#检查session最大间隔时间，此值决定两次操作之间最大的时间间隔
+maxInterval: 1600
+#对外开发接口认证配置
+private_key: MIIBVQIBADANBgkqhkiG9w0BAQEFAASCAT8wggE7AgEAAkEAnDci65joIaWLoUC7GjKsKWEK9425W7vQlIxnTqpd2KJsvrI1mcI_1L9RXGqkrovrtfsCZt4x6p4mT7zjTViIyQIDAQABAkAE_mI4Y8_v22nmQrp4cOw9-mMuXLJzM0LMrNxUkG-lkCbIsaIsMu43wj5WPhI-yaUP_oItgR0NTIGoOBF7ZnSBAiEA4Iyrvwcj3Ihs8WKdJb_il6IRv4Q7hhLAt43r0SnUaTkCIQCyGFAp2rOZWLq35bZ2o-QfdJ7StUPm0Dh5TKoggCXsEQIgfnfb9yAfW4Le0Oj4lx1Gkp5uHo5sM-v17KubCFfl0UkCIQCeUTS58Dvl3tWlcqRAVTMOr2ocn5ysC3-YfQljeOe9MQIhAIma_c07u8s1Xd6UpljZ8Ui1frkxGfpvTuXA24QiP0Dv
+valid_interval: 5000

@@ -1,0 +1,24 @@
+# atmos-common 配置一些公共参数
+[atmos-common]
+debugSwitch=0 #是否开启pprof，默认使用端口号8089 0表示关，1表示开
+subTypes="svc" #支持的sub类型，多个sub类型之间用逗号分隔，比如"svc,ocr",然后每个sub，要单独配置一组基础配置，规则是:atmos-sub，例如sub是svc，则为atmos-svc
+
+[atmos-svc]
+sub="svc"  #业务类型
+lb="lbv2" #lb名称
+defaultTimeout=3000 #默认超时时间
+engineTimeout=3000  #调用引擎接口的超时时间 
+getEngineResultTimeout=15 #单位秒，获取引擎结果的时候，最大等待时间(可能包含多次引擎接口调用 )
+engineRetry = 2 #调用引擎失败的重试次数，默认值为3
+mockSwitch=1 #0表示mock，1表示正常
+
+[log]
+level = "warn"  #日志等级。可设置参数debug、info、warn、error。缺省warn。
+file = "/log/server/atmos.log"    #业务日志路径。
+size = 100      #日志大小。单位MB。缺省100
+count = 20      #日志文件留存数量。缺省20。
+die = 10        #日志文件的有效期。单位天。缺省10。
+async = 1       #是否启用异步日志。1是0否。缺省1。
+#cache = -1      #日志缓存大小。单位条数，超过会丢弃。缺省-1，代表不丢数据，存到内存中。
+#batch = 100     #触发写时间的日志条目数，超过会触发落盘事件。缺省16000。
+#caller = 0      #是否添加调用行信息。1是0否。缺省0。

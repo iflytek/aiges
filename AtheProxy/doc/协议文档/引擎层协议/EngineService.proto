@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package enginebiz;
+
+// 元数据信息
+message MetaData {
+    string data_id = 1;		    		// 数据id;
+    uint32 frame_id = 2;				// 排序id;
+
+    // 数据类型
+    enum DataType {
+        TEXT = 0; // 文本
+        AUDIO = 1; // 音频
+        IMAGE = 2; // 图像
+        VIDEO = 3; // 视频
+    }
+    DataType data_type = 3;				// 数据类型;
+
+    //数据状态
+    enum DataStatus {
+        BEGIN = 0; //开始
+        CONTINUE = 1; //跟流
+        END = 2; //结束
+        ONCE = 3; //一次调用结束
+    }
+    DataStatus status = 4;		        // 数据状态: begin/continue/end/once
+    string format = 5;				    // 数据编码格式;
+    string encoding = 6;				// 数据压缩格式;
+    bytes data = 7;				        // 数据;
+    map<string, bytes> desc = 8;		// 数据描述;
+}
+
+message EngInputData {
+    /*
+        业务参数包含用户自定义业务参数及框架约束参数(是否需要区分,避免被重置);
+    框架参数有如下示例: sub等;
+    */
+    map<string, string> eng_param = 1;  // 业务参数;
+    repeated MetaData data_list = 2;	// 业务输入数据;
+}
+
+message EngOutputData {
+    int32 ret = 1;					    // 返回码;
+    string err = 2;				        // 错误描述;
+    //数据状态
+    enum DataStatus {
+        BEGIN = 0; //开始
+        CONTINUE = 1; //跟流
+        END = 2; //结束
+        ONCE = 3; //一次调用结束
+    }
+    DataStatus status = 3;              // 输出状态
+    repeated MetaData data_list = 4;	// 业务输出数据;
+}

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.iflytek.ccr.polaris.cynosure.mapper.ClusterMapper">
+    <!--集群实体-->
+    <resultMap id="Cluster_ResultMap" type="com.iflytek.ccr.polaris.cynosure.domain.Cluster">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="project_id" property="projectId" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--集群、服务实体-->
+    <resultMap id="ClusterJoinService_ResultMap" type="com.iflytek.ccr.polaris.cynosure.domain.Cluster">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="project_id" property="projectId" jdbcType="VARCHAR"/>
+        <collection property="serviceList" ofType="com.iflytek.ccr.polaris.cynosure.domain.Service">
+            <id column="service_id" property="id" jdbcType="VARCHAR"/>
+            <result column="service_name" property="name" jdbcType="VARCHAR"/>
+            <result column="service_is_open" property="isOpen" jdbcType="BIT"/>
+            <result column="service_in_service" property="inService" jdbcType="BIT"/>
+            <result column="service_description" property="description" jdbcType="VARCHAR"/>
+            <result column="service_user_id" property="userId" jdbcType="VARCHAR"/>
+            <result column="service_group_id" property="groupId" jdbcType="VARCHAR"/>
+            <result column="service_create_time" property="createTime" jdbcType="TIMESTAMP"/>
+            <result column="service_update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        </collection>
+    </resultMap>
+
+    <!--集群列名-->
+    <sql id="Cluster_Column_List">
+        id, name, description, user_id, create_time, update_time,project_id
+    </sql>
+
+    <!--新增集群-->
+    <insert id="insert" parameterType="com.iflytek.ccr.polaris.cynosure.domain.Cluster">
+        insert into tb_service_group (id, name, description,
+        user_id, create_time,
+        update_time,project_id)
+        values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR},
+        #{userId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
+        #{updateTime,jdbcType=TIMESTAMP}, #{projectId,jdbcType=VARCHAR})
+    </insert>
+
+    <!--删除集群-->
+    <delete id="deleteById" parameterType="java.lang.String">
+        delete from tb_service_group
+        where id = #{id,jdbcType=VARCHAR}
+    </delete>
+
+    <!--更新集群-->
+    <update id="updateById" parameterType="com.iflytek.ccr.polaris.cynosure.domain.Cluster">
+        update tb_service_group
+        <set>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                description = #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="projectId != null">
+                project_id = #{projectId,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+
+    <!--根据id查询集群信息-->
+    <select id="findById" resultMap="Cluster_ResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Cluster_Column_List"/>
+        from tb_service_group
+        where tb_service_group.id = #{id,jdbcType=VARCHAR}
+    </select>
+
+    <!--查询集群信息-->
+    <select id="find" resultMap="Cluster_ResultMap"
+            parameterType="com.iflytek.ccr.polaris.cynosure.domain.Cluster">
+        select
+        <include refid="Cluster_Column_List"/>
+        from tb_service_group
+        <where>
+            <if test="name != null">
+                and name = #{name,jdbcType=VARCHAR}
+            </if>
+            <if test="projectId != null">
+                and project_id = #{projectId,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <!--查询集群总数-->
+    <select id="findTotalCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        select count(*) from tb_service_group
+        join
+        (
+        select id _id from tb_project
+        <where>
+            <if test="projectName != null">
+                and name = #{projectName,jdbcType=VARCHAR}
+            </if>
+        </where>
+        ) tb_project
+        on tb_service_group.project_id=tb_project._id
+    </select>
+
+    <!--查询集群列表-->
+    <select id="findList" resultMap="Cluster_ResultMap" parameterType="java.util.Map">
+        select
+        <include refid="Cluster_Column_List"/>
+        from tb_service_group
+        join
+        (
+        select id _id from tb_project
+        <where>
+            <if test="projectName != null">
+                and name = #{projectName,jdbcType=VARCHAR}
+            </if>
+        </where>
+        ) tb_project
+        on tb_service_group.project_id=tb_project._id
+       <!--  order by convert(id,SIGNED) desc -->
+        order by update_time desc
+        <if test="startIndex !=null and pagesize !=null">
+            limit #{startIndex},#{pagesize}
+        </if>
+    </select>
+
+    <!--查询集群列表-->
+    <select id="findClusterList" resultMap="Cluster_ResultMap" parameterType="java.util.Map">
+        select
+        <include refid="Cluster_Column_List"/>
+        from tb_service_group
+        <where>
+            <if test="projectIds != null and projectIds.size()>0">
+                and project_id in
+                <foreach collection="projectIds" item="id" index="index"
+                         open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+        order by update_time desc
+    </select>
+
+    <!--通过id查询服务列表-->
+    <select id="findServiceListById" resultMap="ClusterJoinService_ResultMap" parameterType="java.lang.String">
+        select tb_service_group.*,
+        tb_service.id service_id,
+        tb_service.name service_name,
+        tb_service.description service_description,
+        tb_service.user_id service_user_id,
+        tb_service.group_id service_group_id,
+        tb_service.create_time service_create_time,
+        tb_service.update_time service_update_time
+        from tb_service_group left join tb_service
+        on tb_service_group.id=tb_service.group_id
+        where tb_service_group.id = #{id,jdbcType=VARCHAR}
+    </select>
+</mapper>

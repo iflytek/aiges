@@ -1,0 +1,22 @@
+language: go
+go: 1.12.x
+services:
+- docker
+env:
+  matrix:
+  - GOMOD=""
+  global:
+  - secure: kd4pl4j9/XM9Wq9DbGrBjP22ojeHWsup908pesob+HN6+zVpIaXomu3hywFPzWFTdrqKA+qMRllXQBAk2BEyJznZExUqgo7hiDxSOgLjP9tXTn/dgjlCZJ05beIFSi/0jaFSqicvY9SpV2pMJvv6X6/fgWH+j99wvYPe4fGft8RI6yOeGw0t7ncj2ppNGzYLt9ONVdp07Ylej5LuKLUL2uzIFWdsAV/BPL7aLUlBJruUdAxxyn8hYw13RJcY5lC2rkB4ogdYYcGiqv2UcOLHXXsmBx7AvwlNxRN1BXVOI0WzJMPnNLN5/0AOJWX28pYJhXfCjH7qhqGVnHne6+JlGItAB/BnRvrP51ivY5CbFscNlGwc2GhmI2VwJipvPYZ745UbaHCVEmpz95wuS+TlVwHEcNVUs/oMrzhZvbVxcgelHkeM+1xxpcmqvVA2xHUrCH1YLGZqI3FX3nvX4i3JdkYCGHB44ViW6N10AKFyBAerztKL7PO7/PznJkZIVg5tKHF3pmrdzfoBF6TWoZTkGvGSNEym8ZOubDcWASNX7r/wc/l98NWXcYu0yhKj45yB9adL2brVOImFePtxibGIAQZSr30hWqia5YTsZmRXCyojHJ+bWgDYxzZhhFiSivyMnhemw7ExlBg36Psrfb/XzuvbfTf2+QTTjlzuxmAREh4=
+  - secure: eQDQnPl+CKuBf746SixUQlK45HUMjloOnqSjOLBIYOWODikk+Z1301aAM44xE/c5qqd5SFQDStYJG45NSRLO+H5hd6qqsAaf4wNZNrB1RlHPYF2kSZYKdJaxJtxxCJoVMrYWLlshuYN6bdml8UrxipCnGG95tzy8lYv2ps8gzzCrp50hNpQjPMkgEh723GmrLyNaHDeN6hh3pqDj+KvhfnuiZ2UdjUXwKbf8KmczKtXJOizi6hYFYRqE1C1a9ubP6W68VzVH/k9Uxvs+FuhzLIsPbMN+JxjQyd8tjZ1X/HrMg7wObFbubMWIdCA5cmicCAuXLO7ye5HBjYp6B2KlfcB1y5qTwZ6EzMMYNAWrXe1GIDyPAZC4lZsqKbVsEvUr15+Ro0abvuU6rXK+C456mJHcIt7mvEQz6xxm/SS1D5g9jN/QCAEJKlgOUFwH9W0EBggeZOTPf1xclvuuHS6ecitlJYy8oFF22wudQoDi5iGZh1nZYu3At3DKZRRRDRxYVYeOo4v8XKmQcTruGLy4s4/hu5RhLylWkehN9Qh56w7JEHXrbulw4xhzxOI3mvyLKGBZ6xcLj0Cjfh6DjzltJcBmP2IkpijfkUH+Zq+QtK65gaQuzFXo72rA2JtfFeSWhrRFuk10ySpqK6pzqQ6ltjI8w2ygCkuyiu3de0G4Do0=
+install: true
+script: echo $DOCKER_PASSWORD && echo $DOCKER_USERNAME && ./build.sh
+before_deploy: 
+  - echo "${DOCKER_PASSWORD}"
+  - echo "${DOCKER_USERNAME}"
+  - echo "-----scw00---"
+  - ./docker_build.sh
+deploy:
+  provider: script
+  script: ./deploy.sh
+  on:
+    branch: master

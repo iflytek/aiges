@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.iflytek.ccr.polaris.cynosure.mapper.RegionMapper">
+    <!--区域实体-->
+    <resultMap id="Region_ResultMap" type="com.iflytek.ccr.polaris.cynosure.domain.Region">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="push_url" property="pushUrl" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="user_id" property="userId" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--区域列名-->
+    <sql id="Region_Column_List">
+        id, name, push_url, create_time, update_time,user_id
+    </sql>
+
+    <!--新增区域-->
+    <insert id="insert" parameterType="com.iflytek.ccr.polaris.cynosure.domain.Region">
+        insert into tb_cluster (id, name, push_url,
+        create_time, update_time,user_id
+        )
+        values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{pushUrl,jdbcType=VARCHAR},
+        #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP},
+        #{userId,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!--删除区域-->
+    <delete id="deleteById" parameterType="java.lang.String">
+        delete from tb_cluster
+        where id = #{id,jdbcType=VARCHAR}
+    </delete>
+
+    <!--更新区域-->
+    <update id="updateById" parameterType="com.iflytek.ccr.polaris.cynosure.domain.Region">
+        update tb_cluster
+        <set>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="pushUrl != null">
+                push_url = #{pushUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+
+    <!--根据id查询区域信息-->
+    <select id="findById" resultMap="Region_ResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Region_Column_List"/>
+        from tb_cluster
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+
+    <!--通过区域名称查询区域信息-->
+    <select id="findByName" resultMap="Region_ResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Region_Column_List"/>
+        from tb_cluster
+        where name = #{name,jdbcType=VARCHAR}
+    </select>
+
+    <!--通过区域companion查询区域信息-->
+    <select id="findByPushUrl" resultMap="Region_ResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Region_Column_List"/>
+        from tb_cluster
+        where push_url = #{pushUrl,jdbcType=VARCHAR}
+    </select>
+
+    <!--查询区域总数-->
+    <select id="findTotalCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        select count(*) from tb_cluster
+        <where>
+            <if test="name != null">
+                and name = #{name,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <!--查询区域列表-->
+    <select id="findList" resultMap="Region_ResultMap" parameterType="java.util.Map">
+        select
+        <include refid="Region_Column_List"/>
+        from tb_cluster
+        <where>
+            <if test="name != null">
+                and name = #{name,jdbcType=VARCHAR}
+            </if>
+            <if test="ids != null and ids.size()>0">
+                and id in
+                <foreach collection="ids" item="id" index="index"
+                         open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+        order by create_time desc
+        <if test="startIndex !=null and pagesize !=null">
+            limit #{startIndex},#{pagesize}
+        </if>
+    </select>
+</mapper>

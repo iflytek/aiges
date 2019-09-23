@@ -1,0 +1,70 @@
+[
+  {
+    "func": "addfunc(add_1,add_2)",
+    "do": [
+      "return(0,'',add(add_1,add_2))"
+    ]
+  },
+  "a=5",
+  "b=6",
+  "append('%v + %v = %v',a,b,addfunc(a,b))",
+  {
+    "func": "show_user(show_user_1)",
+    "do": [
+      {
+        "if": "gt(show_user_1.age,20)",
+        "then": "show_user_old='old'",
+        "else": "show_user_old='yong'"
+      },
+      "append('user.name=%s,user.age=%v,is a %s man',show_user_1.name,show_user_1.age,show_user_old)"
+    ]
+  },
+  {
+    "data": {
+      "name": "lixinag",
+      "age": 22
+    },
+    "key": "user"
+  },
+  "i=0",
+  {
+    "for": "lt(i,5)",
+    "do": [
+      "show_user(user)",
+      "i=add(i,1)"
+    ]
+  },
+  {
+    "data":[
+      {
+        "name":"lixiang",
+        "age":15
+      },
+      {
+        "name":"fdsf",
+        "dsf":"sdfsf"
+      }
+    ],
+    "key":"arr"
+  },
+  {
+    "for":"k,v  in  split('1,2,3,4,5',',')",
+    "do":"append(k,v,addfunc(k,v))"
+  },
+  {
+    "func":"addtest(n)",
+    "do":[
+      {
+        "if":"ge(n,10)",
+        "then":"return(0,'',n)",
+        "else":"return(0,'',addtest(addfunc(n,1)))"
+      }
+    ]
+  },
+  "append(addtest(1))",
+  {
+    "func":"sayHello()",
+    "do":"append('hello world')"
+  },
+  "sayHello()"
+]

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.iflytek.ccr.polaris.cynosure.mapper.GrayGroupMapper">
+    <!--服务版本实体-->
+    <resultMap id="GrayGroup_ResultMap" type="com.iflytek.ccr.polaris.cynosure.domain.GrayGroup">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="version_id" property="versionId" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="content" property="content" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--灰度组、灰度配置实体-->
+    <resultMap id="GrayGroupJoinConfig_ResultMap" type="com.iflytek.ccr.polaris.cynosure.domain.GrayGroup">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="version_id" property="versionId" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="content" property="content" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <collection property="serviceConfigList" ofType="com.iflytek.ccr.polaris.cynosure.domain.ServiceConfig">
+            <id column="service_config_id" property="id" jdbcType="VARCHAR"/>
+            <result column="service_config_user_id" property="userId" jdbcType="VARCHAR"/>
+            <result column="service_config_version_id" property="versionId" jdbcType="VARCHAR"/>
+            <result column="service_config_gray_group_id" property="grayGroupId" jdbcType="VARCHAR"/>
+            <result column="service_config_name" property="name" jdbcType="VARCHAR"/>
+            <result column="service_config_path" property="path" jdbcType="VARCHAR"/>
+            <result column="service_config_content" property="content" jdbcType="LONGVARBINARY"/>
+            <result column="service_config_description" property="description" jdbcType="VARCHAR"/>
+            <result column="service_config_create_time" property="createTime" jdbcType="TIMESTAMP"/>
+            <result column="service_config_update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        </collection>
+    </resultMap>
+
+    <!--灰度组列名-->
+    <sql id="GrayGroup_Column_List">
+        id, version_id, user_id, name, description, content, create_time, update_time
+    </sql>
+
+    <!--新增灰度组-->
+    <insert id="insert" parameterType="com.iflytek.ccr.polaris.cynosure.domain.GrayGroup">
+        insert into tb_gray_group (id, version_id, user_id, name,content, description, create_time,
+        update_time)
+        values (#{id,jdbcType=VARCHAR}, #{versionId,jdbcType=VARCHAR},
+        #{userId,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},#{content,jdbcType=VARCHAR},
+        #{description,jdbcType=VARCHAR},
+        #{createTime,jdbcType=TIMESTAMP},#{updateTime,jdbcType=TIMESTAMP})
+    </insert>
+
+    <!--查询灰度组-->
+    <select id="find" resultMap="GrayGroup_ResultMap"
+            parameterType="com.iflytek.ccr.polaris.cynosure.domain.GrayGroup">
+        select
+        <include refid="GrayGroup_Column_List"/>
+        from tb_gray_group
+        <where>
+            <if test="name != null">
+                and name = #{name,jdbcType=VARCHAR}
+            </if>
+            <if test="versionId != null">
+                and version_id = #{versionId,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <!--查询灰度组列表-->
+    <select id="findList" resultMap="GrayGroup_ResultMap" parameterType="java.util.Map">
+        select
+        <include refid="GrayGroup_Column_List"/>
+        from tb_gray_group
+        <where>
+            <if test="versionId != null">
+                and version_id = #{versionId,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+    <!--查询灰度组总数-->
+    <select id="findTotalCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        select count(*) from tb_gray_group
+        join(
+        select id _id,service_id from tb_service_version
+        <where>
+            <if test="versionName != null">
+                and version = #{versionName,jdbcType=VARCHAR}
+            </if>
+        </where>
+        )tb_service_version
+        on tb_gray_group.version_id=tb_service_version._id
+        join
+        (
+        select id _id,group_id from tb_service
+        <where>
+            <if test="serviceName != null">
+                and name = #{serviceName,jdbcType=VARCHAR}
+            </if>
+        </where>
+        ) tb_service
+        on tb_service_version.service_id=tb_service._id
+        join
+        (
+        select id _id,project_id from tb_service_group
+        <where>
+            <if test="clusterName != null">
+                and name = #{clusterName,jdbcType=VARCHAR}
+            </if>
+        </where>
+        ) tb_service_group
+        on tb_service.group_id=tb_service_group._id
+        join
+        (
+        select id _id from tb_project
+        <where>
+            <if test="projectName != null">
+                and name = #{projectName,jdbcType=VARCHAR}
+            </if>
+        </where>
+        ) tb_project
+        on tb_service_group.project_id=tb_project._id
+    </select>
+
+    <!--通过id查询灰度组详情-->
+    <select id="findById" resultMap="GrayGroup_ResultMap" parameterType="java.lang.String">
+        select
+        <include refid="GrayGroup_Column_List"/>
+        from tb_gray_group
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+
+    <!--删除灰度组-->
+    <delete id="deleteById" parameterType="java.lang.String">
+        delete from tb_gray_group
+        where id = #{id,jdbcType=VARCHAR}
+    </delete>
+
+    <!--更新灰度组-->
+    <update id="updateById" parameterType="com.iflytek.ccr.polaris.cynosure.domain.GrayGroup">
+        update tb_gray_group
+        <set>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="versionId != null">
+                version_id = #{vrsionId,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                description = #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+</mapper>

@@ -1,0 +1,2 @@
+docker run  -it --net=host --rm 172.16.59.153/aiaas/lks-docker:lb_ctl.1.0.0 bash
+docker run -it --rm --net=host 172.16.59.153/aiaas/lks-docker:rdbms.1.0.0 bash

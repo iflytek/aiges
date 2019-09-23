@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.iflytek.ccr.polaris.cynosure.mapper.ServiceDiscoveryPushHistoryMapper">
+    <!--服务发现推送历史实体-->
+    <resultMap id="ServiceDiscoveryPushHistory_ResultMap"
+               type="com.iflytek.ccr.polaris.cynosure.domain.ServiceDiscoveryPushHistory">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="VARCHAR"/>
+        <result column="project" property="project" jdbcType="VARCHAR"/>
+        <result column="service_group" property="serviceGroup" jdbcType="VARCHAR"/>
+        <result column="service" property="service" jdbcType="VARCHAR"/>
+        <result column="version" property="version" jdbcType="VARCHAR"/>
+        <result column="push_time" property="pushTime" jdbcType="TIMESTAMP"/>
+        <result column="cluster_text" property="clusterText" jdbcType="LONGVARCHAR"/>
+    </resultMap>
+
+    <!--服务发现列名-->
+    <sql id="ServiceDiscoveryPushHistory_Column_List">
+        id, user_id,project, service_group, service, version, push_time,cluster_text
+    </sql>
+
+    <!--新增服务发现推送历史-->
+    <insert id="insert" parameterType="com.iflytek.ccr.polaris.cynosure.domain.ServiceDiscoveryPushHistory">
+        insert into tb_service_discovery_push_history (id, user_id,project, service_group,
+        service,version, push_time,cluster_text)
+        values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{project,jdbcType=VARCHAR},
+        #{serviceGroup,jdbcType=VARCHAR},
+        #{service,jdbcType=VARCHAR},#{version,jdbcType=VARCHAR}, #{pushTime,jdbcType=TIMESTAMP},
+        #{clusterText,jdbcType=LONGVARCHAR})
+    </insert>
+
+    <!--删除服务推送历史-->
+    <delete id="deleteById" parameterType="java.lang.String">
+        delete from tb_service_discovery_push_history
+        where id = #{id,jdbcType=VARCHAR}
+    </delete>
+
+    <!--通过ids删除服务推送历史-->
+    <delete id="deleteByIds" parameterType="java.util.List">
+        delete from tb_service_discovery_push_history
+        where id in
+        <foreach collection="list" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!--通过id查询服务推送历史-->
+    <select id="findById" resultMap="ServiceDiscoveryPushHistory_ResultMap" parameterType="java.lang.String">
+        select
+        <include refid="ServiceDiscoveryPushHistory_Column_List"/>
+        from tb_service_discovery_push_history
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+
+    <!--查询服务推送历史总数-->
+    <select id="findTotalCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        select count(*) from tb_service_discovery_push_history
+        <where>
+            <if test="projectName != null">
+                and project = #{projectName,jdbcType=VARCHAR}
+            </if>
+            <if test="clusterName != null">
+                and service_group = #{clusterName,jdbcType=VARCHAR}
+            </if>
+            <if test="serviceName != null">
+                and service = #{serviceName,jdbcType=VARCHAR}
+            </if>
+            <if test="versionName != null">
+                and version = #{versionName,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <!--查询服务推送历史列表-->
+    <select id="findList" resultMap="ServiceDiscoveryPushHistory_ResultMap" parameterType="java.util.Map">
+        select
+        <include refid="ServiceDiscoveryPushHistory_Column_List"/>
+        from tb_service_discovery_push_history
+        <where>
+            <if test="projectName != null">
+                and project = #{projectName,jdbcType=VARCHAR}
+            </if>
+            <if test="clusterName != null">
+                and service_group = #{clusterName,jdbcType=VARCHAR}
+            </if>
+            <if test="serviceName != null">
+                and service = #{serviceName,jdbcType=VARCHAR}
+            </if>
+            <if test="versionName != null">
+                and version = #{versionName,jdbcType=VARCHAR}
+            </if>
+        </where>
+        order by push_time desc
+        <if test="startIndex !=null and pagesize !=null">
+            limit #{startIndex},#{pagesize}
+        </if>
+    </select>
+</mapper>

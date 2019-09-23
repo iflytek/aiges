@@ -1,0 +1,14 @@
+version: "3"
+services:
+  srv:
+    image: 172.16.59.153/aiaas/hermes:2.3.12
+    working_dir: /utils/srv
+    network_mode: "host"
+    restart: "no"
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 65535
+        hard: 65535
+    entrypoint: './srv'
+    command: '-lbname xsf-lbv2 -dur 100 -live 1 -max 100 -min 10 -svc iat -subsvc sms  -mode 1'
