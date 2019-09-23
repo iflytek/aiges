@@ -1,0 +1,53 @@
+ syntax = "proto3";
+
+package utils;
+
+
+message Session {
+    string t = 1; //trace 句柄
+    string h = 2; // 服务handle
+    map<string, string> sess = 3;
+}
+
+message DataMeta {
+    bytes data = 1; // 数据
+    map<string, string> desc = 3; // 对应数据类型的参数
+}
+
+
+message ReqData {
+    string op = 1; //操作类型
+    Session s = 2; //session结构
+    map<string, string> param = 3; // 对应数据类型的参数
+    repeated DataMeta data = 4; // 请求数据结构
+}
+
+
+message ResData {
+    int32 code = 1; // 返回码
+    string error_info = 2; // 错误的传化描述
+    Session s = 3; // session结构
+    map<string, string> param = 4; // 对应数据类型的参数
+    repeated DataMeta data = 5; // 响应数据结构
+}
+
+service XsfCall {
+    rpc call (ReqData) returns (ResData) {
+    };
+}
+
+//服务的配套设施，暂时仅提供服务自检接口
+message Request {
+    string query = 1;
+    string headers = 2;
+    string body = 3;
+}
+message Response {
+    string headers = 1;
+    string body = 2;
+}
+service ToolBox {
+    rpc cmdserver (Request) returns (Response) {
+    };
+}
+

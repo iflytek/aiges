@@ -1,0 +1,55 @@
+引擎负载交互:
+srvInfo												// 服务信息
+{
+	ent			string
+	.etc
+}
+
+netInfo												// 网络连接信息
+{
+	
+	fulljoinNum	int
+	semijoinNum	int
+	socketrwNum	int
+}
+
+hashInfo
+{
+	haskKey		string	// 以何hash
+}
+
+weightInfo
+{
+	weight		int		// 权重信息
+	.etc
+}
+
+sysInfo												// 系统资源信息
+{
+	cpu			int
+	mem			int
+	.etc
+}
+
+licInfo												// 授权信息
+{
+	curLic		int
+	maxLic		int
+	.etc
+}
+
+struct reportInfo
+{
+	strategy	enum								// 负载策略
+	system		sysInfo								// 系统资源信息
+	socket		netInfo								// 网络连接信息
+	license		licInfo								// 授权信息
+	.etc
+}
+
+
+
+
+
+
+

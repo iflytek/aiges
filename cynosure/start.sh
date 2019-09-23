@@ -1,0 +1,1 @@
+docker run -d --name cynosure --net="host" -v /opt/polaris/cynosure/config/application.yml:/opt/server/cynosure/config/application.yml -v /opt/polaris/cynosure/logs:/log/server -v /etc/localtime:/etc/localtime 172.16.59.153/develop/cynosure:2.0.2 sh watchdog.sh

@@ -1,0 +1,19 @@
+[atmos-svc]#需要跟服务名保持一致
+#测试目标服务配置，配置格式如下,注意分割符的差异
+#业务1@ip1:port1;ipn:portn,业务2@ip2:port2;ipn:portn
+#taddrs="svc@10.1.205.151:50051;10.1.205.151:50052"
+conn-timeout = 2000
+lb-mode= 2
+lb-retry = 2
+#taddrs="xsf@10.1.86.223:50061,sms@172.16.154.177:5091"
+[trace]
+ip = "127.0.0.1"
+able = 0
+dump = 1
+[log]
+level = "info"
+file = "/log/server/xsfc.log"
+size = 100
+count = 20
+die = 30
+async = 0

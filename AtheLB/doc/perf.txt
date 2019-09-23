@@ -1,0 +1,8 @@
+data:2016.6.1
+
+error lb.log 100 20 60 true 0 0
+mode:client
+about to read config
+about to start goroutines
+getServer goroutine cout is:128, every goroutine loop count is:10000, all run count:1280000,cost time is:9s, tps is:142222.22, succGetServer count is:1280000
+all goroutines done

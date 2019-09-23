@@ -1,0 +1,68 @@
+[
+  {
+    "service": "svc",
+    "version": "1.0",
+    "call":"atmos-svc",
+    "route": "/v2/svc",
+    "request.data.mapping": {
+      "data_type": [2],
+      "rule":[
+        {"dst":"$","src":"$"}
+      ]
+    },
+    "response.data.mapping": {
+      "data_type": [2],
+      "rule":[
+        {"dst":"$","src":"$"}
+      ]
+    },
+    "schema": {
+      "type":"object",
+      "properties":{
+        "common":{
+          "type":"object",
+          "properties":{
+            "app_id":{
+              "type":"string",
+              "maxLength":50
+            },
+            "uid":{
+              "type":"string",
+              "maxLength":50
+            }
+          },
+          "required":["app_id"]
+        },
+        "business":{
+          "type":"object",
+          "properties":{
+            "param1":{
+              "type": "string",
+              "maxLength": 30
+            },
+            "param2":{
+              "type": "string",
+              "maxLength": 30
+            },
+            "param3":{
+              "type": "number"
+            }
+          }
+        },
+        "data":{
+          "type":"object",
+          "properties":{
+            "status":{
+              "type":"integer"
+            },
+            "data":{
+              "type": "string",
+              "maxLength": 30000000
+            }
+
+          }
+        }
+      }
+    }
+  }
+]

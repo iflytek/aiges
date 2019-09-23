@@ -1,0 +1,26 @@
+[client]
+#测试目标服务配置，配置格式如下,注意分割符的差异
+#业务1@ip1:port1;ipn:portn,业务2@ip2:port2;ipn:portn
+conn-timeout = 10000
+conn-pool-size = 4         #rpc连接池数量。缺省4
+lb-mode= 0  #0禁用lb,2使用lb。缺省0
+lb-retry = 3
+#taddrs="xsf-server@127.0.0.1:1997"
+taddrs="xsf-server@127.0.0.1:1997"
+conn-life-cycle = 5000
+
+[log]
+level = "debug"
+file = "clientNative.log"
+size = 100
+count = 20
+die = 30
+async = 0
+caller = 1
+
+[trace]
+ip = "172.16.51.13"
+able = 0
+dump = 1
+bcluster ="2s" #业务集群标识，缺省3s
+idc      ="dz" #IDC标识位，缺省dz

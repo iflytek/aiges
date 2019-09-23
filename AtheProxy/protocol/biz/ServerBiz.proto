@@ -1,0 +1,105 @@
+syntax = "proto3";
+
+package serverbiz;
+
+//服务业务协议
+message ServerBiz {
+    //用于消息类型
+    enum MsgType {
+        UP_CALL = 0; //上行数据请求
+        UP_RESULT = 1; //上行结果ack
+        DOWN_CALL = 2; //下行数据请求
+        DOWN_RESULT = 3; //下行结果ack
+    }
+
+    MsgType msg_type = 1; //枚举类型，用于消息类型
+    string version = 2; //协议版本
+    GlobalRoute global_route = 3; //路由信息
+    UpCall up_call = 4; //上行数据请求
+    UpResult up_result = 5; //上行结果ack
+    DownCall down_call = 6; //下行数据请求
+    DownResult down_result = 7; //下行结果ack
+}
+
+//路由信息
+message GlobalRoute {
+    string session_id = 1; //session id
+    string trace_id = 2; //trace id
+    string up_router_id = 3; //上行数据路由标识
+    string guider_id = 4; //调度中心标识
+    string down_router_id = 5; //下行数据路由标识
+    string appid = 6; //应用标识
+    string uid = 7; //用户标识
+    string did = 8; //设备标识
+    string client_ip = 9; //客户端ip
+}
+
+//上行数据请求
+message UpCall {
+    string call = 1; //请求服务类型
+    sint32 seq_no = 2; //请求序号
+    string from = 3; //数据来源
+    bool sync = 4; //是否同步返回结果
+    map<string, string> business_args = 5; //业务参数
+    map<string, string> temp_args = 6; //临时参数
+    map<string, bytes> user_args = 7; //用户参数
+    map<string, string> session = 8; //session
+    repeated GeneralData data_list = 9; //上行数据
+}
+
+//上行结果ack
+message UpResult {
+    sint32 ret = 1; //返回值
+    sint32 ack_no = 2; //请求序号
+    string err_info = 3; //错误信息
+    string from = 4; //数据来源
+    map<string, string> session = 5; //session
+    repeated GeneralData data_list = 6; //上行数据ack
+}
+
+//下行数据请求
+message DownCall {
+    sint32 ret = 1; //数据返回值
+    sint32 seq_no = 2; //请求序号
+    string from = 3; //数据来源
+    map<string, string> args = 4; //参数列表
+    repeated GeneralData data_list = 5; //下行数据
+}
+
+//下行结果ack
+message DownResult {
+    sint32 ret = 1; //数据返回值
+    sint32 ack_no = 2; //请求序号
+    string err_info = 3; //错误信息
+    map<string, string> args = 4; //参数列表
+}
+
+//数据
+message GeneralData {
+    string data_id = 1; //数据编号
+    uint32 frame_id = 2; //数据序号
+
+    //区分数据类型
+    enum DataType {
+        TEXT = 0; // 文本
+        AUDIO = 1; // 音频
+        IMAGE = 2; // 图像
+        VIDEO = 3; // 视频
+    }
+
+    DataType data_type = 3; //数据类型
+
+    //区分数据状态
+    enum DataStatus {
+        BEGIN = 0; //开始
+        CONTINUE = 1; //跟流
+        END = 2; //结束
+        ONCE = 3; //一次调用结束
+    }
+
+    DataStatus status = 4; //数据状态
+    map<string, bytes> desc_args = 5; //数据描述参数
+    string format = 6; //数据的编码格式 auf
+    string encoding = 7; //数据的压缩格式 aue
+    bytes data = 8; //数据内容
+}

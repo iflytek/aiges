@@ -1,0 +1,9 @@
+FROM 172.16.59.153/aiaas/ubuntu:14.04.gcc.golang
+MAINTAINER sqjian@iflytek.com
+
+WORKDIR /root/src/git.xfyun.cn/AIaaS/xsf-external
+
+COPY xsf  .
+
+RUN cd lab/basic/server && chmod -R +x *
+RUN cd lab/basic/server && ./build.sh

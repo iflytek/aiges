@@ -1,0 +1,1 @@
+../atmos -m 1 -p AIaaS -g aitest -s atmos -u http://10.1.86.223:9080

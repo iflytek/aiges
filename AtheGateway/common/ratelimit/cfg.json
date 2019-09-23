@@ -1,0 +1,31 @@
+[
+  {
+    "limit":10,
+    "appid":"100IMR",
+    "policy":"redis",
+    "tolerant":true,
+    "limit_by":"ip",
+    "Ip":"10.1.87.70"
+  },
+  {
+    "limit":10,
+    "appid":"100IME",
+    "policy":"redis",
+    "tolerant":true,
+    "limit_by":"appid"
+  },
+  {
+    "limit":10,
+    "appid":"12",
+    "policy":"redis",
+    "tolerant":true,
+    "limit_by":"conn"
+  },
+  {
+    "limit":1,
+    "policy":"redis",
+    "tolerant":true,
+    "limit_by":"max"
+  }
+
+]

@@ -1,0 +1,14 @@
+version: "3"
+services:
+  cli:
+    image: 172.16.59.153/aiaas/hermes:2.3.12
+    working_dir: /utils/cli
+    network_mode: "host"
+    restart: "no"
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 65535
+        hard: 65535
+    entrypoint: './cli'
+    command: '-all 0 -c 1 -n 1 -lbname xsf-lbv2 -nbest 1 -perf 0 -svc svc -subsvc "sms" -mode 1'

@@ -1,0 +1,9 @@
+*.idea
+*.iml
+*.class
+*.log
+*.jar
+*.DS_Store
+debug
+example
+findercache

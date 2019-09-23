@@ -1,0 +1,21 @@
+[sfc]
+#测试目标服务配置，配置格式如下,注意分割符的差异
+#业务1@ip1:port1;ipn:portn,业务2@ip2:port2;ipn:portn
+#taddrs="svc@10.1.205.151:50052;10.1.205.151:50051"
+conn-timeout = 2000
+lb-mode= 0
+lb-retry = 2
+#taddrs="xsf@10.1.87.70:8684,sms@10.1.87.21:5091"
+[trace]
+ip = "127.0.0.1"
+able = 0
+dump = 1
+#taddrs="svc@10.1.205.151:50051"
+
+[log]
+level = "info"
+file = "/log/xsfc.log"
+size = 100
+count = 20
+die = 30
+async = 0

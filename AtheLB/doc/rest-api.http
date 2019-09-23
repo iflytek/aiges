@@ -1,0 +1,45 @@
+#查询接口 可用
+GET http://172.16.154.235:8081/ws/getList?queryStruct={"meta":{"idc":"bj","schema":"ifly_cp_msp_balance","table":"seg_list"},"param":{"columnJson":{"seg_id":"seg_id","server_ip":"server_ip","type":"type"},"whereJson":{"type":"vmail"}},"version":"db-service-v3-3.0.0.1001"}&token=100IME
+Accept: */*
+Cache-Control: no-cache
+
+
+
+###
+#插入接口 可用
+GET http://172.16.154.235:8081/ws/insert?caller=xfyun&checksum=558906cf1691c5f0162d9dfaa76db428&queryStruct={"meta":{"idc":"bj","schema":"ifly_cp_msp_balance","table":"seg_list"},"param":{"insertJson":{"seg_id":"8888","type":"haha","server_ip":"127.0.0.9"}},"version":"db-service-v3-3.0.0.1001"}&token=100IME
+Accept: */*
+Cache-Control: no-cache
+
+<> 2018-06-13T030527.200.txt
+<> 2018-06-13T030400.200.txt
+<> 2018-06-13T022545.200.txt
+<> 2018-06-13T022538.200.txt
+<> 2018-06-13T022156.200.txt
+<> 2018-06-13T090901.200.txt
+<> 2018-06-13T090400.200.txt
+
+###
+#更新接口 可用
+GET http://172.16.154.235:8081/ws/update?caller=xfyun&checksum=ebacb20d2c8729e6610b88f6f19d55f1&queryStruct={"meta":{"idc":"bj","schema":"ifly_cp_msp_balance","table":"seg_list"},"param":{"whereJson":{"type":"vmail"},"setJson":{"seg_id":"8888","type":"haha2","server_ip":"127.0.0.9"}},"version":"db-service-v3-3.0.0.1001"}&token=100IME
+Accept: */*
+Cache-Control: no-cache
+
+<> 2018-06-13T030817.200.txt
+<> 2018-06-13T030748.200.txt
+<> 2018-06-13T030721.200.txt
+###
+#删除接口
+GET http://172.16.154.235:8081/ws/delete?caller=xfyun&checksum=fede3636b119b2e3ebd4586238bcbd14&queryStruct={"meta":{"idc":"bj","schema":"ifly_cp_msp_balance","table":"seg_list"},"param":{"whereJson":{"type":"vmail"}},"version":"db-service-v3-3.0.0.1001"}&token=100IME
+Accept: */*
+Cache-Control: no-cache
+
+<> 2018-06-13T030922.200.txt
+<> 2018-06-13T030838.200.txt
+<> 2018-06-12T043827.200.txt
+<> 2018-06-12T043313.200.txt
+<> 2018-06-12T043232.200.txt
+
+###
+
+

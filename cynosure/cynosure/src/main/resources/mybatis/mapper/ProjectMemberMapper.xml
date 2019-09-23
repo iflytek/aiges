@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.iflytek.ccr.polaris.cynosure.mapper.ProjectMemberMapper">
+    <!--项目成员实体-->
+    <resultMap id="ProjectMember_ResultMap" type="com.iflytek.ccr.polaris.cynosure.domain.ProjectMember">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="VARCHAR"/>
+        <result column="project_id" property="projectId" jdbcType="VARCHAR"/>
+        <result column="creator" property="creator" jdbcType="TINYINT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--项目成员、用户-->
+    <resultMap id="ProjectMemberJoinUser_ResultMap" type="com.iflytek.ccr.polaris.cynosure.domain.ProjectMember">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="VARCHAR"/>
+        <result column="project_id" property="projectId" jdbcType="VARCHAR"/>
+        <result column="creator" property="creator" jdbcType="TINYINT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <association property="user" javaType="com.iflytek.ccr.polaris.cynosure.domain.User">
+            <id column="user_id" property="id" jdbcType="VARCHAR"/>
+            <result column="user_account" property="account" jdbcType="VARCHAR"/>
+            <result column="user_password" property="password" jdbcType="VARCHAR"/>
+            <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+            <result column="user_phone" property="phone" jdbcType="VARCHAR"/>
+            <result column="user_email" property="email" jdbcType="VARCHAR"/>
+            <result column="user_create_time" property="createTime" jdbcType="TIMESTAMP"/>
+            <result column="user_update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+            <result column="user_role_type" property="roleType" jdbcType="TINYINT"/>
+        </association>
+    </resultMap>
+
+    <!--项目成员列名-->
+    <sql id="ProjectMember_Column_List">
+      id, user_id, project_id,creator, create_time
+    </sql>
+
+    <!--新增-->
+    <insert id="insert" parameterType="com.iflytek.ccr.polaris.cynosure.domain.ProjectMember">
+        insert into tb_project_member (id, user_id, project_id,creator,
+        create_time)
+        values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{projectId,jdbcType=VARCHAR},
+        #{creator,jdbcType=TINYINT},
+        #{createTime,jdbcType=TIMESTAMP})
+    </insert>
+
+    <!--通过项目id删除项目成员-->
+    <delete id="deleteByProjectId" parameterType="java.lang.String">
+        delete from tb_project_member
+        where project_id = #{projectId,jdbcType=VARCHAR}
+    </delete>
+
+    <!--删除-->
+    <delete id="delete" parameterType="com.iflytek.ccr.polaris.cynosure.domain.ProjectMember">
+        delete from tb_project_member
+        where creator=0
+        and user_id = #{userId,jdbcType=VARCHAR}
+        and project_id = #{projectId,jdbcType=VARCHAR}
+    </delete>
+
+    <!--查询-->
+    <select id="find" resultMap="ProjectMember_ResultMap"
+            parameterType="com.iflytek.ccr.polaris.cynosure.domain.ProjectMember">
+        select
+        <include refid="ProjectMember_Column_List"/>
+        from tb_project_member
+        <where>
+            <if test="userId != null">
+                and user_id = #{userId,jdbcType=VARCHAR}
+            </if>
+            <if test="projectId != null">
+                and project_id = #{projectId,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <!--查询总数-->
+    <select id="findTotalCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        select count(*) from tb_project_member where creator=0
+        <if test="projectId != null">
+            and project_id = #{projectId,jdbcType=VARCHAR}
+        </if>
+    </select>
+
+    <!--查询列表-->
+    <select id="findList" resultMap="ProjectMemberJoinUser_ResultMap" parameterType="java.util.Map">
+        select tb_project_member.*,
+        tb_user.id user_id,
+        tb_user.account user_account,
+        tb_user.password user_password,
+        tb_user.user_name,
+        tb_user.phone user_phone,
+        tb_user.email user_email,
+        tb_user.create_time user_create_time,
+        tb_user.update_time user_update_time,
+        tb_user.role_type user_role_type
+        from tb_project_member join tb_user
+        on tb_project_member.user_id=tb_user.id
+        where creator=0
+        <if test="projectId != null">
+            and project_id = #{projectId,jdbcType=VARCHAR}
+        </if>
+        order by convert(tb_project_member.id,SIGNED) desc
+        <if test="startIndex !=null and pagesize !=null">
+            limit #{startIndex},#{pagesize}
+        </if>
+    </select>
+</mapper>

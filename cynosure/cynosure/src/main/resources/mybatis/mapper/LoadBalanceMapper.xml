@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.iflytek.ccr.polaris.cynosure.mapper.LoadBalanceMapper">
+    <!--负载均衡实体-->
+    <resultMap id="LoadBalance_ResultMap" type="com.iflytek.ccr.polaris.cynosure.domain.LoadBalance">
+        <id column="name" property="name" jdbcType="VARCHAR"/>
+        <id column="abbr" property="abbr" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--负载均衡列名-->
+    <sql id="LoadBalance_Column_List">
+        name, abbr
+    </sql>
+
+    <!--查询负载均衡总数-->
+    <select id="findTotalCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        select count(*) from tb_loadbalance
+    </select>
+
+    <!--查询负载均衡列表-->
+    <select id="findList" resultMap="LoadBalance_ResultMap" parameterType="java.util.Map">
+        select
+        <include refid="LoadBalance_Column_List"/>
+        from tb_loadbalance
+        <if test="startIndex !=null and pagesize !=null">
+            limit #{startIndex},#{pagesize}
+        </if>
+    </select>
+    <!--查询负载均衡列表-->
+    <select id="findByEnglishName" resultType="com.iflytek.ccr.polaris.cynosure.domain.LoadBalance" parameterType="java.lang.String">
+        select *
+        from tb_loadbalance
+        where abbr=#{abbr,jdbcType=VARCHAR}
+    </select>
+</mapper>

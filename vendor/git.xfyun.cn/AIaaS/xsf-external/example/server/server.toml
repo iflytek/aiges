@@ -1,0 +1,117 @@
+#服务自身的配置
+#注意此section名需对应bootConfig中的service
+[xsf-server]#已做缺省处理
+host = "127.0.0.1"#若host为空，则取netcard对应的ip，若二者均为空，则取hostname对应的ip
+#host = "127.0.0.1"#若host为空，则取netcard对应的ip，若二者均为空，则取hostname对应的ip
+#netcard = "eth0"
+port = 1997 #不填则采用随机端口
+#reuseport = 1 #缺省0
+finder = 0 #缺省0
+maxreceive = 4 #能收取的最大消息包大小，单位MB，缺省16MB
+maxsend = 4  #能发送的最大消息包大小，单位MB，缺省16MB
+conn-rbuf = 4 #连接读缓冲区
+conn-wbuf  = 4 #连接写缓冲区
+
+#trace日志所用
+[trace]#已做缺省处理,此section如不传缺省启用
+#trace收集服务的地址
+host = "172.16.51.3" #缺省127.0.0.1
+#trace收集服务的端口
+port = 4546 #缺省4545
+#trace服务的协程数
+backend = 1 #缺省4
+#是否将日志写入到远端
+deliver = 0 #缺省1
+#是否将日志 落入磁盘
+dump = 1 #缺省0
+#是否禁用trace
+able = 1 #缺省1
+watch = 0 #缺省1
+watchport = 1234
+spill = "./log/spill"  #缺省/log/spill
+buffer =    10 #缓冲,缺省1000000
+batch =     100     #大小,缺省100
+linger =    5       #每几秒检查一次buffer,缺省5
+bcluster ="xxx" #业务集群标识，缺省3s
+idc      ="yyy" #IDC标识位，缺省dz
+
+[log]#已做缺省处理
+level = "info" #缺省warn
+file = "serverNative.log" #缺省xsfs.log
+#日志文件的大小，单位MB
+size = 300 #缺省10
+#日志文件的备份数量
+count = 3 #缺省10
+#日志文件的有效期，单位Day
+die = 3 #缺省10
+#缓存大小，单位条数,超过会丢弃
+cache = 100000 #缺省-1，代表不丢数据，堆积到内存中
+#批处理大小，单位条数，一次写入条数（触发写事件的条数）
+batch = 160#缺省16*1024
+#异步日志
+async = 0 #缺省异步
+#是否添加调用行信息
+caller = 1 #缺省0
+wash = 60 #写入磁盘的缺省时间
+
+[lb] #已做缺省处理,此section如不传缺省不启用
+able           = 0 #缺省0
+lbStrategy     = 0                                                                          #负载策略(必传)
+zkList         = ["192.168.86.60:2191", "192.168.86.60:2192", "192.168.86.60:2190"]         #zk列表(必传)
+root           = "/"                                                                         #根目录
+routerType     = "xsf"                                                                      #路由类型(如：svc)(必传)
+subRouterTypes = ["xsf_gray", "xsf_hefei"]                                                  #子路由类型列表(如:["svc_gray","svc_hefei"])
+redisHost      = "192.168.86.60:6379"                                                       #redis主机(必传)
+redisPasswd    = ""                                                                         #redis密码
+maxActive      = 100                                                                        #redis最大连接数
+maxIdle        = 50                                                                         #redis最大空闲连接数
+db             = 0                                                                          #redis数据库
+idleTimeOut    = 10                                                                         #redis空闲连接数超时时间，单位秒
+
+[lbv2] #已做缺省处理,此section如不传缺省不启用
+tm = 1000 #缺省1000，批量上报的超时时间，单位毫秒
+backend = 100#上报的的协程数，缺省4
+finderttl = 100 #更新本地地址的时间，通过访问服务发现实现，缺省一分钟
+lbname = "lbv2"
+apiversion = "1.0"
+able = 1
+sub = "svc"
+subsvc = "sms,sms-16k"
+task = 10 #任务队列长度
+
+#测试目标服务配置，配置格式如下,注意分割符的差异
+#业务1@ip1:port1;ipn:portn,业务2@ip2:port2;ipn:portn
+conn-timeout = 100
+conn-pool-size = 4         #rpc连接池数量。缺省4
+lb-mode= 0  #0禁用lb,2使用lb。缺省0
+lb-retry = 0
+taddrs="lbv2@10.1.87.68:1999"
+
+
+[fc]#flowControl 包括sessionManager和qpsLimiter
+#限流器的类型，若所填值非sessionManager和qpsLimiter或者没填，那么限流器不会初始化
+able = 1 #缺省为0
+router = "sessionManager"   #路由字段，可选项为sessionManager和qpsLimiter
+max = 100                   #会话模式时代表最大的授权量，非会话模式代表间隔时间里的最大请求数
+ttl = 30000                     #会话模式代表会话的超时时间，非会话模式代表有效期（间隔时间），缺省15000ms
+best = 10                   #最佳授权数
+roll = 1000                    #sessionManager内部遍历超时session的时间间隔  缺省1000ms
+report =1000                   #当策略为0即定时上报时，此为上报时间间隔 缺省1000ms，当策略为1即根据授权波动变化是，此值代表检查波动值的时间间隔
+strategy = 2                #可选值为0、1、2（缺省为0），0.代表定时上报(v1)；1.根据授权范围上报(v1)；2.基于hermes（v2）
+wave = 2                  #波动值，当授权数变化值大于等于该值时，出发触发上报行为,缺省10
+
+#sonar日志所用
+[sonar]#已做缺省处理,此section如不传缺省启用
+#trace收集服务的地址
+host = "172.16.51.3" #缺省127.0.0.1
+#trace收集服务的端口
+port = 4546 #缺省4545
+#trace服务的协程数
+backend = 1 #缺省4
+#是否将日志写入到远端
+deliver = 1 #缺省1
+#是否将日志 落入磁盘
+dump = 1 #缺省0
+#是否禁用trace
+able = 0 #缺省1
+ds = "vagus" #缺省vagus

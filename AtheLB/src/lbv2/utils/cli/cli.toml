@@ -1,0 +1,23 @@
+[lb_cli]
+conn-timeout = 10000
+conn-pool-size = 4         #rpc连接池数量。缺省4
+lb-mode= 0  #0禁用lb,2使用lb。缺省0
+lb-retry = 0
+#taddrs="lbv2@10.1.87.19:9094"
+#taddrs="lbv2@10.1.87.19:14943"
+#taddrs="xsf-lbv2@10.1.87.67:27660"
+taddrs="xsf-lbv2@127.0.0.1:1995"
+
+[log]
+level = "debug"
+file = "lb_ctl.log"
+size = 100
+count = 20
+die = 30
+async = 0
+caller = 1
+
+[trace]
+ip = "172.16.51.13"
+able = 0
+dump = 0

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.iflytek.ccr.polaris.cynosure.mapper.ServiceDiscoveryPushFeedbackMapper">
+    <!--服务发现推送反馈实体-->
+    <resultMap id="ServiceDiscoveryPushFeedback_ResultMap"
+               type="com.iflytek.ccr.polaris.cynosure.domain.ServiceDiscoveryPushFeedbackDetail">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="push_id" property="pushId" jdbcType="VARCHAR"/>
+        <result column="project" property="project" jdbcType="VARCHAR"/>
+        <result column="service_group" property="serviceGroup" jdbcType="VARCHAR"/>
+        <result column="consumer_service" property="consumerService" jdbcType="VARCHAR"/>
+        <result column="consumer_version" property="consumerVersion" jdbcType="VARCHAR"/>
+        <result column="provider_service" property="providerService" jdbcType="VARCHAR"/>
+        <result column="provider_version" property="providerVersion" jdbcType="VARCHAR"/>
+        <result column="addr" property="addr" jdbcType="VARCHAR"/>
+        <result column="update_status" property="updateStatus" jdbcType="TINYINT"/>
+        <result column="load_status" property="loadStatus" jdbcType="TINYINT"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="load_time" property="loadTime" jdbcType="TIMESTAMP"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="type" property="type" jdbcType="VARCHAR"/>
+        <result column="type_name" property="typeName" jdbcType="VARCHAR"/>
+        <result column="api_version" property="apiVersion" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--服务发现推送反馈列名-->
+    <sql id="ServiceDiscoveryPushFeedback_Column_List">
+        id, push_id, project, service_group, consumer_service, consumer_version, provider_service,
+        provider_version, addr, update_status, load_status, update_time, load_time, create_time, type, api_version, type_name
+    </sql>
+
+    <!--新增服务发现推送反馈-->
+    <insert id="insert" parameterType="com.iflytek.ccr.polaris.cynosure.domain.ServiceDiscoveryPushFeedback">
+        insert into tb_service_discovery_push_feedback (id, push_id, project,
+        service_group, consumer_service, consumer_version,
+        provider_service, provider_version, addr,
+        update_status, load_status, update_time,
+        load_time, create_time,api_version, type)
+        values (#{id,jdbcType=VARCHAR}, #{pushId,jdbcType=VARCHAR}, #{project,jdbcType=VARCHAR},
+        #{serviceGroup,jdbcType=VARCHAR}, #{consumerService,jdbcType=VARCHAR}, #{consumerVersion,jdbcType=VARCHAR},
+        #{providerService,jdbcType=VARCHAR}, #{providerVersion,jdbcType=VARCHAR}, #{addr,jdbcType=VARCHAR},
+        #{updateStatus,jdbcType=TINYINT}, #{loadStatus,jdbcType=TINYINT}, #{updateTime,jdbcType=TIMESTAMP},
+        #{loadTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, #{apiVersion,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR})
+    </insert>
+
+    <!--删除服务发现推送反馈-->
+    <delete id="deleteByPushId" parameterType="java.lang.String">
+        delete from tb_service_discovery_push_feedback
+        where push_id = #{pushId,jdbcType=VARCHAR}
+    </delete>
+
+    <!--通过pushIds删除服务配置推送反馈-->
+    <delete id="deleteByPushIds" parameterType="java.util.List">
+        delete from tb_service_discovery_push_feedback
+        where push_id in
+        <foreach collection="list" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!--查询服务推送反馈总数-->
+    <select id="findTotalCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        select count(*) from tb_service_discovery_push_feedback
+        <where>
+            <if test="pushId != null">
+                and push_id = #{pushId,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <!--查询服务推送反馈列表-->
+    <select id="findList" resultMap="ServiceDiscoveryPushFeedback_ResultMap" parameterType="java.util.Map">
+        <!--select-->
+        <!--<include refid="ServiceDiscoveryPushFeedback_Column_List"/>-->
+        <!--from tb_service_discovery_push_feedback-->
+        <!--<where>-->
+        <!--<if test="pushId != null">-->
+        <!--and push_id = #{pushId,jdbcType=VARCHAR}-->
+        <!--</if>-->
+        <!--</where>-->
+        <!--order by convert(id,SIGNED) desc-->
+        <!--<if test="startIndex !=null and pagesize !=null">-->
+        <!--limit #{startIndex},#{pagesize}-->
+        <!--</if>-->
+        SELECT
+        tmp.*, tb_dic.type_name
+        FROM
+        ( SELECT * FROM tb_service_discovery_push_feedback
+        <where>
+            <if test="pushId != null">
+                AND push_id = #{pushId,jdbcType=VARCHAR}
+            </if>
+        </where>
+        ) AS tmp
+        LEFT JOIN tb_dic ON tmp.type = tb_dic.type
+        <if test="startIndex !=null and pagesize !=null">
+        limit #{startIndex},#{pagesize}
+        </if>
+    </select>
+</mapper>
