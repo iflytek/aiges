@@ -39,6 +39,8 @@ describe: XXX 是一个高性能，方便的AI 模型部署和服务框架。它
 ```
 
 ### 编译参数
+|参数|功能|
+| --- | --- |
 |AtheGateway| 编译AtheGateway|
 |AtheProxy| 编译AtheProxy|
 |AtheLB|编译AtheLB|
