@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-export GOROOT=/usr/local/go
+#export GOROOT=/usr/local/go
 export PATH=${GOROOT}/bin:$PATH
 export GOPATH=`pwd`/../../
 
