@@ -1,5 +1,7 @@
 language: go
 go: 1.12.x
 env:
-  GO111MODULE: vendor
+  - GO111MODULE=on
+
+install: true
 script: ./build.sh
