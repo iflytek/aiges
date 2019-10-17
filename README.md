@@ -1,4 +1,4 @@
-# AthenaServing ![](https://travis-ci.com/xfyun/AthenaServing.svg?branch=master)
+# AthenaServing [![Build Status](https://travis-ci.com/xfyun/AthenaServing.svg?branch=master)](https://travis-ci.com/xfyun/AthenaServing)
 
 describe: XXX 是一个高性能，方便的AI 模型部署和服务框架。它提供了多种api 用于适配各种AI场景。
 
