@@ -17,17 +17,29 @@ describe: XXX 是一个高性能，方便的AI 模型部署和服务框架。它
 ## 快速体验
 
 ## 组件介绍
-  1. XXgateway
+  1. AtheGateway
    - 功能
    - 链接
-  2. XXproxy
+  2. AtheProxy
    - 功能
    - 链接
-  3. XXlb
+  3. AtheLB
    - 功能
    - 链接
-  4. XXloader
+  4. AtheLoader
    - 功能
    - 链接
    
 ## 整体链路
+
+## 编译方法
+```
+ # 编译所有组件
+./build.sh
+```
+
+### 编译参数
+|AtheGateway| 编译AtheGateway|
+|AtheProxy| 编译AtheProxy|
+|AtheLB|编译AtheLB|
+|AtheLoader|编译AtheLoader|
