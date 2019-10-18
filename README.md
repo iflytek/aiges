@@ -16,6 +16,7 @@
 docker run -it --rm littlescw00/companion:latest sh watchdog.sh -h${本地ip} -p9639 -z${zk地址} -w${网页ip}
 docker run -it --rm littlescw00/cynosure:latest sh watchdog.sh
 
+// 录入相关配置
 
 // 部署服务
 docker run -it --rm littlescw00/athelb -m 1 -p project -g group -s athelb -u ${companion url}
