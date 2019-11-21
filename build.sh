@@ -4,7 +4,7 @@ CURDIR=`pwd`
 OUTPUT="`pwd`/build"
 
 function prebuild() {
-  mkdir -p ${OUTPUT}
+  mkdir -p ${OUTPUT}/output
 }
 
 function getback() {
@@ -51,10 +51,19 @@ function build_AtheProxy() {
 function build_AtheLoader() {
   echo "build AtheLoader"
   cp AtheLoader/ /tmp/ -R
+  cp vendor /tmp/AtheLoader/src/ -R
   export GOPATH=/tmp/AtheLoader/
-  cd /tmp/AtheProxy/
-  sh ./build.sh
+  cd /tmp/AtheLoader/
+  sh ./build.sh || exit 1
+  install output/* ${OUTPUT}/*
   getback
+}
+
+function cleanup() {
+	rm -r /tmp/AtheLoader
+	rm -r /tmp/AtheProxy
+	rm -r /tmp/AtheGateway
+	rm -r /tmp/AtheLB
 }
 
 TARGET=$1
@@ -66,7 +75,7 @@ if [[ "${TARGET}" == "all" ]]; then
 	build_AtheLB
 	build_AtheGateway
 	build_AtheProxy
-	#build_AtheLoader
+	build_AtheLoader
 elif [[ "${TARGET}" == "AtheLB" ]]; then
 	build_AtheLB
 elif [[ "${TARGET}" == "AtheGateway" ]]; then
@@ -79,3 +88,5 @@ else
   	echo "Invalid build target"
   	exit 1
 fi
+
+cleanup
