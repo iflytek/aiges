@@ -22,7 +22,7 @@ func goSigHandler(sig C.int, cStack **C.char, cLen C.int) {
 		conf.SvcVersion,
 		strconv.Itoa(os.Getpid()),
 		strconv.Itoa(utils.GetGoroutineID()),
-		xsf.GetNetaddr(),
+		xsf.GetNetAddr(),
 		"", // all session
 		sigErrTable[syscall.Signal(sig)],
 	}

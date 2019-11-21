@@ -61,13 +61,15 @@ typedef enum{
     DataBegin   =   0,      // 首数据
     DataContinue =  1,      // 中间数据
     DataEnd     =   2,      // 尾数据
-    DataOnce    =   3,      // 非会话单次输入
+    DataOnce    =   3,      // 非会话单次输入输出
 } DataStatus;
 
 typedef struct DataList{
-    void*   data;           // 数据
+    char*   key;            // 数据标识
+    void*   data;           // 数据实体
     unsigned int len;       // 数据长度
     char* desc;             // 数据描述
+    char* encoding;         // 数据编码
     DataType    type;       // 数据类型
     DataStatus status;      // 数据状态
     struct DataList* next;  // 链表指针

@@ -85,7 +85,7 @@ func SignalHook() {
 					conf.SvcVersion,
 					string(os.Getpid()),
 					string(utils.GetGoroutineID()),
-					xsf.GetNetaddr(),
+					xsf.GetNetAddr(),
 					"", // all session
 					sigErrTable[sig.(syscall.Signal)],
 				}

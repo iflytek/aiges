@@ -18,7 +18,7 @@ func RecoverHandle(tag string) {
 				conf.SvcVersion,
 				strconv.Itoa(os.Getpid()),
 				strconv.Itoa(utils.GetGoroutineID()),
-				xsf.GetNetaddr(),
+				xsf.GetNetAddr(),
 				tag,         // inst catch hook:
 				err.(error), // panic error
 			}
