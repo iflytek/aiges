@@ -1,7 +1,7 @@
 
 FROM gcr.io/distroless/cc:latest
 
-COPY build/output/AtheLoader /usr/local/bin
-COPY build/*.so /usr/lib/
+COPY build/output /AtheLoader
+WORKDIR /AtheLoader
 
-ENTRYPOINT ["/usr/local/bin/AtheLoader"]
+ENTRYPOINT ["/AtheLoader/AIservice"]
