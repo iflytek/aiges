@@ -25,7 +25,7 @@ const (
 
 const (
 	/*-------指定组件的版本号-------*/
-	lbVersion    = "0.0.0"
+	lbVersion    = "1.0.0"
 	lbApiVersion = "1.0.0"
 	date         = "2019-09-04 16:36:01"
 	name         = "hermes"
