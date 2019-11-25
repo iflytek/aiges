@@ -1,4 +1,8 @@
-# AthenaServing [![Build Status](https://travis-ci.com/xfyun/AthenaServing.svg?branch=master)](https://travis-ci.com/xfyun/AthenaServing)[![Language](https://img.shields.io/badge/Language-Go-blue.svg)](https://golang.org/)[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/xfyun/AthenaServing/blob/master/LICENSE)
+![AthenaServing](pics/athena.png) 
+# AthenaServing
+[![Build Status](https://travis-ci.com/xfyun/AthenaServing.svg?branch=master)](https://travis-ci.com/xfyun/AthenaServing)
+[![Language](https://img.shields.io/badge/Language-Go-blue.svg)](https://golang.org/)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/xfyun/AthenaServing/blob/master/LICENSE)
 
 
  是一个高性能，便捷高效的AI 模型部署和服务框架。它提供了多种api 用于适配各种AI场景。并集成了服务发现，配置中心等功能，方便用户完成训练模型的快速部署与上线。
