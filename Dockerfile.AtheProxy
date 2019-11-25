@@ -2,7 +2,6 @@ FROM gcr.io/distroless/cc:latest
 
 
 COPY build/AtheProxy /usr/local/bin/
-#RUN /usr/local/bin/AtheProxy -v
 
 ENTRYPOINT ["/usr/local/bin/AtheProxy"]
 #ENTRYPOINT ["ls"]

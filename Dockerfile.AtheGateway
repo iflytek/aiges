@@ -1,6 +1,7 @@
 
 FROM gcr.io/distroless/cc:latest
+#FROM 172.16.59.153/aiaas/google_distroless_cc
 
-COPY build/AtheGateway /usr/local/bin
+COPY build/AtheGateway /usr/local/bin/
 
 ENTRYPOINT ["/usr/local/bin/AtheGateway"]
