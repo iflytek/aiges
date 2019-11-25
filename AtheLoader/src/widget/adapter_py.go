@@ -232,7 +232,6 @@ char* pyEngineErr(int err){
 	return desc;
 }
 
-*/
 import "C"
 import (
 	"errors"
@@ -253,7 +252,7 @@ result = CallSomeFunction();
 // Release the thread. No Python API allowed beyond this point.
 PyGILState_Release(gstate);
 */
-
+/*
 func pythonOpen(file string) (err error) {
 	ret := C.pyInit()
 	if ret != 0 {
@@ -396,6 +395,38 @@ func pythonVersion() (ver string) {
 func pythonError(code int) (err string) {
 	errC := C.pyEngineErr(C.int(code))
 	return C.GoString(errC)
+}
+*/
+
+import (
+    "instance"
+)
+
+func pythonOpen(file string) (err error) {
+    return 
+}
+
+func pythonClose() {
+}
+
+func pythonInit(cfg map[string]string) (errNum int, errInfo error) {
+    return
+}
+
+func pythonFini() (errNum int, errInfo error) {
+    return
+}
+
+func pythonOnceExec(handle string, req *instance.ActMsg) (resp instance.ActMsg, errNum int, errInfo error) {
+    return
+}
+
+func pythonVersion() (ver string) {
+    return
+}
+
+func pythonError(code int) (err string) {
+    return
 }
 
 // TODO 后续补充实现

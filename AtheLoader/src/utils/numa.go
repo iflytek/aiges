@@ -21,18 +21,20 @@ char* SetProcessAffinityOnNode(int nodeIndex)
 	}
 	return NULL;
 }
-*/
+
 import "C"
 import (
 	"errors"
 )
-
+*/
 func NumaBind(numaIndex int) error {
-	if numaIndex >= 0 {
+/*
+    if numaIndex >= 0 {
 		err := C.SetProcessAffinityOnNode(C.int(numaIndex))
 		if err != nil {
 			return errors.New("NumaBind fail, " + C.GoString(err))
 		}
 	}
+*/
 	return nil
 }
