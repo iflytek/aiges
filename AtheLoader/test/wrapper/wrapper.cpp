@@ -85,7 +85,7 @@ int WrapperAPI wrapperRead(const void* handle, pDataList* respData){
 Note: demo 关闭实时读功能,wrapperRead仅需返回最终last结果,
     若需实时返回结果,可通过修改配置[aiges].realTimeRlt = true
      */
-    respData = &wrapperInnerRslt; 
+    *respData = wrapperInnerRslt; 
 	return 0;
 }
 
@@ -96,7 +96,7 @@ int WrapperAPI wrapperDestroy(const void* handle){
 
 int WrapperAPI wrapperExec(pParamList params, pDataList reqData, pDataList* respData){
 	printf("wrapperExec\n");
-	respData = &wrapperOnceRslt;
+	*respData = wrapperOnceRslt;
     return 0;
 }
 
