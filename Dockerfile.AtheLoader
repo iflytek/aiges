@@ -6,4 +6,4 @@ COPY build/output /AtheLoader
 COPY build/output/*.so.* /usr/local/lib/
 WORKDIR /AtheLoader
 
-ENTRYPOINT ["./AIservice"]
+#ENTRYPOINT ["./AIservice"]
