@@ -16,19 +16,7 @@
  - 授权均衡
 
 ## 快速体验
-```
-// 部署配置中心和服务发现
-docker run -it --rm littlescw00/companion:latest sh watchdog.sh -h${本地ip} -p9639 -z${zk地址} -w${网页ip}
-docker run -it --rm littlescw00/cynosure:latest sh watchdog.sh
-
-// 录入相关配置
-
-// 部署服务
-docker run -it --rm littlescw00/athelb -m 1 -p project -g group -s athelb -u ${companion url}
-docker run -it --rm littlescw00/athegateway  -project project -group group -service athegateway -version 1.0.0 -url ${companion url}
-docker run -it --rm littlescw00/atheproxy  -m 1 -p project -g group -s atheproxy -u ${companion url}
-docker run --rm -it  -e "GODEBUG=cgocheck=0" -e "LD_LIBRARY_PATH=/AtheLoader" littlescw00/atheloader:latest -p project -g group -s atheloader -u ${companion url} -c  aiges.toml -m 1
-```
+   - [部署文档](docs/install.md)
 ## 组件介绍
 #### AtheGateway
    - 全新的Web API服务webgate提供了基于配置的热插拔AI能力特性,只需要通过新增或编辑配置、推送配置两部操作即可完成AI能力的上线或者下线，免去了以往的定制开发工作，业务人员可以把更多的精力投入到AI能力协议的设计和实现上。
@@ -48,7 +36,7 @@ docker run --rm -it  -e "GODEBUG=cgocheck=0" -e "LD_LIBRARY_PATH=/AtheLoader" li
 ![流程图](pics/workflow.png)
 ## 编译方法
 ```
- # 编译所有组件
+# 编译所有组件
 ./build.sh
 ```
 
