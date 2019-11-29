@@ -1,5 +1,10 @@
+USE `ifly_cynosure_3`;
 INSERT INTO `tb_lastest_search` (`id`, `user_id`, `url`, `pre_condition`, `create_time`, `update_time`) VALUES ('108b1cc21b6b400aaa3bdb95fa9388be', '3688919024172793856', '/api/v1/service/version/lastestList', '{\"cluster\":\"athena\",\"project\":\"athena\",\"service\":\"atheloader\"}', '2019-11-15 06:06:49', '2019-11-21 07:25:20');
+USE `ifly_cynosure_3`;
 INSERT INTO `tb_lastest_search` (`id`, `user_id`, `url`, `pre_condition`, `create_time`, `update_time`) VALUES ('2b029a2d091c48a9af4ec258d5b37175', '3688919024172793856', '/api/v1/service/lastestList', '{\"cluster\":\"athena\",\"project\":\"athena\"}', '2019-11-15 06:05:26', '2019-11-21 07:25:08');
+USE `ifly_cynosure_3`;
 INSERT INTO `tb_lastest_search` (`id`, `user_id`, `url`, `pre_condition`, `create_time`, `update_time`) VALUES ('546a000fa09949a0a7a08ba2f8feeb0c', '3688919024172793856', '/api/v1/cluster/lastestList', '{\"project\":\"athena\"}', '2019-11-15 06:05:13', '2019-11-15 06:16:41');
+USE `ifly_cynosure_3`;
 INSERT INTO `tb_lastest_search` (`id`, `user_id`, `url`, `pre_condition`, `create_time`, `update_time`) VALUES ('5d2f08d69e424b9a9c2a2f3f905fd12b', '3688919024172793856', '/api/v1/service/config/lastestList', '{\"cluster\":\"athena\",\"project\":\"athena\",\"service\":\"athelb\",\"version\":\"1.0.0\"}', '2019-11-15 06:06:56', '2019-11-29 02:29:35');
+USE `ifly_cynosure_3`;
 INSERT INTO `tb_lastest_search` (`id`, `user_id`, `url`, `pre_condition`, `create_time`, `update_time`) VALUES ('7e2baf85c97a4a6d9b9f6f5e35485d1a', '3688919024172793856', '/api/v1/service/discovery/lastestList', '{\"cluster\":\"athena\",\"project\":\"athena\",\"service\":\"atheloader\"}', '2019-11-25 08:16:46', '2019-11-26 01:41:24');
