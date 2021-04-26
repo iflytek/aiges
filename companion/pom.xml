@@ -11,7 +11,7 @@
         <nakedserver-http.version>1.0.7</nakedserver-http.version>
         <jackson.version>1.9.13</jackson.version>
         <jackson-mapper.version>1.9.13</jackson-mapper.version>
-        <common-io.version>2.6</common-io.version>
+        <common-io.version>2.7</common-io.version>
     </properties>
     <dependencies>
         <dependency>
