@@ -110,7 +110,7 @@ func notify(type_ string, logfile string) {
 		}()
 		select {
 		case <-time.After(time.Duration(5) * time.Second):
-			fmt.Println("http post event fail time out > " + strconv.Itoa(conf.ResPerTimeout) + " ms")
+			fmt.Println("http post event fail time out > 5 s")
 			continue
 		case <-endFlag:
 			if code != 0 {
