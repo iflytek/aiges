@@ -279,16 +279,6 @@ int adapterCallback(const void* handle, pDataList respData, int ret){
 	return engineCreateCallBack((void*)handle, respData, ret);
 }
 
-extern int meterHandler(char* hdl, char* key, int count);
-int meterCustom(const char* hdl, const char* key, int count){
-	return meterHandler((char*)hdl, (char*)key, count);
-}
-
-
-extern int traceHandler(char* hdl, char* key, char* value);
-int traceLogHdl(const char* hdl, const char* key, const char* value){
-	return traceHandler((char*)hdl, (char*)key, (char*)value);
-}
 
 int adapterFreeParaList(pParamList pl){
 	for (;pl != NULL;){
@@ -373,10 +363,6 @@ func (ec *engineC) close() {
 }
 
 func engineInit(cfg map[string]string) (errNum int, errInfo error) {
-	// cgo控制接口回调：自定义计量接口&自定义trace日志接口
-	C.adapterSetCtrl(C.CTMeterCustom, C.meterCustom)
-	C.adapterSetCtrl(C.CTTraceLog, C.traceLogHdl)
-
 	// 配置参数的语言栈转换;
 	configList := C.paramListCreate()
 	defer C.paramListfree(configList)
