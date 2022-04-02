@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package protocol;
+
+message MetaDesc {
+    string name = 1;                    // 数据名
+    enum DataType {
+        TEXT = 0; // 文本
+        AUDIO = 1; // 音频
+        IMAGE = 2; // 图像
+        VIDEO = 3; // 视频
+        OTHER = 4; // 其他
+    }
+    DataType dataType = 2;              // 数据类型
+    map<string, string> attribute =3;   // 数据属性
+}
+
+message Payload {
+    MetaDesc meta = 1;                  // payload描述
+    bytes data = 2;				        // 数据实体
+}
+
+message LoaderInput {
+    string serviceId = 1;            // 服务id
+    string serviceName = 2;          // 服务名
+    enum SessState {
+        STREAM = 0;    // 流式
+        ONCE = 1;    // 非流式
+    }
+    SessState   state = 3;           // 会话状态
+    map<string, string> headers = 4;  // 平台参数
+    map<string, string> params = 5;  // 用户参数
+    repeated MetaDesc expect = 6;    // 期望输出
+    repeated Payload pl = 7;         // 用户输入
+    int32 sync_id = 8;               // 业务包id
+}
+
+message LoaderOutput {
+    string serviceId = 1;           // 服务id
+    int32 code = 2;
+    string err = 3;
+    enum RespStatus {
+        BEGIN = 0; //开始
+        CONTINUE = 1; //跟流
+        END = 2; //结束
+        ONCE = 3; //一次调用结束
+    }
+    RespStatus status = 4;          // 请求状态
+    repeated Payload pl = 5;        // 用户输出
+}
