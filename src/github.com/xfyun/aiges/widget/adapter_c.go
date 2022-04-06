@@ -222,12 +222,6 @@ void DataListfree(struct DataList* ptr){
 	struct DataList* currentData=ptr;
 	while(currentData!=NULL){
 		ptr=ptr->next;
-		//struct ParamList* currentDesc=currentData->desc;
-		//while(currentDesc!=NULL){
-		//	currentData->desc=currentData->desc->next;
-		//	free(currentDesc);
-		//	currentDesc=currentData->desc;
-		//}
 		free(currentData);
 		currentData=ptr;
 	}
