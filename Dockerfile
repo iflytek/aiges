@@ -32,7 +32,7 @@ RUN echo '''name: loader \n\
 channels: \n \
 - defaults \n\
 dependencies: \n \
-- python=3.9.12 \n\
+- python=3.7.3 \n\
 prefix: /opt/loader ''' > /home/loader/environment.yml &&  conda env create -f environment.yml
 
 
@@ -53,5 +53,5 @@ COPY ai_cpython_wrapper/ /home/wrapper
  
 RUN cd /home/wrapper && make
 
-ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/aiges:/home/wrapper/wrappere_lib
+#ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/aiges:/home/wrapper/wrappere_lib
 

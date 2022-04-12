@@ -135,7 +135,9 @@ int callWrapperInit(pConfig cfg)
 
     if (!wrapperModule)
     {
+        PyErr_Print(); 
         std::cout << log_python_exception << std::endl;
+	std::cout << "not found  wrapper.py " << std::endl;
         PyGILState_Release(gstate);
         return WRAPPER::CError::innerError;
     }
