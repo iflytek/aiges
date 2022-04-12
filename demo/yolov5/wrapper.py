@@ -14,7 +14,7 @@ model = None
 def wrapperInit(config: {}) -> int:
     print("model initializing...")
     global model
-    model = torch.hub.load('.', 'yolov5s', source="local", pretrained=True)
+    model = torch.hub.load('/home/yolov5', 'yolov5s', source="local", pretrained=True)
 
     print("init success", flush=True)
     return 0
