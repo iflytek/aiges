@@ -1,56 +1,71 @@
-import torch
-import numpy as np
-from PIL import Image
-import io
-'''
-初始化
-config的值是由aiges.toml中[wrapper]各段设置的
-'''
+import sys
+if not hasattr(sys, 'argv'):
+    sys.argv  = ['']
 
-print("wrapper.py",flush=True)
-model=torch.hub.load('ultralytics/yolov5', 'yolov5s')
 
+'''
+服务初始化
+@param config:
+    插件初始化需要的一些配置，字典类型
+    key: 配置名
+    value: 配置的值
+@return
+    ret: 错误码。无错误时返回0
+'''
 def wrapperInit(config: {}) -> int:
-    global model
-    print("init success", flush=True)
     return 0
 
 
 '''
-逆初始化
+服务逆初始化
+
+@return
+    ret:错误码。无错误码时返回0
 '''
-
-
 def wrapperFini() -> int:
-    print("fini success", flush=True)
+    return 0
+
+'''
+非会话模式计算接口,对应oneShot请求,可能存在并发调用
+
+@param usrTag 句柄
+#param params 功能参数
+@param  reqData     写入数据实体
+@param  respData    返回结果实体,内存由底层服务层申请维护,通过execFree()接口释放
+@param psrIds 需要使用的个性化资源标识列表
+@param psrCnt 需要使用的个性化资源个数
+
+@return 接口错误码
+    reqDat
+    ret:错误码。无错误码时返回0
+'''
+def wrapperOnceExec(usrTag:str,params:{},reqData:[],respData:[],psrIds:[],psrCnt:int) -> int:
+    print("hello world")
+    print(usrTag)
+    print(params)
+    print(reqData)
+    print(psrIds)
+    print(psrCnt)
+    return 100
+
+
+def wrapperCreate(usrTag: str, params: [], psrIds: [], psrCnt: int) -> str:
+    return ""
+
+
+def wrapperWrite(handle: str, datas: []) -> int:
     return 0
 
 
-'''
-once接口执行函数
-'''
+def wrapperRead(handle: str) -> []:
+    return []
 
 
-def wrapperOnceExec(usrTag: str, params: {}, reqData: [], respData: [], psrIds: [], psrCnt: int) -> int:
-
-    img = np.array(Image.open(io.BytesIO(reqData[0]["data"])).convert('RGB'))
-    global model
-    rlt=model(img)
-    value=rlt.pandas().xyxy[0].to_json(orient="records")
-    length = len(str(value).encode())
-    respData.append({"key": "boxes", "data": value, "len": length, "status": 3, "type": 0})
-    print(respData,flush=True)
+def wrapperDestroy(handle: str) -> int:
     return 0
-'''
-根据不同错误码返回不同的错误描述
-'''
 
 
-def wrapperError(ret: int) -> str:
-    if ret == 10013:
-        return "reqData is empty"
-    elif ret == 10001:
-        return "load onnx model failed"
-    else:
-        return "other error code"
-
+def wrapperError(ret:int)->str:
+    if ret==100:
+        return "this is a tese error return"
+    return ""
