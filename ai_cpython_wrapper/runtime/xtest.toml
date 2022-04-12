@@ -1,0 +1,75 @@
+[xtest]
+taddrs="mocksvc@127.0.0.1:5090"
+trace-ip = "172.16.51.13"
+
+[svcMode]
+service = "mocksvc"           # 请求目标服务名称, eg:sms
+svcId = "s12345678"             # 服务id
+timeout = 1000                  # 服务超时时间, 对应服务端waitTime
+multiThr = 50                    # 请求并发数
+loopCnt = 100                     # 请求总次数
+sessMode = false                # 服务请求模式. true:会话模式 false:非会话模式
+linearMs = 5000                 # 并发压测线性增长区间,单位:ms
+
+[header]
+"appid" = "100IME"              # 平台控制参数
+"uid" = "1234567890"
+
+[parameter]
+"ctrl" = "normal"                 # 用户功能参数
+
+[data]
+payload = "data1"         # 输入数据流key,多个数据流以";"分割,如"dataKey1;dataKey2"
+expect = "result"               # 输出数据流key,多个数据流以";"分割
+
+[data1]  # 输入数据流data1描述
+inputSrc = "./cat.jpg"            # 上行数据流数据源, 配置文件路径(配置为目录则循环读取目录中文件)
+sliceOn = false                 # 切片开关, false:关闭切换, true:开启切片
+sliceSize = 1280                # 上行数据切片大小,用于会话模式: byte
+interval = 40                   # 上行数据发包间隔,用于会话模式: ms. 注：动态校准,每个包间隔非严格interval
+name = "input1"                 # 输入数据流data1对应的key值
+type = "image"                  # 数据类型，支持"audio","text","image","video"
+describe = "encoding=jpg"       # 数据描述信息,多个描述信息以";"分割,如："k1=v1;k2=v2"
+                                # 图像支持如下属性："encoding", 如"encoding=jpg"
+
+[data2]  # 输入数据流data2描述
+inputSrc = "./image"            # 上行数据流数据源, 配置文件路径(配置为目录则循环读取目录中文件) 
+sliceOn = false                 # 切片开关, false:关闭切换, true:开启切片
+sliceSize = 1280                # 上行数据切片大小,用于会话模式: byte
+interval = 40                   # 上行数据发包间隔,用于会话模式: ms. 注：动态校准,每个包间隔非严格interval
+name = "input2"                 # 输入数据流data2对应的key值
+type = "image"                  # 数据类型，支持"audio","text","image","video"
+describe = "encoding=jpg"        # 数据描述信息,多个描述信息以";"分割,如："k1=v1;k2=v2"
+                                        # 图像支持如下属性："encoding", 如"encoding=jpg"
+
+
+[dataKey2]
+inputSrc = "path"               # 上行数据流数据源, 配置文件路径(配置为目录则循环读取目录中文件)
+sliceOn = false                 # 切片开关, false:关闭切换, true:开启切片
+sliceSize = 1280                # 上行数据切片大小,用于会话模式: byte
+interval = 40                   # 上行数据发包间隔,用于会话模式: ms. 注：动态校准,每个包间隔非严格interval
+type = "image"                  # 数据类型，支持"audio","text","image","video"
+describe = "k1=v1;k2=v2"        # 数据描述信息,多个描述信息以";"分割
+                                # 图像支持如下属性："encoding", 如"encoding=jpg"
+[result]
+name = "result"
+type = "text"                   # 输出数据类型，支持"audio","text","image","video"
+describe = "encoding=utf8;compress=gzip"        # 数据描述信息,多个描述信息以";"分割
+                                # 文本支持如下属性："encoding","compress", 如"encoding=utf8;compress=gzip"
+
+
+[downstream]                    # 下行数据流存储输出
+output = 0                      # 输出方式： 0:输出至公共文件outputDst 1:以独立文件形式输出至目录outputDst(文件名:sid+**) 2：输出至终端
+outputDst = "./log/result"          # 响应数据输出目标, 若output=0则配置目录, output=1则配置文件
+
+
+[log]
+file = "./log/xtest.log"        # 日志文件名
+level = "debug"                 # 日志打印等级
+size = 100                      # 日志文件大小
+count = 20                      # 日志备份数量
+async = 0                       # 异步开关
+die = 30
+
+[trace]
+able = 0

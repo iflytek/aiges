@@ -1,0 +1,12 @@
+{"level":"info","ts":"2021-09-15T17:52:17.493+0800","caller":"calc/calc.go:141","msg":"toml content after loading","content":{"Calc":{"QueueSize":10000,"ConsumeNumber":4,"Hosts":["10.1.87.19:10800"],"Topic":"lic_lkc_bj","Timeout":500,"Enable":true},"Log":{"Level":"info","LogFormat":"json","LogPath":"./calc-test.log","ConsolePrint":false}}}
+{"level":"info","ts":"2021-09-15T17:52:17.494+0800","caller":"calc/calc.go:153","msg":"calc sdk init success"}
+{"level":"info","ts":"2021-09-15T17:54:23.509+0800","caller":"calc/core.go:85","msg":"wait for queue clean up","queue size":0}
+{"level":"info","ts":"2021-09-15T17:54:23.509+0800","caller":"calc/core.go:87","msg":"queue have been cleaned when sdk finish"}
+{"level":"info","ts":"2021-09-15T17:54:23.509+0800","caller":"calc/core.go:191","msg":"producer finish"}
+{"level":"info","ts":"2021-09-15T17:54:23.509+0800","caller":"calc/core.go:191","msg":"producer finish"}
+{"level":"info","ts":"2021-09-15T17:54:23.509+0800","caller":"calc/core.go:191","msg":"producer finish"}
+{"level":"info","ts":"2021-09-15T17:54:23.509+0800","caller":"calc/core.go:191","msg":"producer finish"}
+{"level":"info","ts":"2021-09-15T17:54:44.193+0800","caller":"calc/calc.go:141","msg":"toml content after loading","content":{"Calc":{"QueueSize":10000,"ConsumeNumber":4,"Hosts":["10.1.87.19:10800"],"Topic":"lic_lkc_bj","Timeout":500,"Enable":true},"Log":{"Level":"info","LogFormat":"json","LogPath":"./calc-test.log","ConsolePrint":true}}}
+{"level":"info","ts":"2021-09-15T17:54:44.193+0800","caller":"calc/calc.go:153","msg":"calc sdk init success"}
+{"level":"info","ts":"2021-09-15T18:00:23.257+0800","caller":"calc/calc.go:141","msg":"toml content after loading","content":{"Calc":{"QueueSize":10000,"ConsumeNumber":4,"Hosts":["10.1.87.19:10800"],"Topic":"lic_lkc_bj","Timeout":500,"Enable":true},"Log":{"Level":"info","LogFormat":"json","LogPath":"./calc-test.log","ConsolePrint":true}}}
+{"level":"info","ts":"2021-09-15T18:00:23.258+0800","caller":"calc/calc.go:153","msg":"calc sdk init success"}

@@ -1,0 +1,341 @@
+# github.com/BurntSushi/toml v0.4.1
+github.com/BurntSushi/toml
+github.com/BurntSushi/toml/internal
+# github.com/Microsoft/go-winio v0.5.0
+github.com/Microsoft/go-winio
+github.com/Microsoft/go-winio/pkg/guid
+# github.com/StackExchange/wmi v1.2.1
+github.com/StackExchange/wmi
+# github.com/VividCortex/ewma v1.1.1
+github.com/VividCortex/ewma
+# github.com/aws/aws-sdk-go v1.43.31
+## explicit
+github.com/aws/aws-sdk-go/aws
+github.com/aws/aws-sdk-go/aws/arn
+github.com/aws/aws-sdk-go/aws/awserr
+github.com/aws/aws-sdk-go/aws/awsutil
+github.com/aws/aws-sdk-go/aws/client
+github.com/aws/aws-sdk-go/aws/client/metadata
+github.com/aws/aws-sdk-go/aws/corehandlers
+github.com/aws/aws-sdk-go/aws/credentials
+github.com/aws/aws-sdk-go/aws/credentials/ec2rolecreds
+github.com/aws/aws-sdk-go/aws/credentials/endpointcreds
+github.com/aws/aws-sdk-go/aws/credentials/processcreds
+github.com/aws/aws-sdk-go/aws/credentials/ssocreds
+github.com/aws/aws-sdk-go/aws/credentials/stscreds
+github.com/aws/aws-sdk-go/aws/csm
+github.com/aws/aws-sdk-go/aws/defaults
+github.com/aws/aws-sdk-go/aws/ec2metadata
+github.com/aws/aws-sdk-go/aws/endpoints
+github.com/aws/aws-sdk-go/aws/request
+github.com/aws/aws-sdk-go/aws/session
+github.com/aws/aws-sdk-go/aws/signer/v4
+github.com/aws/aws-sdk-go/internal/context
+github.com/aws/aws-sdk-go/internal/ini
+github.com/aws/aws-sdk-go/internal/s3shared
+github.com/aws/aws-sdk-go/internal/s3shared/arn
+github.com/aws/aws-sdk-go/internal/s3shared/s3err
+github.com/aws/aws-sdk-go/internal/sdkio
+github.com/aws/aws-sdk-go/internal/sdkmath
+github.com/aws/aws-sdk-go/internal/sdkrand
+github.com/aws/aws-sdk-go/internal/sdkuri
+github.com/aws/aws-sdk-go/internal/shareddefaults
+github.com/aws/aws-sdk-go/internal/strings
+github.com/aws/aws-sdk-go/internal/sync/singleflight
+github.com/aws/aws-sdk-go/private/checksum
+github.com/aws/aws-sdk-go/private/protocol
+github.com/aws/aws-sdk-go/private/protocol/eventstream
+github.com/aws/aws-sdk-go/private/protocol/eventstream/eventstreamapi
+github.com/aws/aws-sdk-go/private/protocol/json/jsonutil
+github.com/aws/aws-sdk-go/private/protocol/jsonrpc
+github.com/aws/aws-sdk-go/private/protocol/query
+github.com/aws/aws-sdk-go/private/protocol/query/queryutil
+github.com/aws/aws-sdk-go/private/protocol/rest
+github.com/aws/aws-sdk-go/private/protocol/restjson
+github.com/aws/aws-sdk-go/private/protocol/restxml
+github.com/aws/aws-sdk-go/private/protocol/xml/xmlutil
+github.com/aws/aws-sdk-go/service/s3
+github.com/aws/aws-sdk-go/service/sso
+github.com/aws/aws-sdk-go/service/sso/ssoiface
+github.com/aws/aws-sdk-go/service/sts
+github.com/aws/aws-sdk-go/service/sts/stsiface
+# github.com/beorn7/perks v1.0.1
+github.com/beorn7/perks/quantile
+# github.com/cespare/xxhash/v2 v2.1.2
+github.com/cespare/xxhash/v2
+# github.com/cihub/seelog v0.0.0-20170130134532-f561c5e57575
+github.com/cihub/seelog
+github.com/cihub/seelog/archive
+github.com/cihub/seelog/archive/gzip
+github.com/cihub/seelog/archive/tar
+github.com/cihub/seelog/archive/zip
+# github.com/cooleric/go-zookeeper v0.0.0-20180110082822-77d7ab8968c9
+github.com/cooleric/go-zookeeper/zk
+# github.com/garyburd/redigo v1.6.3
+github.com/garyburd/redigo/internal
+github.com/garyburd/redigo/redis
+# github.com/go-ole/go-ole v1.2.5
+github.com/go-ole/go-ole
+github.com/go-ole/go-ole/oleutil
+# github.com/go-redis/redis v6.15.9+incompatible
+## explicit
+github.com/go-redis/redis
+github.com/go-redis/redis/internal
+github.com/go-redis/redis/internal/consistenthash
+github.com/go-redis/redis/internal/hashtag
+github.com/go-redis/redis/internal/pool
+github.com/go-redis/redis/internal/proto
+github.com/go-redis/redis/internal/util
+# github.com/golang/protobuf v1.5.2
+## explicit
+github.com/golang/protobuf/proto
+github.com/golang/protobuf/protoc-gen-go/descriptor
+github.com/golang/protobuf/ptypes
+github.com/golang/protobuf/ptypes/any
+github.com/golang/protobuf/ptypes/duration
+github.com/golang/protobuf/ptypes/timestamp
+# github.com/hashicorp/errwrap v1.0.0
+github.com/hashicorp/errwrap
+# github.com/hashicorp/go-multierror v1.1.1
+github.com/hashicorp/go-multierror
+# github.com/jmespath/go-jmespath v0.4.0
+github.com/jmespath/go-jmespath
+# github.com/matttproud/golang_protobuf_extensions v1.0.2-0.20181231171920-c182affec369
+github.com/matttproud/golang_protobuf_extensions/pbutil
+# github.com/minio/blake2b-simd v0.0.0-20160723061019-3f5f724cb5b1
+github.com/minio/blake2b-simd
+# github.com/mitchellh/go-ps v1.0.0
+github.com/mitchellh/go-ps
+# github.com/prometheus/client_golang v1.11.0
+github.com/prometheus/client_golang/prometheus
+github.com/prometheus/client_golang/prometheus/internal
+# github.com/prometheus/client_model v0.2.0
+github.com/prometheus/client_model/go
+# github.com/prometheus/common v0.32.1
+github.com/prometheus/common/expfmt
+github.com/prometheus/common/internal/bitbucket.org/ww/goautoneg
+github.com/prometheus/common/model
+# github.com/prometheus/procfs v0.6.0
+github.com/prometheus/procfs
+github.com/prometheus/procfs/internal/fs
+github.com/prometheus/procfs/internal/util
+# github.com/pyroscope-io/dotnetdiag v1.2.1
+github.com/pyroscope-io/dotnetdiag
+github.com/pyroscope-io/dotnetdiag/nettrace
+github.com/pyroscope-io/dotnetdiag/nettrace/profiler
+github.com/pyroscope-io/dotnetdiag/nettrace/typecode
+# github.com/pyroscope-io/pyroscope v0.13.0
+## explicit
+github.com/pyroscope-io/pyroscope/pkg/agent
+github.com/pyroscope-io/pyroscope/pkg/agent/debugspy
+github.com/pyroscope-io/pyroscope/pkg/agent/dotnetspy
+github.com/pyroscope-io/pyroscope/pkg/agent/ebpfspy
+github.com/pyroscope-io/pyroscope/pkg/agent/gospy
+github.com/pyroscope-io/pyroscope/pkg/agent/phpspy
+github.com/pyroscope-io/pyroscope/pkg/agent/pprof
+github.com/pyroscope-io/pyroscope/pkg/agent/profiler
+github.com/pyroscope-io/pyroscope/pkg/agent/pyspy
+github.com/pyroscope-io/pyroscope/pkg/agent/rbspy
+github.com/pyroscope-io/pyroscope/pkg/agent/spy
+github.com/pyroscope-io/pyroscope/pkg/agent/types
+github.com/pyroscope-io/pyroscope/pkg/agent/upstream
+github.com/pyroscope-io/pyroscope/pkg/agent/upstream/remote
+github.com/pyroscope-io/pyroscope/pkg/convert
+github.com/pyroscope-io/pyroscope/pkg/flameql
+github.com/pyroscope-io/pyroscope/pkg/storage/dict
+github.com/pyroscope-io/pyroscope/pkg/storage/segment
+github.com/pyroscope-io/pyroscope/pkg/storage/tree
+github.com/pyroscope-io/pyroscope/pkg/structs/cappedarr
+github.com/pyroscope-io/pyroscope/pkg/structs/merge
+github.com/pyroscope-io/pyroscope/pkg/structs/sortedmap
+github.com/pyroscope-io/pyroscope/pkg/structs/transporttrie
+github.com/pyroscope-io/pyroscope/pkg/util/file
+github.com/pyroscope-io/pyroscope/pkg/util/process
+github.com/pyroscope-io/pyroscope/pkg/util/serialization
+github.com/pyroscope-io/pyroscope/pkg/util/throttle
+github.com/pyroscope-io/pyroscope/pkg/util/varint
+# github.com/samuel/go-zookeeper v0.0.0-20201211165307-7117e9ea2414
+github.com/samuel/go-zookeeper/zk
+# github.com/satori/go.uuid v1.2.0
+## explicit
+github.com/satori/go.uuid
+# github.com/shirou/gopsutil v3.21.4+incompatible
+github.com/shirou/gopsutil/cpu
+github.com/shirou/gopsutil/internal/common
+github.com/shirou/gopsutil/mem
+github.com/shirou/gopsutil/net
+github.com/shirou/gopsutil/process
+# github.com/shirou/gopsutil/v3 v3.21.7
+github.com/shirou/gopsutil/v3/cpu
+github.com/shirou/gopsutil/v3/internal/common
+# github.com/streadway/amqp v1.0.0
+## explicit
+github.com/streadway/amqp
+# github.com/tklauser/go-sysconf v0.3.7
+github.com/tklauser/go-sysconf
+# github.com/tklauser/numcpus v0.2.3
+github.com/tklauser/numcpus
+# github.com/valyala/bytebufferpool v1.0.0
+github.com/valyala/bytebufferpool
+# github.com/xfyun/finder-go v0.0.0-20220331051723-e16091b3b281
+github.com/xfyun/finder-go
+github.com/xfyun/finder-go/common
+github.com/xfyun/finder-go/companion
+github.com/xfyun/finder-go/errors
+github.com/xfyun/finder-go/log
+github.com/xfyun/finder-go/route
+github.com/xfyun/finder-go/storage
+github.com/xfyun/finder-go/storage/common
+github.com/xfyun/finder-go/storage/zookeeper
+github.com/xfyun/finder-go/utils/arrayutil
+github.com/xfyun/finder-go/utils/byteutil
+github.com/xfyun/finder-go/utils/fileutil
+github.com/xfyun/finder-go/utils/httputil
+github.com/xfyun/finder-go/utils/netutil
+github.com/xfyun/finder-go/utils/serviceutil
+github.com/xfyun/finder-go/utils/stringutil
+# github.com/xfyun/flange v0.0.0-20220331071834-05b49d1403f6
+github.com/xfyun/flange
+# github.com/xfyun/flume v0.0.0-20220331061655-38a49b5af7f9
+github.com/xfyun/flume
+# github.com/xfyun/lbClientPb v0.0.0-20220331063509-ef4be7a68a22
+github.com/xfyun/lbClientPb
+# github.com/xfyun/lb_client v0.0.0-20220331073237-7f0320449c11
+github.com/xfyun/lb_client
+# github.com/xfyun/lumberjack-ccr v0.0.0-20211213032130-b21985544bd2
+github.com/xfyun/lumberjack-ccr
+# github.com/xfyun/redisgo v0.0.0-20220331072549-8b4cfc76e532
+github.com/xfyun/redisgo
+# github.com/xfyun/sonar v0.0.0-20220331071109-0b7c3a371c9a
+github.com/xfyun/sonar
+# github.com/xfyun/thrift v0.0.0-20210423095925-0ef93ee2c654
+github.com/xfyun/thrift
+# github.com/xfyun/uuid v0.0.0-20220331052528-3a275a5702d5
+github.com/xfyun/uuid
+# github.com/xfyun/xsf v0.0.0-20220402010628-6507dace16c0
+## explicit
+github.com/xfyun/xsf/client
+github.com/xfyun/xsf/client/internal/metric_collector
+github.com/xfyun/xsf/client/internal/rolling
+github.com/xfyun/xsf/server
+github.com/xfyun/xsf/server/internal/bvt
+github.com/xfyun/xsf/server/internal/gauge
+github.com/xfyun/xsf/utils
+# go.uber.org/atomic v1.7.0
+go.uber.org/atomic
+# go.uber.org/multierr v1.6.0
+go.uber.org/multierr
+# go.uber.org/zap v1.21.0
+go.uber.org/zap
+go.uber.org/zap/buffer
+go.uber.org/zap/internal/bufferpool
+go.uber.org/zap/internal/color
+go.uber.org/zap/internal/exit
+go.uber.org/zap/zapcore
+# golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd
+golang.org/x/net/context
+golang.org/x/net/http/httpguts
+golang.org/x/net/http2
+golang.org/x/net/http2/hpack
+golang.org/x/net/idna
+golang.org/x/net/internal/timeseries
+golang.org/x/net/trace
+# golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e
+golang.org/x/sys/internal/unsafeheader
+golang.org/x/sys/unix
+golang.org/x/sys/windows
+# golang.org/x/text v0.3.7
+golang.org/x/text/encoding
+golang.org/x/text/encoding/internal
+golang.org/x/text/encoding/internal/identifier
+golang.org/x/text/encoding/unicode
+golang.org/x/text/internal/utf8internal
+golang.org/x/text/runes
+golang.org/x/text/secure/bidirule
+golang.org/x/text/transform
+golang.org/x/text/unicode/bidi
+golang.org/x/text/unicode/norm
+# golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac
+golang.org/x/time/rate
+# google.golang.org/genproto v0.0.0-20210602131652-f16073e35f0c
+google.golang.org/genproto/googleapis/rpc/status
+# google.golang.org/grpc v1.38.0
+google.golang.org/grpc
+google.golang.org/grpc/attributes
+google.golang.org/grpc/backoff
+google.golang.org/grpc/balancer
+google.golang.org/grpc/balancer/base
+google.golang.org/grpc/balancer/grpclb/state
+google.golang.org/grpc/balancer/roundrobin
+google.golang.org/grpc/binarylog/grpc_binarylog_v1
+google.golang.org/grpc/codes
+google.golang.org/grpc/connectivity
+google.golang.org/grpc/credentials
+google.golang.org/grpc/encoding
+google.golang.org/grpc/encoding/proto
+google.golang.org/grpc/grpclog
+google.golang.org/grpc/internal
+google.golang.org/grpc/internal/backoff
+google.golang.org/grpc/internal/balancerload
+google.golang.org/grpc/internal/binarylog
+google.golang.org/grpc/internal/buffer
+google.golang.org/grpc/internal/channelz
+google.golang.org/grpc/internal/credentials
+google.golang.org/grpc/internal/envconfig
+google.golang.org/grpc/internal/grpclog
+google.golang.org/grpc/internal/grpcrand
+google.golang.org/grpc/internal/grpcsync
+google.golang.org/grpc/internal/grpcutil
+google.golang.org/grpc/internal/metadata
+google.golang.org/grpc/internal/resolver
+google.golang.org/grpc/internal/resolver/dns
+google.golang.org/grpc/internal/resolver/passthrough
+google.golang.org/grpc/internal/resolver/unix
+google.golang.org/grpc/internal/serviceconfig
+google.golang.org/grpc/internal/status
+google.golang.org/grpc/internal/syscall
+google.golang.org/grpc/internal/transport
+google.golang.org/grpc/internal/transport/networktype
+google.golang.org/grpc/keepalive
+google.golang.org/grpc/metadata
+google.golang.org/grpc/peer
+google.golang.org/grpc/reflection
+google.golang.org/grpc/reflection/grpc_reflection_v1alpha
+google.golang.org/grpc/resolver
+google.golang.org/grpc/serviceconfig
+google.golang.org/grpc/stats
+google.golang.org/grpc/status
+google.golang.org/grpc/tap
+# google.golang.org/protobuf v1.28.0
+google.golang.org/protobuf/encoding/prototext
+google.golang.org/protobuf/encoding/protowire
+google.golang.org/protobuf/internal/descfmt
+google.golang.org/protobuf/internal/descopts
+google.golang.org/protobuf/internal/detrand
+google.golang.org/protobuf/internal/encoding/defval
+google.golang.org/protobuf/internal/encoding/messageset
+google.golang.org/protobuf/internal/encoding/tag
+google.golang.org/protobuf/internal/encoding/text
+google.golang.org/protobuf/internal/errors
+google.golang.org/protobuf/internal/filedesc
+google.golang.org/protobuf/internal/filetype
+google.golang.org/protobuf/internal/flags
+google.golang.org/protobuf/internal/genid
+google.golang.org/protobuf/internal/impl
+google.golang.org/protobuf/internal/order
+google.golang.org/protobuf/internal/pragma
+google.golang.org/protobuf/internal/set
+google.golang.org/protobuf/internal/strs
+google.golang.org/protobuf/internal/version
+google.golang.org/protobuf/proto
+google.golang.org/protobuf/reflect/protodesc
+google.golang.org/protobuf/reflect/protoreflect
+google.golang.org/protobuf/reflect/protoregistry
+google.golang.org/protobuf/runtime/protoiface
+google.golang.org/protobuf/runtime/protoimpl
+google.golang.org/protobuf/types/descriptorpb
+google.golang.org/protobuf/types/known/anypb
+google.golang.org/protobuf/types/known/durationpb
+google.golang.org/protobuf/types/known/timestamppb
+# stathat.com/c/consistent v1.0.0
+stathat.com/c/consistent

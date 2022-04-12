@@ -1,0 +1,1 @@
+protoc --gofast_out=plugins=grpc:. xsf.proto

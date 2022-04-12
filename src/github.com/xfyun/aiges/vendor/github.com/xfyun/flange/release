@@ -1,0 +1,72 @@
+v1.1.0
+1. add metric process for flange;
+2. update spill logical for spill-[data] & spill-[idx];
+
+v1.0.6
+1. add spill logical with full spanId and batch size record header;
+
+v1.0.5
+1. add full spanId into record header;
+2. add batch size into record header with format `#size`;
+3. add catch error stack log, more catch in serialize;
+
+v1.0.4
+1. remove service info fields check in `Init()`, just have `setGlobalConfig()`;
+2. check `serviceIP` and `servicePort` in `setGlobalConfig()`;
+
+v1.0.3
+1. remove `serviceIP` and `servicePort` check in `Init()`;
+2. move `setGlobalConfig()` before init-times-check;
+
+v1.0.2
+1. add invalid service info fields check in `Init()`;
+
+v1.0.1
+1. move spill meta info from `SerializeSpans` to `spillSpan`;
+
+v1.0.0
+1. rebuild flange based on `batch_pb_serialize` and `batch_thrift_sending`;
+
+v0.2.12
+1. add 'WithRpcCallType()' to set 'call.type' = 'rpc' tag;
+
+v0.2.11
+1. add `WithRpcComponent()` to support rpc tag;
+
+v0.2.10
+1. add 'span_version' into each span for post-process;
+
+v0.2.9
+1. update traceId ip address to  `bcluster` and `idc` with format [04d%idc];
+
+v0.2.8
+1. update span with `traceSpans` to support baseSpan batch flush;
+
+v0.2.7
+1. reset `sequeue` to `channel`;
+2. reset `ringbuffer` to raw span init, and `time.Now()` in call;
+
+v0.2.6
+1. update `seQueue` to use single `Node` saving value(*Span);
+2. add `inQueue` into Span to indicate flushed;
+3. remove spanId check;
+
+v0.2.5
+1. update for-condition from len > 0 to get nil, check may fix hang;
+2. check for valid span in consumer/spill goroutine with len(id) > 0;
+3. remove unlimit sequeue insert;
+
+v0.2.4
+1. add span retrieve debug interface;
+2. fix bug for genInputSeQueue cache fixed spans of capacity;
+
+v0.2.3
+1. check flume connection before reverse spill append msg;
+2. check consumer batch size before next assign;
+3. add more metric content;
+4. add `flange` as a flag to all log;
+
+v0.2.2
+1. add check for `genOutputRingBuffer`;
+2. add check for `FromMeta`;
+3. check flume connection before append msg;

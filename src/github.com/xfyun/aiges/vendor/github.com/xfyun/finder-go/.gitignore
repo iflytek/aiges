@@ -1,0 +1,12 @@
+*.idea
+*.iml
+*.class
+*.log
+*.jar
+*.DS_Store
+.vscode
+debug
+findercache
+*.findercache
+libfinder.so
+*.out

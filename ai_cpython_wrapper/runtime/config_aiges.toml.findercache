@@ -1,0 +1,104 @@
+[mocksvc] #服务配置;section与服务名匹配;
+finder = 1
+#host = "127.0.0.1"
+port = 5090    #缺省：随机端口
+
+[aiges] #统一引擎相关通用配置;
+gesMock = false
+sessMode = false
+numaNode = 0
+realTimeRlt = false
+usrCfg = ""
+sub = "common"
+catchOn=false
+catchDump=true
+
+[wrapper] #wrapper示例配置
+"common.lic" = "10"
+"resource./msp/resource/sms/acmod_16KPowerFlt_sms_RNN.bin" = "HMM_16K"
+"resource./msp/resource/sms/wfst.bin" = "WFST"
+
+[auth]
+meterCtrl = true
+janusCtrl = true
+
+[resource]
+able = true
+capacity=0
+memory=0
+ageing=500000
+baseId=1000
+channel=1
+tags="type"
+
+host="http://xrpc.xfyun.cn:8099/"
+index="http://10.1.87.51:9005/individuation/iat/search_frame_index"
+indexV2=""
+patchNotify=false
+patchRedisHost="172.31.243.215:16379,172.31.243.215:16380,172.31.243.215:16381,172.31.243.215:16382,172.31.243.215:16383,172.31.243.215:16384"
+patchRedisPass="12345678"
+patchCapacity=100
+
+
+[elog]
+elogRemote = true
+elogLocal = false
+elogHost = "10.1.86.76"
+elogPort = "4545"
+elogXml = "seelog.xml"
+elogSpill = "/log/server/iatspill"
+elogS3ak = "W3SBNK9CAP32EJX2E531"
+elogS3sk = "dXaAFrtOfsmsVjmbzUEOe7RrnUkNHBoGClw55WW2"
+elogS3ep = "oss-beijing-dz-internal.openstorage.cn"
+elogZkhost = "10.1.86.75:2181,10.1.86.76:2181,10.1.86.77:2181"
+elogConsumerNum = 10
+
+[log]
+level = "debug"
+file = "./log/aiges.log"
+size = 30
+count = 3
+die = 3
+async = 0
+caller=1
+
+[lbv2]
+lbname = "lb-niche"    #传给服务发现，用来确定使用哪个lb       程序启动时候-m=1表示使用服务发现来寻找Lb
+able = 0
+sub = "sub"
+subsvc = "svc"
+apiversion = "1.0.0"
+conn-timeout = 100
+conn-pool-size = 20        #rpc连接池数量。缺省4
+lb-mode= 0  #0禁用lb,2使用lb。缺省0      ats只是上报lb,不使用lb，所以设为0
+lb-retry = 2
+taddrs="lbv2@10.1.87.68:9095"    #不使用服务发现时候使用的默认lb地址
+
+[fc]    #xrpc flowControl
+able = 1
+router = "sessionManager"   #路由字段，可选项为sessionManager和qpsLimiter
+max = 20                   #会话模式时代表最大的授权量，非会话模式代表间隔时间里的最大请求数
+ttl = 10000                  #会话模式代表会话的超时时间，非会话模式代表有效期（间隔时间）
+best = 20                   #最佳授权数
+roll = 5000
+strategy = 2                 #可选值为0、1、2（缺省为0），0.代表定时上报(v1)；1.根据授权范围上报(v1)；2.基于hermes(v2)
+
+[trace]
+host = "10.1.86.76"
+port = 4545
+able = 1
+deliver = 1 #缺省1
+dump = 1
+backend = 2
+buffer=2000
+bcluster = "5s"
+idc = "hf"
+loadts = 1000000
+
+[sonar]
+able = 1
+
+[pprof]
+able=true
+host="0.0.0.0"
+port=12345
