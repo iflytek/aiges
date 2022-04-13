@@ -17,7 +17,7 @@ def wrapperInit(config: {}) -> int:
     logger.info("model initializing...")
     logger.info("engine config %s" % str(config))
     global model
-    model = torch.hub.load('.', 'yolov5s', source="local", pretrained=True)
+    model = torch.hub.load('/home/yolov5', 'yolov5s', source="local", pretrained=True)
     logger.info("init success")
     return 0
 
