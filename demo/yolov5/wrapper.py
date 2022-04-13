@@ -12,14 +12,14 @@ config的值是由aiges.toml中[wrapper]各段设置的
 model = None
 
 logger = flags.logger
+model = torch.hub.load('.', 'yolov5s', source="local", pretrained=True)
 
 def wrapperInit(config: {}) -> int:
     logger.info("model initializing...")
     logger.info("engine config %s" % str(config))
     global model
-    model = torch.hub.load('/home/yolov5', 'yolov5s', source="local", pretrained=True)
 
-    logger.info("init success", flush=True)
+    logger.info("init success")
     return 0
 
 
