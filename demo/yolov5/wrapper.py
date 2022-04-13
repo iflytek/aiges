@@ -2,6 +2,7 @@ import torch
 import numpy as np
 from PIL import Image
 import io
+import flags
 
 '''
 初始化
@@ -10,13 +11,15 @@ config的值是由aiges.toml中[wrapper]各段设置的
 
 model = None
 
+logger = flags.logger
 
 def wrapperInit(config: {}) -> int:
-    print("model initializing...")
+    logger.info("model initializing...")
+    logger.info("engine config %s" % str(config))
     global model
     model = torch.hub.load('/home/yolov5', 'yolov5s', source="local", pretrained=True)
 
-    print("init success", flush=True)
+    logger.info("init success", flush=True)
     return 0
 
 
@@ -26,7 +29,7 @@ def wrapperInit(config: {}) -> int:
 
 
 def wrapperFini() -> int:
-    print("fini success", flush=True)
+    logger.info("fini success", flush=True)
     return 0
 
 
