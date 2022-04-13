@@ -114,6 +114,7 @@ int callWrapperExec(const char *usrTag, pParamList params, pDataList reqData, pD
             errRlt = log_python_exception();
             if (errRlt != "")
             {
+                PyErr_Print();
                 spdlog::error("wrapperExec error:{},sid:{}", errRlt, sid);
             }
             Py_DECREF(pArgsT);
@@ -221,6 +222,7 @@ int callWrapperExec(const char *usrTag, pParamList params, pDataList reqData, pD
         errRlt = log_python_exception();
         if (errRlt != "")
         {
+            PyErr_Print();
             spdlog::error("wrapperExec error:{}, ret:{},sid:{}", errRlt, ret, sid);
         }
         ret = WRAPPER::CError::innerError;

@@ -137,7 +137,7 @@ int callWrapperInit(pConfig cfg)
     {
         PyErr_Print(); 
         std::cout << log_python_exception << std::endl;
-	std::cout << "not found  wrapper.py " << std::endl;
+	    std::cout << "not found  wrapper.py " << std::endl;
         PyGILState_Release(gstate);
         return WRAPPER::CError::innerError;
     }
@@ -145,6 +145,7 @@ int callWrapperInit(pConfig cfg)
     PyObject *initFunc = PyObject_GetAttrString(wrapperModule, "wrapperInit");
     if (!initFunc || !PyCallable_Check(initFunc))
     {
+        PyErr_Print();
         std::cout << log_python_exception << std::endl;
         PyGILState_Release(gstate);
         return WRAPPER::CError::NotImplementInit;
@@ -176,6 +177,8 @@ int callWrapperInit(pConfig cfg)
             if (errRlt != "")
             {
                 spdlog::error("wrapperInit error:{}", errRlt);
+                PyErr_Print();
+
             }
             ret = WRAPPER::CError::innerError;
         }
