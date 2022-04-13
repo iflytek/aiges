@@ -1,0 +1,36 @@
+# 定义docker_tag镜像版本号
+# 研测基于CI_PIPELINE_ID
+# 上线基于branch日期版本
+variables:
+  docker_tag : v$CI_PIPELINE_ID
+
+# 定义Pipeline过程
+stages:
+- build
+before_script:
+  - docker info
+  - docker login -u $CI_DOCKER_USERNAME -p $CI_DOCKER_PASSWORD artifacts.iflytek.com/docker-private
+
+
+# 基础镜像构建
+baseloader:
+  stage: build
+  script:
+    - docker build . -f Dockerfile_bullseye -t artifacts.iflytek.com/docker-private/atp/py_loader:py39
+    - docker push artifacts.iflytek.com/docker-private/atp/py_loader:"$CI_COMMIT_TAG":py39
+  only:
+    - py39
+  tags:
+    - atp
+
+# demo镜像
+test-build-dev:
+  stage: build
+  script:
+    - docker build  -t artifacts.iflytek.com/docker-private/atp/awake/awaken_discern_simulate_v2:"$docker_tag" .
+    - docker push artifacts.iflytek.com/docker-private/atp/awake/awaken_discern_simulate_v2:"$docker_tag"
+  only:
+    - atp
+  tags:
+  - atp
+
