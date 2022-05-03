@@ -1,4 +1,3 @@
-import torch
 import numpy as np
 from PIL import Image
 import io
@@ -43,7 +42,6 @@ def wrapperOnceExec(usrTag: str, params: {}, reqData: [], respData: [], psrIds: 
     img = np.array(Image.open(io.BytesIO(reqData[0]["data"])).convert('RGB'))
     global model
     rlt = model.readtext(img)
-    print(rlt)
     respData.append(rlt)
     print(respData, flush=True)
     return 0

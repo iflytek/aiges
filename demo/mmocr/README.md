@@ -32,7 +32,7 @@ git clone https://github.com/open-mmlab/mmocr.git
 
 根据官方引导， 我们基于 ase py39 docker镜像进行推理镜像构建
 
-### CPU推理
+### MMOCR CPU推理镜像构建
 
 ```dockerfile
 # 基于py加载器镜像
@@ -74,6 +74,74 @@ COPY xtest.toml /home/aiges
 COPY xtest /home/aiges/xtest
 COPY aiges.toml /home/aiges
 CMD ["sh", "-c", "./AIservice -m=0 -c=aiges.toml -s=svcName -u=http://companion.xfyun.iflytek:6868 -p=AIaaS -g=dx"]
+
+```
+
+### wrapper.py 编写
+
+```python
+import numpy as np
+from PIL import Image
+import io
+import flags
+from mmocr.utils.ocr import MMOCR
+# 导入 推理所需要的一些库以及一些工具工具
+'''
+初始化
+config的值是由aiges.toml中[wrapper]各段设置的
+'''
+
+model = None
+
+logger = flags.logger
+
+def wrapperInit(config: {}) -> int:
+    # init中实现 全局model/引擎初始化
+    logger.info("model initializing...")
+    logger.info("engine config %s" % str(config))
+    global model
+    # Load models into memory
+    model = MMOCR(det='TextSnake', recog=None)
+    logger.info("init success")
+    return 0
+
+
+'''
+逆初始化
+'''
+
+
+def wrapperFini() -> int:
+    logger.info("fini success", flush=True)
+    return 0
+
+
+'''
+once接口执行函数
+当为once类型接口调用时会调用此接口
+'''
+def wrapperOnceExec(usrTag: str, params: {}, reqData: [], respData: [], psrIds: [], psrCnt: int) -> int:
+    # 转换请求过来的图片为 ndarray
+    img = np.array(Image.open(io.BytesIO(reqData[0]["data"])).convert('RGB'))
+    global model
+    # 调用mmocr的 model推理模块进行推理
+    rlt = model.readtext(img)
+    respData.append(rlt)
+    print(respData, flush=True)
+    return 0
+
+
+'''
+根据不同错误码返回不同的错误描述
+'''
+
+def wrapperError(ret: int) -> str:
+    if ret == 10013:
+        return "reqData is empty"
+    elif ret == 10001:
+        return "load onnx model failed"
+    else:
+        return "other error code"
 
 ```
 
