@@ -69,6 +69,7 @@ const char *callWrapperError(int ret)
         if (pRet == NULL)
         {
             std::string errRlt = "";
+            PyErr_Print();
             errRlt = log_python_exception();
             if (errRlt != "")
             {
@@ -87,6 +88,7 @@ const char *callWrapperError(int ret)
     catch (const std::exception &e)
     {
         std::string errRlt = "";
+		PyErr_Print();
         errRlt = log_python_exception();
         if (errRlt != "")
         {
@@ -173,6 +175,7 @@ int callWrapperInit(pConfig cfg)
         if (pRet == NULL)
         {
             std::string errRlt = "";
+            PyErr_Print();
             errRlt = log_python_exception();
             if (errRlt != "")
             {
@@ -191,6 +194,7 @@ int callWrapperInit(pConfig cfg)
     catch (const std::exception &e)
     {
         std::string errRlt = "";
+        PyErr_Print();
         errRlt = log_python_exception();
         if (errRlt != "")
         {
@@ -230,7 +234,9 @@ int callWrapperFini()
         PyObject *pRet = PyEval_CallObject(FiniFunc, NULL);
         if (pRet == NULL)
         {
+
             std::string errRlt = "";
+            PyErr_Print();
             errRlt = log_python_exception();
             if (errRlt != "")
             {
@@ -247,6 +253,7 @@ int callWrapperFini()
     }
     catch (const std::exception &e)
     {
+        PyErr_Print();
         std::string errRlt = "";
         errRlt = log_python_exception();
         if (errRlt != "")
