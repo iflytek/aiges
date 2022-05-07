@@ -18,16 +18,18 @@
 
 ## 开源计划
 
-- [x] [加载器](#AIGes) 通用引擎/模型加载器
-- [x] [负载均衡器](#LoadBalance) 负载聚合组件
-- [ ] [WebGate](#Webgate) Web网关组件
-- [x] [Polaris](#Polaris) 配置中心与服务发现
-- [ ] [Atom](#Atom) 协议转换组件
-- [ ] Serving on Kubernetes Helm Chart一键部署 (进行中)
-- [ ] Serving on Docker with docker-compose 一键部署
-- [ ] 各组件Documentation建设 (进行中)
-- [ ] 多领域模型Demo演示示例、GIF (进行中)
-- [x] AIServing [API](#API协议) AI能力协议规范
+| 任务项 |目标 |时间 |
+|-----|-----|-----|
+|- [x] [加载器](#AIGes) 通用引擎/模型加载器|
+|- [x] [负载均衡器](#LoadBalance) 负载聚合组件|
+|- [ ] [WebGate](#Webgate) Web网关组件|
+|- [x] [Polaris](#Polaris) 配置中心与服务发现|
+|- [ ] [Atom](#Atom) 协议转换组件|
+|- [ ] Serving on Kubernetes Helm Chart一键部署 (进行中)|
+|- [ ] Serving on Docker with docker-compose 一键部署|
+|- [ ] 各组件Documentation建设 (进行中)|
+|- [ ] 多领域模型Demo演示示例、GIF (进行中)|
+|- [x] AIServing [API](#API协议) AI能力协议规范|
 
 
 
