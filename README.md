@@ -25,19 +25,13 @@ View Doc on [Documentation](https://xfyun.github.io/inferservice/architechture/a
 ## Features
 
 
--[X] 支持模型推理成RPC服务(Serving框架会转成HTTP服务)
-
--[X] 支持C代码推理 support c++/c code infer
-
--[X] 支持Python代码推理 Support python code infer
-
--[X] 支持配置中心，服务发现
-
--[X] 支持负载均衡配置
-
--[ ] 支持Java代码推理或者其它
-
--[ ] 支持计量授权
+- [x] 支持模型推理成RPC服务(Serving框架会转成HTTP服务)
+- [x] 支持C代码推理 support c++/c code infer
+- [x] 支持Python代码推理 Support python code infer
+- [x] 支持配置中心，服务发现
+- [x] 支持负载均衡配置
+- [ ] 支持Java代码推理或者其它
+- [ ] 支持计量授权
  
 
 
