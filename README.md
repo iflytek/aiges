@@ -18,7 +18,7 @@
 
 ## 开源计划
 
-- [x] [加载器](#AI General Engine Service (AIges)) 通用引擎/模型加载器
+- [x] [加载器](#AI General Engine Service) 通用引擎/模型加载器
 - [x] [负载均衡器](#LoadBalance) 负载聚合组件
 - [ ] [WebGate](#Webgate) Web网关组件
 - [x] [Polaris](#Polaris) 配置中心与服务发现
