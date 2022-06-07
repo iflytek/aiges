@@ -1,0 +1,214 @@
+{
+  "meta": {
+    "serviceId": "mmocr",
+    "version": "v1.0",
+    "service": ["mmocr"],
+    "sub": "ase",
+    "call": "atmos",
+    "call_type": "0",
+    "webgate_type": 0,
+    "hosts": "api.xf-yun.com",
+    "route": "/v1/private/sc0a44ca9",
+    "mmocr": {
+      "input": {
+        "data": {
+          "dataType": "image"
+        }
+      },
+      "accept": {
+        "boxes": {
+          "dataType": "text"
+        }
+      }
+    },
+    "routeKey": []
+  },
+  "schemainput": {
+    "type": "object",
+    "properties": {
+      "header": {
+        "type": "object",
+        "properties": {
+          "directEngIp": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 1024
+          },
+          "app_id": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 50
+          },
+          "uid": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 50
+          },
+          "did": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 50
+          },
+          "imei": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 50
+          },
+          "imsi": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 50
+          },
+          "mac": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 50
+          },
+          "net_type": {
+            "type": "string",
+            "enum": ["wifi", "2G", "3G", "4G", "5G"]
+          },
+          "net_isp": {
+            "type": "string",
+            "enum": ["CMCC", "CUCC", "CTCC", "other"]
+          },
+          "status": {
+            "type": "integer",
+            "enum": [3]
+          },
+          "request_id": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 64
+          },
+          "res_id": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 1024
+          },
+          "data_cleaner_ttl": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 13
+          },
+          "patch_id": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 1024
+            }
+          }
+        },
+        "required": ["app_id", "status"]
+      },
+      "parameter": {
+        "type": "object",
+        "properties": {
+          "mmocr": {
+            "type": "object",
+            "properties": {
+              "category": {
+                "type": "string",
+                "enum": ["en_phfw_chapter"]
+              },
+              "application_mode": {
+                "type": "string",
+                "enum": ["common_gpu"]
+              },
+              "gpu_id": {
+                "type": "string",
+                "enum": ["first"]
+              },
+              "gpu_type": {
+                "type": "string",
+                "enum": ["T4G16"]
+              },
+              "boxes": {
+                "type": "object",
+                "properties": {
+                  "encoding": {
+                    "type": "string",
+                    "enum": ["utf8", "gb2312"]
+                  },
+                  "compress": {
+                    "type": "string",
+                    "enum": ["raw", "gzip"]
+                  },
+                  "format": {
+                    "type": "string",
+                    "enum": ["plain", "json", "xml"]
+                  }
+                }
+              }
+            },
+            "required": ["category", "application_mode", "gpu_id", "gpu_type"]
+          }
+        }
+      },
+      "payload": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "encoding": {
+                "type": "string",
+                "enum": ["jpg", "png", "bmp", "jpeg"]
+              },
+              "image": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 10485760
+              },
+              "status": {
+                "type": "integer",
+                "enum": [3]
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "schemaoutput": {
+    "type": "object",
+    "properties": {
+      "payload": {
+        "type": "object",
+        "properties": {
+          "boxes": {
+            "type": "object",
+            "properties": {
+              "encoding": {
+                "type": "string",
+                "enum": ["utf8", "gb2312"]
+              },
+              "compress": {
+                "type": "string",
+                "enum": ["raw", "gzip"]
+              },
+              "format": {
+                "type": "string",
+                "enum": ["plain", "json", "xml"]
+              },
+              "status": {
+                "type": "integer",
+                "enum": [0, 1, 2]
+              },
+              "seq": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9999999
+              },
+              "text": {
+                "type": "string",
+                "minLength": 0,
+                "maxLength": 1048576
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
