@@ -15,5 +15,10 @@ bulid:
 clean:
 	rm -rf bin
 
-unpack:
+pack:
 	tar -acvf aiservice.tar.gz ./bin
+	mkdir -p dist
+	mv aiservice.tar.gz dist
+
+dist: build pack
+
