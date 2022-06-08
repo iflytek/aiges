@@ -1,3 +1,0 @@
-// +build nogospy
-
-package gospy
