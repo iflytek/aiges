@@ -1,4 +1,4 @@
-# Athena Serving
+# AI Service Engine
 
 <!-- markdownlint-disable MD033 -->
 
@@ -9,8 +9,8 @@
 <!-- markdownlint-restore -->
 
 ## 背景
->
-> 
+>引擎托管平台（AI Service Engine）是一个专为AI能力开发者打造的AI算法引擎的无服务全托管式平台，您可以通过集成ASE中提供的插件，快速的部署AI算法引擎，并使用网络、分发策略、数据处理等配套辅助系统。引擎托管平台致力于加速AI算法引擎云服务化，并借助云原生架构，为云服务的稳定提供多重保障，您无需关注底层基础设施及服务化相关的开发、治理和运维，即可高效、安全对引擎进行部署、升级、扩缩、运营和监控。
+
 ## 整体架构
 ![img](https://raw.githubusercontent.com/xfyun/proposals/main/athenaloader/athena.png)
 
@@ -35,14 +35,6 @@
 |&#9744; AIServing [API](#API协议) AI能力协议规范|完善开源协议说明，schema自动生成、校验工具|2022/Q3|
 |&#9744; AseCTl命令行工具 [API](#Asectl) 命令行工具|支持能力一键生成，运行，配置管理等|2022/Q4|
 
-## 安装
-
-这个项目使用 [node](http://nodejs.org) 和 [npm](https://npmjs.com)。请确保你本地安装了它们。
-
-```sh
-$ npm install --global standard-readme-spec
-```
-
 ## 使用说明
 
 ### AIGes (AI General Engine Service)
@@ -65,7 +57,7 @@ View Doc on [Documentation](https://xfyun.github.io/inferservice/architechture/a
 
 ### AIGes 项目编译
 ```
-cd xunfei/athenaloader/src/github.com/xfyun/aiges/
+cd athenaloader/
 make
 ```
 
