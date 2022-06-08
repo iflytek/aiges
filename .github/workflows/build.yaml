@@ -24,7 +24,9 @@
             go-version: 1.17
         - name: Build aiges
           run: |
-            make build-release
+            make clean
+            make
+            make pack
         
           
 
