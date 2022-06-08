@@ -1,4 +1,5 @@
 .idea
+dist/
 demo/yolov5/utils/__pycache__/
 bin/
 
