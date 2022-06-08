@@ -26,13 +26,10 @@ rm -rf $$TMP_DIR ;\
 }
 endef
 
-
-
 install-goreleaser: ## check license if not exist install go-lint tools
 	#goimports -l -w cmd
 	#goimports -l -w pkg
 	$(call go-get-tool,$(GORELEASER_BIN),github.com/goreleaser/goreleaser@v1.6.3)
-
 
 build:
 	mkdir bin
