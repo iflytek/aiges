@@ -5,7 +5,7 @@ RUN  pip3 config set global.index-url https://pypi.mirrors.ustc.edu.cn/simple/
 RUN pip3 install torch==1.10  torchvision 
 RUN  apt install -y  libgl1-mesa-glx && pip3 install openmim && \
     mim install mmcv-full && \
-    mim install mmdet
+    mim install mmdet==2.24.0
 
 copy mmocr /home/mmocr
 

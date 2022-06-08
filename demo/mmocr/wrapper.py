@@ -3,6 +3,7 @@ from PIL import Image
 import io
 import flags
 from mmocr.utils.ocr import MMOCR
+import json
 
 '''
 初始化
@@ -41,8 +42,10 @@ once接口执行函数
 def wrapperOnceExec(usrTag: str, params: {}, reqData: [], respData: [], psrIds: [], psrCnt: int) -> int:
     img = np.array(Image.open(io.BytesIO(reqData[0]["data"])).convert('RGB'))
     global model
-    rlt = model.readtext(img)
-    respData.append(rlt)
+    rlt = model.readtext(img,details=True)
+    rlt = json.dumps(rlt)
+    respData.append({"key": "boxes", "data": rlt, "len": len(rlt), "status": 3, "type": 0})
+    #respData.append(rlt)
     print(respData, flush=True)
     return 0
 
