@@ -1,9 +1,9 @@
-  name:Github Action WorkFlows
+  name: Github Action WorkFlows
   on:
     push:
-      branches: [ "*" ]
+      branches: [ master ]
     pull_request:
-      branches: [ "*" ]
+      branches: [ master ]
       paths-ignore:
         - '*.md'
         - '*.yml'
