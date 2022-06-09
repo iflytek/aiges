@@ -29,12 +29,12 @@ jobs:
           make
           make pack
 
-      - name: create-release
-        uses: ncipollo/release-action@v1
+      - name: Upload to release
+        uses: JasonEtco/upload-to-release@master
         with:
-          artifacts: "dist/aiservice.tar.gz"
-          # bodyFile: "body.md"
-          token: ${{ secrets.TOKEN }}
+          args: dist/aiservice.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
 
           
 
