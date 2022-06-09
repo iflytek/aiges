@@ -28,13 +28,7 @@ jobs:
           make clean
           make
           make pack
-
-      - name: Upload to release
-        uses: JasonEtco/upload-to-release@master
-        with:
-          args: dist/aiservice.tar.gz
-        env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+          make build-release
 
           
 
