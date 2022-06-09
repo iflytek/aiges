@@ -27,6 +27,12 @@
             make clean
             make
             make pack
+        -name: create-release
+        - uses: ncipollo/release-action@v1
+        with:
+          artifacts: "dist/aiservice.tar.gz"
+          # bodyFile: "body.md"
+          token: ${{ secrets.TOKEN }}
         
           
 
