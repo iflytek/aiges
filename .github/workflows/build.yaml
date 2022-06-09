@@ -27,7 +27,7 @@
             make clean
             make
             make pack
-        -name: create-release
+        - name: create-release
         - uses: ncipollo/release-action@v1
         with:
           artifacts: "dist/aiservice.tar.gz"
