@@ -82,13 +82,89 @@ View Doc on [Documentation](https://xfyun.github.io/inferservice/architechture/a
 ### Features
 
 &#9745; 支持模型推理成RPC服务(Serving框架会转成HTTP服务)
+
 &#9745; 支持C代码推理 support c++/c code infer
+
 &#9745; 支持Python代码推理 Support python code infer
+
 &#9745; 支持配置中心，服务发现
+
 &#9745; 支持负载均衡配置
+
 &#9744; 支持Java代码推理或者其它
+
 &#9744; 支持计量授权
 
 ### Protocol
 
 参见: [ase-proto](https://github.com/xfyun/ase_protocol)
+
+
+### 开源版docker镜像
+
+#### 基础镜像
+
+基础镜像中提供
+
+- 基础的编译好的 Python加载器AIService(包含支持python的libwrapper.so), 目录结构如下
+
+    加载器默认放置于 容器/home/aiges 目录
+    ```bash
+    root@e38a9aacc355:/home/aiges# pwd
+    /home/aiges
+    root@e38a9aacc355:/home/aiges# ls -l /home/aiges/
+    total 18760
+    -rwxr-xr-x 1 root root 19181688 Jun 10 15:30 AIService
+    -rw-r--r-- 1 root root     2004 Jun 10 18:15 aiges.toml
+    drwxr-xr-x 3 root root     4096 Jun 10 15:30 include
+    drwxrwxrwx 1 root root     4096 Jun 10 15:31 library
+    drwxr--r-- 2 root root     4096 Jun 10 18:16 log
+    -rw-r--r-- 1 root root       96 Jun 10 18:15 start_test.sh
+    drwxr-xr-x 2 root root     4096 Jun 10 18:16 xsf_status
+    drwxr-xr-x 2 root root     17711057 Jun 10 18:16 xtest
+    -rw-r--r-- 1 root root     4232 Jun 10 17:54 xtest.toml
+    ```
+    其中 aiges.toml 用于本地启动测试使用
+
+- Python环境: 不推荐用户后续镜像构建修改Python版本
+
+#### 业务镜像
+
+业务镜像一般需要用户自己编写Dockerfile构建，业务镜像中用户可以根据场景需要定制安装
+
+- 推理运行时，如onnxruntime、torch vision等
+
+- gpu驱动，cuda，cudnn等驱动
+
+
+示例Dockerfile地址为
+
+* [openmmlab_mmocr](https://github.com/xfyun/aiges/blob/master/demo/mmocr/Dockerfile_cpu)
+* [yolov5](https://github.com/xfyun/aiges/blob/master/demo/yolov5/Dockerfile)
+
+
+### 注意事项
+
+* 示例尚未提供gpu runtime安装方法
+
+* 用户的python插件需要自行定义一个目录放置， 如上述的 /home/mmocr , /home/yolov5, 且该位置需要像
+
+https://github.com/xfyun/aiges/blob/master/demo/mmocr/Dockerfile_cpu#L23 
+
+声明PYTHONPATH指向该位置
+
+* 插件wrapper.py 当前只支持非流式
+
+* 插件wrapper.py 当前只支持返回,需要用户显式在插件中定义
+
+```json
+{"key": "boxes", "data": rlt, "len": len(rlt), "status": 3, "type": 0}
+```
+该结构数据
+
+* 上条rlt 当前只支持单层数据，即不支持object嵌套，如果用户返回json，此处需要先把rlt dumps成文本再返回 
+
+
+
+
+
