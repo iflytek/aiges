@@ -6,10 +6,11 @@ RUN apt-get update && apt-get install -y libnuma-dev build-essential
 COPY . /home/aiges
 WORKDIR /home/aiges
 
-RUN mkdir -p output/include && go mod vendor && go build -v -o ./output/AIservice -gcflags "-N -l -c 10" main/main.go && \
-    cp ./cgo/header/widget/* ./output/include/ && \
-    cp  -r ./cgo/library/* ./output/
-  
+#RUN mkdir -p output/include && go mod vendor && go build -v -o ./output/AIservice -gcflags "-N -l -c 10" main/main.go && \
+#    cp ./cgo/header/widget/* ./output/include/ && \
+#    cp  -r ./cgo/library/* ./output/
+
+RUN make build-pack
 
 FROM artifacts.iflytek.com/docker-private/atp/python:3.9.12-bullseye as cpython-builder
 MAINTAINER ybyang7@iflytek.com
@@ -39,5 +40,5 @@ MAINTAINER ybyang7@iflytek.com
 ENV TZ Asia/Shanghai
 RUN DEBIAN_FRONTEND=noninteractive apt update &&apt install -y libnuma-dev libboost-all-dev
 WORKDIR /home/aiges
-COPY --from=go-builder /home/aiges/output .
+COPY --from=go-builder /home/aiges/dist/ .
 COPY --from=cpython-builder /home/wrapper/wrapper_lib /home/aiges/lib
