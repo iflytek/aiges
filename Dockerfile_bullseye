@@ -2,7 +2,7 @@ FROM artifacts.iflytek.com/docker-private/jianjiang/ubuntu_go:20.04_1.16 as go-b
 MAINTAINER ybyang7@iflytek.com
 
 ENV GOPROXY=https://goproxy.cn,direct
-RUN apt-get update && apt-get install -y libnuma-dev build-essential
+RUN apt-get update && apt-get install -y libnuma-dev build-essential git
 COPY . /home/aiges
 WORKDIR /home/aiges
 
