@@ -164,6 +164,9 @@ https://github.com/xfyun/aiges/blob/master/demo/mmocr/Dockerfile_cpu#L23
 
 * 上条rlt 当前只支持单层数据，即不支持object嵌套，如果用户返回json，此处需要先把rlt dumps成文本再返回 
 
+* 理论上用户除了上传 wrapper.py 以及相关依赖之外，还需要提供一些模型文件，这些文件比较大，一般不在Dockerfile中构建入镜像，会导致git代码库十分庞大,当前示例的的yolov5和 mmocr均在 wrapper init的时候下载模型
+
+建议统一方式模型资源使用支持如下 用户下载、平台提前挂载指定目录如 /resources
 
 
 
