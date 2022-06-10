@@ -48,6 +48,7 @@ deb https://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib 
 deb-src https://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib''' >/etc/apt/sources.list
 
 RUN DEBIAN_FRONTEND=noninteractive apt update &&apt install -y libnuma-dev libboost-all-dev
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/aiges:/home/aiges/library
 WORKDIR /home/aiges
-COPY --from=go-builder /home/aiges/dist/ .
-COPY --from=cpython-builder /home/wrapper/wrapper_lib /home/aiges/lib
+COPY --from=go-builder /home/aiges/dist/aiges_linux_amd64 .
+COPY --from=cpython-builder /home/wrapper/wrapper_lib /home/aiges/library
