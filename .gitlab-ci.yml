@@ -16,8 +16,8 @@ before_script:
 baseloader:
   stage: build
   script:
-    - docker build . -f Dockerfile_bullseye -t artifacts.iflytek.com/docker-private/atp/py_loader:py39
-    - docker push artifacts.iflytek.com/docker-private/atp/py_loader:py39
+    - docker build . -f Dockerfile_bullseye -t artifacts.iflytek.com/docker-private/atp/py_loader:py39-new
+    - docker push artifacts.iflytek.com/docker-private/atp/py_loader:py39-new
   only:
     - py39
   tags:
