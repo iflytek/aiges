@@ -109,6 +109,9 @@ const void* WrapperAPI wrapperCreate(const char* usrTag, pParamList params, wrap
     std::string sid = "";
     for (pParamList sidP = params; sidP != NULL; sidP = sidP->next)
     {
+        if(NULL==sidP->key){
+            continue;
+        }
         if (std::string("sid") == sidP->key)
         {
             sid = sidP->value;
@@ -148,6 +151,9 @@ int WrapperAPI wrapperExec(const char* usrTag, pParamList params, pDataList reqD
     std::string sid = "";
     for (pParamList sidP = params; sidP != NULL; sidP = sidP->next)
     {
+        if(NULL==sidP->key){
+            continue;
+        }
         if (std::string("sid") == sidP->key)
         {
             sid = sidP->value;
