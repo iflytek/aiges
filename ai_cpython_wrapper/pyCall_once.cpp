@@ -26,6 +26,9 @@ int callWrapperExec(const char *usrTag, pParamList params, pDataList reqData, pD
         PyObject *pyParam = PyDict_New();
         for (pParamList p = params; p != NULL; p = p->next)
         {
+            if(NULL==p->key){
+                continue;
+            }
             PyObject *tmpV = Py_BuildValue("s", p->value);
             tmpPyObjectVec.push_back(tmpV);
             PyDict_SetItemString(pyParam, p->key, tmpV);
@@ -73,6 +76,9 @@ int callWrapperExec(const char *usrTag, pParamList params, pDataList reqData, pD
                 tmpPyObjectVec.push_back(tmpDesc);
                 for (pParamList descP = p->desc; descP != NULL; descP = descP->next)
                 {
+                    if(NULL==descP->key){
+                        continue;
+                    }   
                     PyObject *tmpV = Py_BuildValue("s", descP->value);
                     tmpPyObjectVec.push_back(tmpV);
                     PyDict_SetItemString(tmpDesc, descP->key, tmpV);
