@@ -34,8 +34,8 @@ MAINTAINER ybyang7@iflytek.com
 ENV TZ Asia/Shanghai
 
 COPY docker/repos/ubuntu1804/sources.list /etc/apt/sources.list
-
-RUN DEBIAN_FRONTEND=noninteractive apt update &&apt install -y libnuma-dev libboost-all-dev
+RUN apt update && apt install -y build-essential vim
+RUN DEBIAN_FRONTEND=noninteractive apt update &&apt install -y libnuma-dev libboost-all-dev git vim
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/aiges:/home/aiges/library
 WORKDIR /home/aiges
 COPY --from=go-builder /home/aiges/dist/aiges_linux_amd64 .
