@@ -3,6 +3,7 @@ FROM artifacts.iflytek.com/docker-private/atp/cuda-go-python-base:10.1-1.17-3.9.
 MAINTAINER ybyang7@iflytek.com
 
 ENV GOPROXY=https://goproxy.cn,direct
+COPY docker/repos/ubuntu1804/sources.list /etc/apt/sources.list
 RUN apt-get update && apt-get install -y libnuma-dev build-essential git
 COPY . /home/aiges
 WORKDIR /home/aiges
@@ -16,7 +17,7 @@ RUN make build-pack
 FROM artifacts.iflytek.com/docker-private/atp/cuda-go-python-base:10.1-1.17-3.9.13-ubuntu1804 as cpython-builder
 MAINTAINER ybyang7@iflytek.com
 
-COPY docker/repos/ubuntu18.04/sources.list /etc/apt/sources.list
+COPY docker/repos/ubuntu1804/sources.list /etc/apt/sources.list
 
 WORKDIR /home/loader
 RUN apt update && apt install -y build-essential vim
@@ -32,7 +33,7 @@ FROM artifacts.iflytek.com/docker-private/atp/cuda-go-python-base:10.1-1.17-3.9.
 MAINTAINER ybyang7@iflytek.com
 ENV TZ Asia/Shanghai
 
-COPY docker/repos/ubuntu18.04/sources.list /etc/apt/sources.list
+COPY docker/repos/ubuntu1804/sources.list /etc/apt/sources.list
 
 RUN DEBIAN_FRONTEND=noninteractive apt update &&apt install -y libnuma-dev libboost-all-dev
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/aiges:/home/aiges/library
