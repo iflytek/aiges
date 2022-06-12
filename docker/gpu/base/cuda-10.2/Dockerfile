@@ -136,7 +136,8 @@ RUN set -eux; \
 		tk-dev \
 		uuid-dev \
     	libffi-dev \
-    	libssl-dev  \
+    	libssl-dev \
+        libbz2-dev \
     ; \
 	rm -rf /var/lib/apt/lists/*
 

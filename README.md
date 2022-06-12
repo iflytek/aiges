@@ -198,6 +198,16 @@ https://github.com/xfyun/aiges/blob/master/demo/mmocr/Dockerfile_cpu#L23
 | artifacts.iflytek.com/docker-private/atp/aiges-gpu:10.1-3.9.13-ubuntu1804 | 10.1-3.9.13-ubuntu1804 | 3.9.13 | 10.1 | ubuntu 18.04 |
 | artifacts.iflytek.com/docker-private/atp/aiges-gpu:10.2-3.9.13-ubuntu1804 | 10.2-3.9.13-ubuntu1804 | 3.9.13 | 10.2 | ubuntu 18.04 |
 
+***构建命令***:
+
+1. 使用buildx:
+   - `docker buildx build  -f docker/gpu/aiges/ubuntu1804/Dockerfile . -t artifacts.iflytek.com/docker-private/atp/aiges-gpu:10.1-3.9.13-ubuntu1804`
+
+2. 使用docker build
+   - `docker buildx build  -f docker/gpu/aiges/ubuntu1804/Dockerfile . -t artifacts.iflytek.com/docker-private/atp/aiges-gpu:10.1-3.9.13-ubuntu1804`
+
+3. 使用buildah
+   - `buildah build  -f docker/gpu/aiges/ubuntu1804/Dockerfile . -t artifacts.iflytek.com/docker-private/atp/aiges-gpu:10.1-3.9.13-ubuntu1804`
 
 #### 业务镜像构建方法
 
@@ -208,7 +218,9 @@ https://github.com/xfyun/aiges/blob/master/demo/mmocr/Dockerfile_cpu#L23
 [mmocr](demo/mmocr/Dockerfile_gpu)
 
 
+### build.py使用
 
+TODO 计划开发build.py 支持多cuda版本多python版本的基础镜像自动构建pipeline
 
 
 
