@@ -1,4 +1,4 @@
-FROM artifacts.iflytek.com/docker-private/atp/cuda-go-python-base:10.1-1.17-3.9.13-ubuntu1804
+FROM artifacts.iflytek.com/docker-private/atp/cuda-go-python-base:10.1-1.17-3.9.13-ubuntu1804 as go-builder
 
 MAINTAINER ybyang7@iflytek.com
 
