@@ -128,6 +128,7 @@ View Doc on [Documentation](https://xfyun.github.io/inferservice/architechture/a
 
 - Python环境: 不推荐用户后续镜像构建修改Python版本
 
+
 #### 业务镜像
 
 业务镜像一般需要用户自己编写Dockerfile构建，业务镜像中用户可以根据场景需要定制安装
@@ -145,7 +146,7 @@ View Doc on [Documentation](https://xfyun.github.io/inferservice/architechture/a
 
 ### 注意事项
 
-* 示例尚未提供gpu runtime安装方法
+~~* 示例尚未提供gpu runtime安装方法~~
 
 * 用户的python插件需要自行定义一个目录放置， 如上述的 /home/mmocr , /home/yolov5, 且该位置需要像
 
@@ -162,7 +163,7 @@ https://github.com/xfyun/aiges/blob/master/demo/mmocr/Dockerfile_cpu#L23
 ```
 该结构数据
 
-* 上条rlt 当前只支持单层数据，即不支持object嵌套，如果用户返回json，此处需要先把rlt dumps成文本再返回 
+* 上条示例中, rlt 当前只支持单层数据，即不支持object嵌套，如果用户返回json，此处需要先把rlt dumps成文本再返回 
 
 * 理论上用户除了上传 wrapper.py 以及相关依赖之外，还需要提供一些模型文件，这些文件比较大，一般不在Dockerfile中构建入镜像，会导致git代码库十分庞大,当前示例的的yolov5和 mmocr均在 wrapper init的时候下载模型
 
@@ -171,6 +172,45 @@ https://github.com/xfyun/aiges/blob/master/demo/mmocr/Dockerfile_cpu#L23
 * 用户下载模型，比如用户在代码wrapper_init中下载模型，需要用户提前准备好模型下载链接
 
 * 平台提前挂载资源到指定目录如 /resources，需要用户提前上传
+
+#### 基础镜像构建(GPU)
+
+***基础镜像仅在特殊需求时(如对cuda，python版本有要求时才需要重新构建,一般用户仅需关注构建业务镜像)***
+
+1. cuda-go-python基础镜像,用于编译aiges项目的基础镜像，参见 [官方仓库](https://gitlab.com/nvidia/container-images/cuda/)，本仓 库引用了部分版本，存放于 [docker/gpu/cuda](docker/gpu/cuda)中
+基础镜像当前基于 nvidia/cuda 官方的基础镜像作为base镜像 如 [cuda-10.1](docker/gpu/base/cuda-10.1)中所示: aiges基础镜像基于 ***形如 nvidia/cuda:10.1-devel-ubuntu18.04*** 构建
+
+2. 基于 [cuda-10.1](docker/gpu/base/cuda-10.1) 已构建出 ***artifacts.iflytek.com/docker-private/atp/cuda-go-python-base:10.1-1.17-3.9.13-ubuntu1804***
+
+3. aiges: 基于 [aiges-dockerifle](docker/gpu/aiges/ubuntu1804/Dockerfile) 构建出gpu的  aiges基础镜像
+
+***当前支持的cuda-go-python基础镜像列表(包含cuda go python编译环境)***
+
+| repo                                                                                     | tag                         | python | cuda | os           |
+|------------------------------------------------------------------------------------------|-----------------------------|--------|------|--------------|
+| artifacts.iflytek.com/docker-private/atp/cuda-go-python-base:10.1-1.17-3.9.13-ubuntu1804 | 10.1-1.17-3.9.13-ubuntu1804 | 3.9.13 | 10.1 | ubuntu 18.04 |
+| artifacts.iflytek.com/docker-private/atp/cuda-go-python-base:10.2-1.17-3.9.13-ubuntu1804 | 10.2-1.17-3.9.13-ubuntu1804 | 3.9.13 | 10.2 | ubuntu 18.04 |
+
+***当前支持的aiges基础镜像列表***
+
+| repo                                                                      | tag                    | python | cuda | os           |
+|---------------------------------------------------------------------------|------------------------|--------|------|--------------|
+| artifacts.iflytek.com/docker-private/atp/aiges-gpu:10.1-3.9.13-ubuntu1804 | 10.1-3.9.13-ubuntu1804 | 3.9.13 | 10.1 | ubuntu 18.04 |
+| artifacts.iflytek.com/docker-private/atp/aiges-gpu:10.2-3.9.13-ubuntu1804 | 10.2-3.9.13-ubuntu1804 | 3.9.13 | 10.2 | ubuntu 18.04 |
+
+
+#### 业务镜像构建方法
+
+业务镜像需要基于 aiges基础镜像进行构建，用户可在此过程定制 python的依赖项目以及用户自研项目
+
+参考示例:
+
+
+
+
+
+
+
 
 
 
