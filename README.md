@@ -205,6 +205,9 @@ https://github.com/xfyun/aiges/blob/master/demo/mmocr/Dockerfile_cpu#L23
 
 参考示例:
 
+[mmocr](demo/mmocr/Dockerfile_gpu)
+
+
 
 
 
