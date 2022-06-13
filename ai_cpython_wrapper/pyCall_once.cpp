@@ -116,7 +116,9 @@ int callWrapperExec(const char *usrTag, pParamList params, pDataList reqData, pD
         PyObject *pRet = PyEval_CallObject(execFunc, pArgsT);
         if (pRet == NULL)
         {
-        	PyErr_Print();
+        	if (PyErr_Occurred()){
+                   	PyErr_Print();
+                }
             std::string errRlt = "";
             errRlt = log_python_exception();
             if (errRlt != "")
