@@ -15,7 +15,18 @@
 
 echo "### Usage" >> Note.md
 echo "
-\`\`\`sh
-# AIservice 为编译出的AI加载器
-\`\`\`
+***当前支持的cuda-go-python基础镜像列表(包含cuda go python编译环境)***
+
+| repo                                                                                     | tag                         | python | cuda | os           |
+|------------------------------------------------------------------------------------------|-----------------------------|--------|------|--------------|
+| artifacts.iflytek.com/docker-private/atp/cuda-go-python-base:10.1-1.17-3.9.13-ubuntu1804 | 10.1-1.17-3.9.13-ubuntu1804 | 3.9.13 | 10.1 | ubuntu 18.04 |
+| artifacts.iflytek.com/docker-private/atp/cuda-go-python-base:10.2-1.17-3.9.13-ubuntu1804 | 10.2-1.17-3.9.13-ubuntu1804 | 3.9.13 | 10.2 | ubuntu 18.04 |
+
+***当前支持的aiges基础镜像列表***
+
+| repo                                                                      | tag                    | python | cuda | os           |
+|---------------------------------------------------------------------------|------------------------|--------|------|--------------|
+| artifacts.iflytek.com/docker-private/atp/aiges-gpu:10.1-3.9.13-ubuntu1804 | 10.1-3.9.13-ubuntu1804 | 3.9.13 | 10.1 | ubuntu 18.04 |
+| artifacts.iflytek.com/docker-private/atp/aiges-gpu:10.2-3.9.13-ubuntu1804 | 10.2-3.9.13-ubuntu1804 | 3.9.13 | 10.2 | ubuntu 18.04 |
+
 " >> Note.md

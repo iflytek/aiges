@@ -19,6 +19,19 @@ jobs:
         with:
           go-version: 1.18
 
+      - name: Prepare
+        id: prepare
+        run: |
+          TAG=${GITHUB_REF#refs/tags/}
+          echo ::set-output name=tag_name::${TAG}
+
+      - name: Note
+        id: Note
+        env:
+          VERSION: ${{ steps.prepare.outputs.tag_name }}
+        run: |
+          cd hack/release && sh note.sh
+
       - name: Release
         run: |
           export GITHUB_TOKEN=${{ secrets.GH_TOKEN }}
