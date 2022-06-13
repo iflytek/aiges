@@ -138,6 +138,7 @@ RUN set -eux; \
     	libffi-dev \
     	libssl-dev \
     	libbz2-dev \
+    	liblzma-dev  \
     ; \
 	rm -rf /var/lib/apt/lists/*
 
@@ -146,8 +147,8 @@ ENV PYTHON_VERSION 3.9.13
 
 RUN set -eux; \
 	\
-	wget -O python.tar.xz "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz"; \
-	wget -O python.tar.xz.asc "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz.asc"; \
+	wget -O python.tar.xz "https://registry.npmmirror.com/-/binary/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz"; \
+	wget -O python.tar.xz.asc "https://registry.npmmirror.com/-/binary/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz.asc"; \
 	GNUPGHOME="$(mktemp -d)"; export GNUPGHOME; \
 	gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys "$GPG_KEY"; \
 	gpg --batch --verify python.tar.xz.asc python.tar.xz; \
