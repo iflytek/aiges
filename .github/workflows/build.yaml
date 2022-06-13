@@ -26,9 +26,7 @@ jobs:
       - name: Build aiges
         run: |
           make clean
-          make
-          make pack
-          make build-release
+          make build-pack
 
           
 
