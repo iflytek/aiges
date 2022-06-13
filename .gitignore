@@ -2,4 +2,4 @@
 dist/
 demo/yolov5/utils/__pycache__/
 bin/
-
+hack/release/Note.md
