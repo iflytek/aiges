@@ -69,7 +69,6 @@ const char *callWrapperError(int ret)
         if (pRet == NULL)
         {
             std::string errRlt = "";
-            PyErr_Print();
             errRlt = log_python_exception();
             if (errRlt != "")
             {
@@ -88,7 +87,6 @@ const char *callWrapperError(int ret)
     catch (const std::exception &e)
     {
         std::string errRlt = "";
-		PyErr_Print();
         errRlt = log_python_exception();
         if (errRlt != "")
         {
@@ -137,7 +135,6 @@ int callWrapperInit(pConfig cfg)
 
     if (!wrapperModule)
     {
-        PyErr_Print(); 
         std::cout << log_python_exception << std::endl;
 	    std::cout << "not found  wrapper.py " << std::endl;
         PyGILState_Release(gstate);
@@ -147,7 +144,6 @@ int callWrapperInit(pConfig cfg)
     PyObject *initFunc = PyObject_GetAttrString(wrapperModule, "wrapperInit");
     if (!initFunc || !PyCallable_Check(initFunc))
     {
-        PyErr_Print();
         std::cout << log_python_exception << std::endl;
         PyGILState_Release(gstate);
         return WRAPPER::CError::NotImplementInit;
@@ -175,12 +171,10 @@ int callWrapperInit(pConfig cfg)
         if (pRet == NULL)
         {
             std::string errRlt = "";
-            PyErr_Print();
             errRlt = log_python_exception();
             if (errRlt != "")
             {
                 spdlog::error("wrapperInit error:{}", errRlt);
-                PyErr_Print();
 
             }
             ret = WRAPPER::CError::innerError;
@@ -194,7 +188,6 @@ int callWrapperInit(pConfig cfg)
     catch (const std::exception &e)
     {
         std::string errRlt = "";
-        PyErr_Print();
         errRlt = log_python_exception();
         if (errRlt != "")
         {
@@ -236,7 +229,6 @@ int callWrapperFini()
         {
 
             std::string errRlt = "";
-            PyErr_Print();
             errRlt = log_python_exception();
             if (errRlt != "")
             {
@@ -253,7 +245,6 @@ int callWrapperFini()
     }
     catch (const std::exception &e)
     {
-        PyErr_Print();
         std::string errRlt = "";
         errRlt = log_python_exception();
         if (errRlt != "")
