@@ -184,6 +184,10 @@ https://github.com/xfyun/aiges/blob/master/demo/mmocr/Dockerfile_cpu#L23
 
 3. aiges: 基于 [aiges-dockerifle](docker/gpu/aiges/ubuntu1804/Dockerfile) 构建出gpu的  aiges基础镜像
 
+构建命令:
+
+``docker buildx build -f docker/gpu/base/cuda-10.2/Dockerfile -t artifacts.iflytek.com/docker-private/atp/cuda-go-python-base:10.2-1.17-3.9.13-ubuntu1804  . --push``
+
 ***当前支持的cuda-go-python基础镜像列表(包含cuda go python编译环境)***
 
 | repo                                                                                     | tag                         | python | cuda | os           |
