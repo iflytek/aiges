@@ -25,9 +25,9 @@ builds:
     main: ./main
     id: build
     hooks:
-      pre: sudo apt-get install -y libnuma-dev
-      post: 
-       - mkdir -p {{ dir .Path }}/include 
+      pre:
+       - sudo apt-get install -y libnuma-dev
+       - mkdir -p {{ dir .Path }}/include
        - cp -ar ./cgo/library/ {{ dir .Path }}/
        - cp -ar ./cgo/header/widget/  {{ dir .Path }}/include/
     binary: AIservice
@@ -65,3 +65,4 @@ changelog:
     exclude:
       - '^docs:'
       - '^test:'
+extra_files:

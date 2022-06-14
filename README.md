@@ -114,7 +114,7 @@ View Doc on [Documentation](https://xfyun.github.io/inferservice/architechture/a
     /home/aiges
     root@e38a9aacc355:/home/aiges# ls -l /home/aiges/
     total 18760
-    -rwxr-xr-x 1 root root 19181688 Jun 10 15:30 AIService
+    -rwxr-xr-x 1 root root 19181688 Jun 10 15:30 AIservice
     -rw-r--r-- 1 root root     2004 Jun 10 18:15 aiges.toml
     drwxr-xr-x 3 root root     4096 Jun 10 15:30 include
     drwxrwxrwx 1 root root     4096 Jun 10 15:31 library
