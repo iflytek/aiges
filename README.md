@@ -45,27 +45,14 @@
 
 View Doc on [Documentation](https://xfyun.github.io/inferservice/architechture/architechture/)
 
-### Features
-
-&#9745; 支持模型推理成RPC服务(Serving框架会转成HTTP服务)
-&#9745; 支持C代码推理 support c++/c code infer
-&#9745; 支持Python代码推理 Support python code infer
-&#9745; 支持配置中心，服务发现
-&#9745; 支持负载均衡配置
-&#9744; 支持Java代码推理或者其它
-&#9744; 支持计量授权
-
 ### AIGes 项目编译
 ```
-cd athenaloader/
 make
 ```
-
 ### AIGes 项目打包
 ```
-make pack
+make build-pack
 ```
-
 ### AIGes 清理项目文件
 ```
 make clean
