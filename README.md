@@ -2,8 +2,8 @@
 
 <!-- markdownlint-disable MD033 -->
 
-<span class="badge-placeholder">[![Build Status](https://img.shields.io/drone/build/thegeeklab/hugo-geekdoc?logo=drone&server=https%3A%2F%2Fdrone.thegeeklab.de)](https://drone.thegeeklab.de/thegeeklab/hugo-geekdoc)</span>
-<span class="badge-placeholder">[![GitHub release](https://img.shields.io/github/v/release/xfyun/aiges)](https://github.com/xfyun/aiges/releases/latest)</span>
+<span class="badge-placeholder">[![Github Action WorkFlows](https://github.com/xfyun/aiges/actions/workflows/build.yaml/badge.svg)](https://github.com/xfyun/aiges/actions/workflows/build.yaml)</span>
+<span class="badge-placeholder">[![Release](https://github.com/xfyun/aiges/actions/workflows/release.yml/badge.svg?event=release)](https://github.com/xfyun/aiges/actions/workflows/release.yml)</span>
 <span class="badge-placeholder">[![License: Apache2.0](https://img.shields.io/github/license/xfyun/aiges)](https://img.shields.io/github/license/xfyun/aiges)</span>
 
 <!-- markdownlint-restore -->

@@ -57,5 +57,5 @@ build-pack: install-goreleaser  ## build binaries by default
 build-release: SHELL:=/bin/bash
 build-release: install-goreleaser ## build binaries by default
 	@echo "build sealos bin"
-	$(GORELEASER_BIN) release --timeout=1h  --release-notes=hack/release/Note.md
+	$(GORELEASER_BIN) release --timeout=1h  --release-notes=hack/release/Note.md --debug
 
