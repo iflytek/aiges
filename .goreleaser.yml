@@ -30,7 +30,7 @@ builds:
        - mkdir -p {{ dir .Path }}/include 
        - cp -ar ./cgo/library/ {{ dir .Path }}/
        - cp -ar ./cgo/header/widget/  {{ dir .Path }}/include/
-    binary: AIService
+    binary: AIservice
     goos:
       - linux
     goarch:
