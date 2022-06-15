@@ -52,7 +52,7 @@ archives:
   -
    files:
      - src: './cgo/library'
-       dst: ''{{ dir .Path }}/'
+       dst: '{{ dir .Path }}/'
 #        # Strip parent folders when adding files to the archive.
 #        # Default: false
 #        strip_parent: false
