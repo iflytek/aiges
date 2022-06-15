@@ -48,15 +48,16 @@ builds:
       - -linkmode external
 
 
-#archives:
-#  - files:
-#      - src: './cgo/library'
-#        dst: {{ dir .Path }}/
+archives:
+  -
+   files:
+     - src: './cgo/library'
+       dst: ''{{ dir .Path }}/'
 #        # Strip parent folders when adding files to the archive.
 #        # Default: false
 #        strip_parent: false
-#      - src: './cgo/header/widget/*'
-#        dst: {{ dir .Path }}/include
+     - src: './cgo/header/widget/*'
+       dst: '{{ dir .Path }}/include'
 #        # Strip parent folders when adding files to the archive.
 #        # Default: false
 #        strip_parent: false
