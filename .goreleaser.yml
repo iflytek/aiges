@@ -23,7 +23,7 @@ builds:
       - CC_FOR_TARGET=gcc-x86_64-linux-gnu
       - PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig/
     main: ./main
-    id: build
+    id: aiges
     hooks:
       pre:
        - sudo apt-get install -y libnuma-dev
