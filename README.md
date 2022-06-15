@@ -158,7 +158,7 @@ https://github.com/xfyun/aiges/blob/master/demo/mmocr/Dockerfile_cpu#L23
 
 * 用户下载模型，比如用户在代码wrapper_init中下载模型，需要用户提前准备好模型下载链接
 
-* 平台提前挂载资源到指定目录如 /resources，需要用户提前上传
+* 平台提前挂载资源到指定目录如 /models，需要用户提前上传
 
 #### 基础镜像构建(GPU)
 
