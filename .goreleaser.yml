@@ -51,16 +51,18 @@ builds:
 archives:
   -
    files:
-     - src: './cgo/library'
-       dst: '{{ dir .Path }}/'
+     - src: './cgo/library/*'
+       dst: 'library'
+       strip_parent: true
+
 #        # Strip parent folders when adding files to the archive.
 #        # Default: false
 #        strip_parent: false
      - src: './cgo/header/widget/*'
-       dst: '{{ dir .Path }}/include'
+       dst: 'include'
+       strip_parent: true
 #        # Strip parent folders when adding files to the archive.
 #        # Default: false
-#        strip_parent: false
 #  - replacements:
 #      darwin: Darwin
 #      linux: Linux
