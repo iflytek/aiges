@@ -2,7 +2,7 @@ import torch
 import numpy as np
 from PIL import Image
 import io
-import flags
+from iflags import flags
 
 '''
 初始化
