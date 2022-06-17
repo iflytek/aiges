@@ -343,16 +343,22 @@ char *pyDictStrToChar(PyObject *obj, std::string itemKey, std::string sid, int &
             return NULL;
         }
     }
-    PyObject *utf8string = PyUnicode_AsUTF8String(pyValue);
-    if (itemKey == DATA_DATA)
-    {
-        //以字节为单位
-        rlt_ch = strdup(PyBytes_AsString(utf8string));
-    }
-    else
-    {
-        rlt_ch = strdup(PyBytes_AsString(utf8string));
-    }
+    char *utf8string;
+	if (PyBytes_Check(pyValue)){
+	   utf8string = strdup(PyBytes_AS_STRING(pyValue));
+	}else if PyUnicode_Check(pyValue){
+	   utf8string = strdup(PyBytes_AsString(PyUnicode_AsUTF8String(pyValue)));
+	}
+	rlt_ch = utf8string;
+//    if (itemKey == DATA_DATA)
+//    {
+//        //以字节为单位
+//        rlt_ch = strdup(PyBytes_AsString(utf8string));
+//    }
+//    else
+//    {
+//        rlt_ch = strdup(PyBytes_AsString(utf8string));
+//    }
     spdlog::debug("pyDictStrToChar , key: {},value:{},sid:{}", itemKey, rlt_ch, sid);
 
     Py_XDECREF(utf8string);
