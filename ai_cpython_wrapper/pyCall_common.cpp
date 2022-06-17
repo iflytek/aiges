@@ -343,20 +343,17 @@ char *pyDictStrToChar(PyObject *obj, std::string itemKey, std::string sid, int &
             return NULL;
         }
     }
-    PyObject *utf8string = PyUnicode_AsUTF8String(pyValue);
-    if (itemKey == DATA_DATA)
-    {
-        //以字节为单位
-        rlt_ch = strdup(PyBytes_AsString(utf8string));
-    }
-    else
-    {
-        rlt_ch = strdup(PyBytes_AsString(utf8string));
-    }
-    spdlog::debug("pyDictStrToChar , key: {},value:{},sid:{}", itemKey, rlt_ch, sid);
+    char *utf8string;
+	if (PyBytes_Check(pyValue)){
+	   utf8string = strdup(PyBytes_AS_STRING(pyValue));
+	}else if PyUnicode_Check(pyValue){
+	   PyObject *tmp = PyUnicode_AsUTF8String(pyValue);
+	   utf8string = strdup(PyBytes_AsString(tmp));
+	   Py_XDECREF(tmp);
+	}
+    spdlog::debug("pyDictStrToChar , key: {},value:{},sid:{}", itemKey, utf8string, sid);
 
-    Py_XDECREF(utf8string);
-    return rlt_ch;
+    return utf8string;
 }
 
 pDescList pyDictToDesc(PyObject *obj, std::string descKey, std::string sid, int &ret)
