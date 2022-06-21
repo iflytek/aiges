@@ -173,14 +173,6 @@ func multiUpStream(cli *xsfcli.Client, swg *sync.WaitGroup, session string, inte
 	dataSeq := make([]int, len(indexs))     // send current index
 	endLen := 0
 
-	h264FrameSizes := make(map[int][]int)
-	for streamId, fileId := range indexs {
-		if _var.UpStreams[streamId].DataType == protocol.MetaDesc_DataType(protocol.MetaData_VIDEO) {
-			h264FrameSizes[streamId] = GetH264Frames(_var.UpStreams[streamId].DataList[fileId])
-			cli.Log.Debugw("upstream get h264 frames size. ",
-				"frames", h264FrameSizes, "length", len(h264FrameSizes))
-		}
-	}
 	for dataId := 1; len(indexs) > 0; dataId++ {
 		req := xsfcli.NewReq()
 		req.SetParam("baseId", "0")
@@ -192,16 +184,8 @@ func multiUpStream(cli *xsfcli.Client, swg *sync.WaitGroup, session string, inte
 		// 上行数据流实体数据
 		for streamId, fileId := range indexs {
 			var size int
-			if _var.UpStreams[streamId].DataType == protocol.MetaDesc_DataType(protocol.MetaData_VIDEO) {
-				if (dataId - 1) > len(h264FrameSizes[streamId])-1 {
-					size = 0
-				} else {
-					size = h264FrameSizes[streamId][dataId-1]
-				}
-			} else {
-				size = _var.UpStreams[streamId].UpSlice
-			}
-			upStatus := protocol.EngInputData_CONTINUE
+			size = _var.UpStreams[streamId].UpSlice
+			upStatus := protocol.LoaderOutput_CONTINUE
 			if dataSendLen[streamId] >= len(_var.UpStreams[streamId].DataList[fileId]) {
 				continue // 该上行数据流已发送完毕
 			}
@@ -210,7 +194,7 @@ func multiUpStream(cli *xsfcli.Client, swg *sync.WaitGroup, session string, inte
 			//}
 			if dataSendLen[streamId]+size >= len(_var.UpStreams[streamId].DataList[fileId]) {
 				size = len(_var.UpStreams[streamId].DataList[fileId]) - dataSendLen[streamId]
-				upStatus = protocol.EngInputData_END
+				upStatus = protocol.LoaderOutput_END
 				endLen += 1
 			}
 			upData := _var.UpStreams[streamId].DataList[fileId][dataSendLen[streamId] : dataSendLen[streamId]+size]

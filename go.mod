@@ -10,6 +10,7 @@ require (
 	github.com/satori/go.uuid v1.2.0
 	github.com/streadway/amqp v1.0.0
 	github.com/xfyun/xsf v0.0.0-20220402010628-6507dace16c0
+	go.uber.org/atomic v1.7.0
 )
 
 require (
@@ -50,7 +51,6 @@ require (
 	github.com/xfyun/sonar v0.0.0-20220331071109-0b7c3a371c9a // indirect
 	github.com/xfyun/thrift v0.0.0-20210423095925-0ef93ee2c654 // indirect
 	github.com/xfyun/uuid v0.0.0-20220331052528-3a275a5702d5 // indirect
-	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/multierr v1.6.0 // indirect
 	go.uber.org/zap v1.21.0 // indirect
 	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd // indirect
