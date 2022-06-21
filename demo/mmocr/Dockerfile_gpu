@@ -1,4 +1,4 @@
-FROM artifacts.iflytek.com/docker-private/atp/aiges-gpu:10.1-3.9.13-ubuntu1804
+FROM artifacts.iflytek.com/docker-private/atp/aiges-gpu:10.1-3.9.13-ubuntu1804-v1.0.0
 
 RUN  pip3 config set global.index-url https://pypi.mirrors.ustc.edu.cn/simple/ 
 
