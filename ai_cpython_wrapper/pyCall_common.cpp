@@ -302,7 +302,7 @@ int pyDictGetData(PyObject *obj, void **buffData, std::string sid, int &dataSize
     if (PyBytes_Check(data)) {
         PyBytes_AsStringAndSize(data, &st, &actual_size);
         void *r;
-        r = malloc(sizeof(char));
+        r = malloc(dataSize);
         if (r == NULL) {
             ret = WRAPPER::CError::RltDataDataInvalid;
             spdlog::error("Can't malloc memory,  error:{}, sid:{}", errRlt, sid);
