@@ -1,5 +1,5 @@
-PYLIB=$(shell python3-config  --ldflags)
-PYINC=$(shell python3-config --cflags )
+PYLIB=$(shell python3-config  --ldflags --embed)
+PYINC=$(shell python3-config --cflags --embed )
 wrapper:
 	echo $(PYLIB)
 	g++ -fPIC -shared -std=c++11 -Wno-attributes  $(PYINC)  -g -O0 -I. -I./include/spdlog/include -I./include/ -o libpyCallCommon.so pyCall_common.cpp -L. $(PYLIB)
