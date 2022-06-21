@@ -38,5 +38,5 @@ RUN apt update && apt install -y build-essential vim
 RUN DEBIAN_FRONTEND=noninteractive apt update &&apt install -y libnuma-dev libboost-all-dev git vim
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/aiges:/home/aiges/library
 WORKDIR /home/aiges
-COPY --from=go-builder /home/aiges/dist/aiges_linux_amd64_v1 .
+COPY --from=go-builder /home/aiges/dist/aiges_linux_amd64 .
 COPY --from=cpython-builder /home/wrapper/wrapper_lib /home/aiges/library
