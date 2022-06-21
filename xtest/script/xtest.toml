@@ -1,0 +1,68 @@
+[xtest]
+taddrs="AIservice@127.0.0.1:5090"
+trace-ip = "172.16.51.13"
+
+[svcMode]
+service = "AIservice"           # 请求目标服务名称, eg:sms
+svcId = "s12345678"             # 服务id
+timeout = 1000                  # 服务超时时间, 对应服务端waitTime
+multiThr = 100                  # 请求并发数
+loopCnt = 10000                 # 请求总次数
+sessMode = false                # 服务请求模式. true:会话模式 false:非会话模式
+linearMs = 5000                 # 并发压测线性增长区间,单位:ms
+perfOn=false                    # 是否开启性能测试
+perfLevel=1                     # 非会话模式默认0
+                                #会话模式0: 从发第一帧到最后一帧的性能
+                                #会话模式1:首结果(发送第一帧到最后一帧的性能)
+                                #会话模式2:尾结果(发送最后一帧到收到最后一帧的性能)
+[header]
+"appid" = "100IME"
+"uid" = "1234567890"
+
+[parameter]
+"key" = "value"
+
+[data]
+payload = "dataKey1;dataKey2"   # 输入数据流配置段,多个数据流以";"分割
+expect = "dataKey3"             # 输出数据流配置段,多个数据流以";"分割
+
+[dataKey1]  # 输入数据流dataKey1描述
+inputSrc = "path"               # 上行数据流数据源, 配置文件路径(配置为目录则循环读取目录中文件)
+sliceOn = false                 # 切片开关, false:关闭切换, true:开启切片
+sliceSize = 1280                # 上行数据切片大小,用于会话模式: byte
+interval = 40                   # 上行数据发包间隔,用于会话模式: ms. 注：动态校准,每个包间隔非严格interval
+name = "input1"                 # 输入数据流key值
+type = "image"                  # 数据类型，支持"audio","text","image","video"
+describe = "k1=v1;k2=v2"        # 数据描述信息,多个描述信息以";"分割
+                                # 图像支持如下属性："encoding", 如"encoding=jpg"
+[dataKey2]
+inputSrc = "path"               # 上行数据流数据源, 配置文件路径(配置为目录则循环读取目录中文件)
+sliceOn = false                 # 切片开关, false:关闭切换, true:开启切片
+sliceSize = 1280                # 上行数据切片大小,用于会话模式: byte
+interval = 40                   # 上行数据发包间隔,用于会话模式: ms. 注：动态校准,每个包间隔非严格interval
+name = "input2"                 # 输入数据流key值
+type = "image"                  # 数据类型，支持"audio","text","image","video"
+describe = "k1=v1;k2=v2"        # 数据描述信息,多个描述信息以";"分割
+                                # 图像支持如下属性："encoding", 如"encoding=jpg"
+[dataKey3]
+name = "result"                 # 输入数据流key值
+type = "text"                   # 输出数据类型，支持"audio","text","image","video"
+describe = "k1=v1;k2=v2"        # 数据描述信息,多个描述信息以";"分割
+                                # 文本支持如下属性："encoding","compress", 如"encoding=utf8;compress=gzip"
+
+
+[downstream]                    # 下行数据流存储输出
+output = 0                      # 输出方式： 0:输出至公共文件outputDst 1:以独立文件形式输出至目录outputDst(文件名:sid+**) 2：输出至终端
+outputDst = "./log/result"          # 响应数据输出目标, 若output=0则配置目录, output=1则配置文件
+
+
+[log]
+file = "./log/xtest.log"        # 日志文件名
+level = "debug"                 # 日志打印等级
+size = 100                      # 日志文件大小
+count = 20                      # 日志备份数量
+async = 0                       # 异步开关
+die = 30
+
+[trace]
+able = 0
