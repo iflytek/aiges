@@ -47,6 +47,34 @@ builds:
       - -s -w
       - -linkmode external
 
+  - env:
+      - CGO_ENABLED=1
+      - CC=x86_64-linux-gnu-gcc
+      - CC_FOR_TARGET=gcc-x86_64-linux-gnu
+      - PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig/
+    main: ./xtest/main
+    id: xtest
+    hooks:
+      pre:
+        - sudo apt-get install -y libnuma-dev
+        - cp -ar ./xtest/script/xtest.toml {{ dir .Path }}/
+        - cp -ar ./xtest/script/test.sh  {{ dir .Path }}/
+    binary: xtest
+    goos:
+      - linux
+    goarch:
+      - amd64
+    tags:
+      - netgo
+      - static
+      - osusergo
+    ldflags:
+      # - -X github.com/labring/sealos/pkg/version.gitVersion={{.Version}}
+      # - -X github.com/labring/sealos/pkg/version.gitCommit={{.ShortCommit}}
+      # - -X github.com/labring/sealos/pkg/version.buildDate={{.Date}}
+      # - -extldflags "-static -fpic"
+      - -s -w
+      - -linkmode external
 
 archives:
   -

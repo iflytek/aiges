@@ -37,6 +37,7 @@ build:
 	cp -r ./cgo/library/* ./bin/
 	mkdir -p bin/include
 	cp -ra ./cgo/header/widget/* ./bin/include
+	$(GOBUILD) -v -o ./bin/xtest ./xtest/main/xtest.go
 
 clean:
 	rm -rf bin dist
