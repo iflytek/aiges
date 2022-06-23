@@ -4,7 +4,7 @@ MAINTAINER ybyang7@iflytek.com
 
 ENV GOPROXY=https://goproxy.cn,direct
 COPY docker/repos/ubuntu1804/sources.list /etc/apt/sources.list
-RUN apt-get update && apt-get install -y libnuma-dev build-essential git
+RUN apt-get update && apt-get install -y libnuma-dev build-essential git sudo
 COPY . /home/aiges
 WORKDIR /home/aiges
 

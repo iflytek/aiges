@@ -1,7 +1,7 @@
 import numpy as np
 from PIL import Image
 import io
-import flags
+from iflags import flags
 from mmocr.utils.ocr import MMOCR
 import json
 
