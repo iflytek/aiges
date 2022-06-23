@@ -117,15 +117,16 @@ int callWrapperInit(pConfig cfg) {
     PyObject *wrapperModule = PyImport_ImportModule(_wrapperName);
 
     if (!wrapperModule) {
-        std::cout << log_python_exception << std::endl;
-        std::cout << "not found  wrapper.py " << std::endl;
+        std::cout << log_python_exception() << std::endl;
+        std::cout << "error init module when import wrapper.py " << std::endl;
         PyGILState_Release(gstate);
         return WRAPPER::CError::innerError;
     }
 
     PyObject *initFunc = PyObject_GetAttrString(wrapperModule, "wrapperInit");
     if (!initFunc || !PyCallable_Check(initFunc)) {
-        std::cout << log_python_exception << std::endl;
+        std::cout << log_python_exception() << std::endl;
+        std::cout << "error call wrapperInit when import wrapper.py " << std::endl;
         PyGILState_Release(gstate);
         return WRAPPER::CError::NotImplementInit;
     }
