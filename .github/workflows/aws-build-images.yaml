@@ -39,7 +39,7 @@ jobs:
         id: build-and-push
         uses: pahud/ecr-public-action@0db8adbcfd3c3ec2f604d70fdd6b5d15c80e1dbc
         with:
-          dockerfile: docker/golang/single/Dockerfile
+          dockerfile: ./docker/gpu/base/cuda-10.1/Dockerfile
           context: .
           create_repo: ${{ steps.repoName.outputs.reponame }}
           tags: |

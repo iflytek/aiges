@@ -35,7 +35,7 @@ jobs:
       id: meta
       uses: docker/metadata-action@v4
       with:
-        images: seawyq/aiges_gpu    
+        images: seawyq/cuda-go-python-base    
         
     - name: Build and push Docker image
       uses: docker/build-push-action@v3
@@ -44,4 +44,4 @@ jobs:
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
-        file: ./docker/gpu/aiges/ubuntu1804/cuda-10.1/Dockerfile
+        file: ./docker/gpu/base/cuda-10.1/Dockerfile
