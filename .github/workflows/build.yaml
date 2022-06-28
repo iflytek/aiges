@@ -33,7 +33,7 @@ jobs:
     # 构建镜像到docker hub
     steps:
       - name: Set up QEMU
-      uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v2
 
       - name: Set up Docker Buildx
         id: buildx
