@@ -31,7 +31,7 @@ jobs:
           make clean
           make build-pack
     # 构建镜像到docker hub
-    steps:
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 
@@ -61,7 +61,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           file: ./docker/gpu/base/cuda-10.1/Dockerfile
     # 构建镜像到AWS
-    steps: 
+    
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
