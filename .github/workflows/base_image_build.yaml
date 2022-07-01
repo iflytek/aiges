@@ -1,0 +1,40 @@
+
+name: Build Base Image
+on:
+  push:
+    branches: [ master ]
+    tags:
+      - '*'
+  pull_request:
+    branches: [ master ]
+    paths-ignore:
+      - '*.md'
+      - '*.yml'
+      - 'docs/**'
+
+jobs:
+  build-base-image:
+    runs-on: ubuntu-latest
+    # 项目构建
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+
+      - name: Login to Amazon Public ECR
+        uses: docker/login-action@v1
+        with:
+          registry: public.ecr.aws
+          username: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          password: ${{ secrets.AWS_ACCESS_KEY_KEY }}
+        env:
+          AWS_REGION: us-east-1
+
+      - name: Build Docker Image -cuda-base
+        uses: docker/build-push-action@v2
+        with:
+          context: ./docker/gpu/base/cuda-10.1
+          builder: ${{ steps.buildx.outputs.name }}
+          push: true
+          tags: ${{ secrets.ECR_REGISTRY }}/cuda-go-python-base:10.1-1.17-3.9.13-ubuntu1804

@@ -31,23 +31,23 @@ jobs:
           make clean
           make build-pack
           
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-east-1
+#      - name: Configure AWS credentials
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          aws-region: ap-east-1
+#
+#      - name: Get repo name
+#        id: repoName
+#        run: echo "::set-output name=reponame::$(echo ${{github.repository}} | cut -d '/' -f 2)"
 
-      - name: Get repo name
-        id: repoName
-        run: echo "::set-output name=reponame::$(echo ${{github.repository}} | cut -d '/' -f 2)"
-
-      - name: Build and Push to ECR public
-        id: build-and-push
-        uses: pahud/ecr-public-action@0db8adbcfd3c3ec2f604d70fdd6b5d15c80e1dbc
-        with:
-          dockerfile: ./docker/gpu/base/cuda-10.1/Dockerfile
-          context: .
-          create_repo: ${{ steps.repoName.outputs.reponame }}
-          tags: |
-            public.ecr.aws/iflytek-open/${{ steps.repoName.outputs.reponame }}:latest
+#      - name: Build and Push to ECR public
+#        id: build-and-push
+#        uses: pahud/ecr-public-action@0db8adbcfd3c3ec2f604d70fdd6b5d15c80e1dbc
+#        with:
+#          dockerfile: ./docker/gpu/base/cuda-10.1/Dockerfile
+#          context: .
+#          create_repo: ${{ steps.repoName.outputs.reponame }}
+#          tags: |
+#            public.ecr.aws/iflytek-open/${{ steps.repoName.outputs.reponame }}:latest
