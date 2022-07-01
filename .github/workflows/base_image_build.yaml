@@ -22,7 +22,7 @@ jobs:
         cuda: [10.1, 10.2, 11.2,11.6]
         python: [ 3.9.13 ]
         golang: [1.17]
-        ubuntu: [1804]
+        ubuntu_os: [1804]
     runs-on: ubuntu-latest
     # 项目构建
     steps:
@@ -63,4 +63,4 @@ jobs:
           context: ./docker/gpu/base/cuda-${{ matrix.cuda }}
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: ${{ secrets.ECR_REGISTRY }}/${{env.CUDA_BASE_REPO}}:${{ matrix.cuda }}-${{ matrix.golang }}-${{ matrix.python }}-${{ matrix.ubuntu }}
+          tags: ${{ secrets.ECR_REGISTRY }}/${{env.CUDA_BASE_REPO}}:${{ matrix.cuda }}-${{ matrix.golang }}-${{ matrix.python }}-ubuntu${{ matrix.ubuntu_os }}
