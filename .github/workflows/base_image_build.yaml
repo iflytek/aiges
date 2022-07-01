@@ -17,6 +17,12 @@ env:
 
 jobs:
   build-base-image:
+    strategy:
+      matrix:
+        cuda: [10.1, 10.2, 11.2,11.6]
+        python: [ 3.9.13 ]
+        golang: [1.17]
+        ubuntu: [1804]
     runs-on: ubuntu-latest
     # 项目构建
     steps:
@@ -54,7 +60,7 @@ jobs:
       - name: Build Docker Image -cuda-base
         uses: docker/build-push-action@v2
         with:
-          context: ./docker/gpu/base/cuda-10.1
+          context: ./docker/gpu/base/cuda-${{ matrix.cuda }}
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: ${{ secrets.ECR_REGISTRY }}/${{env.CUDA_BASE_REPO}}:10.1-1.17-3.9.13-ubuntu1804
+          tags: ${{ secrets.ECR_REGISTRY }}/${{env.CUDA_BASE_REPO}}:${{ matrix.cuda }}-${{ matrix.golang }}-${{ matrix.python }}-${{ matrix.ubuntu }}
