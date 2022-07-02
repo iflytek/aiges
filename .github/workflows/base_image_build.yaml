@@ -54,7 +54,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
-          aws ecr-public create-repository     --repository-name $CUDA_BASE_REPO
+          aws ecr-public create-repository     --repository-name $CUDA_BASE_REPO || true
 
 
       - name: Build Docker Image -cuda-base
