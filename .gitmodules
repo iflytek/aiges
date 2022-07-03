@@ -1,0 +1,3 @@
+[submodule "ai_cpython_wrapper"]
+	path = ai_cpython_wrapper
+	url = git@github.com:xfyun/aiges_c_python_wrapper.git
