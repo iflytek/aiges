@@ -1,3 +1,0 @@
-# ai_cpython_wrapper
-
-cpython插件，通过此插件完成加载器对python的支持
