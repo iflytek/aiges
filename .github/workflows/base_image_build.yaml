@@ -2,7 +2,7 @@
 name: Build Base Image
 on:
   push:
-    paths:
+    paths-ignore:
       - "docker/gpu/base/**"
 
 env:
