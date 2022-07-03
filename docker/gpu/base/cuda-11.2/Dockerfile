@@ -208,23 +208,20 @@ ENV PYTHON_PIP_VERSION 22.0.4
 # https://github.com/docker-library/python/issues/365
 ENV PYTHON_SETUPTOOLS_VERSION 58.1.0
 # https://github.com/pypa/get-pip
-#ENV PYTHON_GET_PIP_URL https://bootstrap.pypa.io/get-pip.py
-#ENV PYTHON_GET_PIP_SHA256 ba3ab8267d91fd41c58dbce08f76db99f747f716d85ce1865813842bb035524d
-COPY ./docker/get-pip.py /
+ENV PYTHON_GET_PIP_URL https://bootstrap.pypa.io/get-pip.py
+ENV PYTHON_GET_PIP_SHA256 ba3ab8267d91fd41c58dbce08f76db99f747f716d85ce1865813842bb035524d
+
+# will cause error here
+#COPY ./docker/get-pip.py /
+
 RUN set -eux; \
-        \
-        export PYTHONDONTWRITEBYTECODE=1; \
-        \
-        python /get-pip.py \
-                --disable-pip-version-check \
-                --no-cache-dir \
-                --no-compile \
-                "pip==$PYTHON_PIP_VERSION" \
-                "setuptools==$PYTHON_SETUPTOOLS_VERSION" \
-        ; \
-        rm -f get-pip.py; \
-        \
-        pip --version
+	\
+	wget -O get-pip.py "$PYTHON_GET_PIP_URL"; \
+	echo "$PYTHON_GET_PIP_SHA256 *get-pip.py" | sha256sum -c -; \
+	\
+	export PYTHONDONTWRITEBYTECODE=1; \
+	\
+	python get-pip.py \
 		--disable-pip-version-check \
 		--no-cache-dir \
 		--no-compile \
