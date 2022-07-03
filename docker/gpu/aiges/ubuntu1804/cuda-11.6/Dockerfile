@@ -1,4 +1,4 @@
-FROM artifacts.iflytek.com/docker-private/atp/cuda-go-python-base:11.6.2-1.17-3.9.13-ubuntu1804 as go-builder
+FROM artifacts.iflytek.com/docker-private/atp/cuda-go-python-base:11.6-1.17-3.9.13-ubuntu1804 as go-builder
 
 MAINTAINER ybyang7@iflytek.com
 
@@ -14,7 +14,7 @@ WORKDIR /home/aiges
 
 RUN make build-pack
 
-FROM artifacts.iflytek.com/docker-private/atp/cuda-go-python-base:10.1-1.17-3.9.13-ubuntu1804 as cpython-builder
+FROM artifacts.iflytek.com/docker-private/atp/cuda-go-python-base:11.6-3.9.13-ubuntu1804 as cpython-builder
 MAINTAINER ybyang7@iflytek.com
 
 COPY docker/repos/ubuntu1804/sources.list /etc/apt/sources.list
@@ -29,7 +29,7 @@ RUN cd /home/wrapper && make
 
 #ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/aiges:/home/wrapper/wrappere_lib
 
-FROM artifacts.iflytek.com/docker-private/atp/cuda-go-python-base:10.1-1.17-3.9.13-ubuntu1804 as final
+FROM artifacts.iflytek.com/docker-private/atp/cuda-go-python-base:11.6-1.17-3.9.13-ubuntu1804 as final
 MAINTAINER ybyang7@iflytek.com
 ENV TZ Asia/Shanghai
 

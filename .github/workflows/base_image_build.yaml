@@ -1,4 +1,5 @@
-name: AIGes Docker Building
+
+name: Build Base Image
 on:
   push:
     branches: [ master ]
@@ -13,10 +14,9 @@ on:
 
 env:
   CUDA_BASE_REPO: cuda-go-python-base
-  AIGES_REPO: aiges-gpu
 
 jobs:
-  aiges-building:
+  build-base-image:
     strategy:
       matrix:
         cuda: [10.1, 10.2, 11.2,11.6]
@@ -47,13 +47,6 @@ jobs:
         env:
           AWS_REGION: us-east-1
 
-      - name:  Setup Python And Generate Dockerfile
-        shell: bash
-        run: |
-          sudo apt install -y python3-pip
-          sudo pip install jinja2 plumbum
-          sudo python docker/build.py generate  --all --use_github  
-
       # Set up credentials used by AWS CLI
       - name:  CreateRepo
         shell: bash
@@ -61,13 +54,14 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
-          aws ecr-public create-repository     --repository-name $AIGES_REPO || true
+          aws ecr-public create-repository     --repository-name $CUDA_BASE_REPO || true
 
-      - name: Build Docker Image For AIges
+
+      - name: Build Docker Image -cuda-base
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: ./dist/aiges/${{ matrix.ubuntu_os }}/cuda-${{ matrix.cuda }}/Dockerfile
+          file: ./docker/gpu/base/cuda-${{ matrix.cuda }}/Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: ${{ secrets.ECR_REGISTRY }}/${{env.AIGES_REPO}}:${{ matrix.cuda }}-${{ matrix.golang }}-${{ matrix.python }}-ubuntu${{ matrix.ubuntu_os }}
+          tags: ${{ secrets.ECR_REGISTRY }}/${{env.CUDA_BASE_REPO}}:${{ matrix.cuda }}-${{ matrix.golang }}-${{ matrix.python }}-ubuntu${{ matrix.ubuntu_os }}
