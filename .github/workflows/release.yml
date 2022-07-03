@@ -6,6 +6,10 @@ on:
       - '**'
     tags:
       - '*'
+env:
+  CUDA_BASE_REPO: cuda-go-python-base
+  AIGES_REPO: aiges-gpu
+
 
 jobs:
   goreleaser:
