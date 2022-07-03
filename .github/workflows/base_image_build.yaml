@@ -60,7 +60,8 @@ jobs:
       - name: Build Docker Image -cuda-base
         uses: docker/build-push-action@v2
         with:
-          context: ./docker/gpu/base/cuda-${{ matrix.cuda }}
+          context: .
+          file: ./docker/gpu/base/cuda-${{ matrix.cuda }}/Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           push: true
           tags: ${{ secrets.ECR_REGISTRY }}/${{env.CUDA_BASE_REPO}}:${{ matrix.cuda }}-${{ matrix.golang }}-${{ matrix.python }}-ubuntu${{ matrix.ubuntu_os }}

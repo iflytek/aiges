@@ -216,6 +216,7 @@ RUN set -eux; \
         export PYTHONDONTWRITEBYTECODE=1; \
         \
         python /get-pip.py \
+                --disable-pip-version-check \
                 --no-cache-dir \
                 --no-compile \
                 "pip==$PYTHON_PIP_VERSION" \
