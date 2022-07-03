@@ -2,9 +2,8 @@
 name: Build Base Image
 on:
   push:
-    branches: [ master ]
-    tags:
-      - '*'
+    paths:
+      - "docker/gpu/base/**"
   pull_request:
     branches: [ master ]
     paths-ignore:

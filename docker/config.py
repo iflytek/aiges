@@ -1,6 +1,9 @@
 import logging
-
+ch = logging.StreamHandler()
+ch.setLevel(logging.INFO)
 log = logging.getLogger()
+log.setLevel(logging.DEBUG)
+log.addHandler(ch)
 
 SUPPORTED_DISTRO_LIST = ["ubuntu1804"]
 SUPPORTED_PYVERSION_LIST = ["3.9.13"]

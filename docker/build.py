@@ -17,7 +17,7 @@ class Manager(cli.Application):
     PROGNAME: str = "build.py"
     VERSION: str = "0.0.1"
 
-    manifest: dict[str, dict[str, str]] = {}
+    manifest = {}
     ci = None
 
     def main(self):
@@ -133,13 +133,14 @@ class ManagerGenerate(Manager):
             os.makedirs(TEMP_GEN_DIR)
         for tag in self.matrix:
             dockerfile_dir = os.path.join(TEMP_GEN_DIR, tag.distro,
-                                          tag.cuda)  # for now , we fixed python version and golang
+                                          "cuda-" + tag.cuda)  # for now , we fixed python version and golang
             st = self.render(tag)
             if not os.path.exists(dockerfile_dir):
                 os.makedirs(dockerfile_dir)
             with open(os.path.join(dockerfile_dir, Dockerfile), 'w') as dockerfile:
                 dockerfile.write(st)
                 dockerfile.close()
+                log.info("write %s success" % os.path.abspath(os.path.join(dockerfile_dir, Dockerfile)))
 
     def render(self, tag: ImageTag):
         s = self.template.render(use_github=self.use_github, vars={
@@ -168,6 +169,7 @@ class ManagerGenerate(Manager):
         tpl = "./docker/templates/aiges-gpu/Dockerfile.j2"
         if not os.path.exists(tpl):
             raise FileNotFoundError("not found %s" % tpl)
+        log.info("load success j2 file.")
         self.template = self.template_env.from_string(open(tpl, "r").read())
 
     def targeted(self):
