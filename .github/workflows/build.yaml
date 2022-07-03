@@ -50,9 +50,9 @@ jobs:
       - name:  Setup Python And Generate Dockerfile
         shell: bash
         run: |
-          apt install -y python-pip
-          pip install jinj2 plumbum
-          python docker/build.py generate  --all --use_github  
+          sudo apt install -y python-pip
+          sudo pip install jinj2 plumbum
+          sudo python docker/build.py generate  --all --use_github  
 
       # Set up credentials used by AWS CLI
       - name:  CreateRepo
