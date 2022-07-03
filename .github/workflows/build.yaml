@@ -1,4 +1,4 @@
-name: Github Action WorkFlows
+name: AIGes Docker Building
 on:
   push:
     branches: [ master ]
@@ -11,8 +11,18 @@ on:
       - '*.yml'
       - 'docs/**'
 
+env:
+  CUDA_BASE_REPO: cuda-go-python-base
+  AIGES_REPO: aiges-gpu
+
 jobs:
-  build-binaries:
+  aiges-building:
+    strategy:
+      matrix:
+        cuda: [10.1, 10.2, 11.2,11.6]
+        python: [ 3.9.13 ]
+        golang: [1.17]
+        ubuntu_os: [1804]
     runs-on: ubuntu-latest
     # 项目构建
     steps:
@@ -21,33 +31,43 @@ jobs:
         with:
           submodules: true
 
-      - name: Setup Go
-        uses: actions/setup-go@v2
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
         with:
-          go-version: 1.17
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
 
-      - name: Build aiges
+      - name: Login to Amazon Public ECR
+        uses: docker/login-action@v1
+        with:
+          registry: public.ecr.aws
+          username: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          password: ${{ secrets.AWS_ACCESS_KEY_KEY }}
+        env:
+          AWS_REGION: us-east-1
+
+      - name:  Setup Python And Generate Dockerfile
+        shell: bash
         run: |
-          make clean
-          make build-pack
-          
-#      - name: Configure AWS credentials
-#        uses: aws-actions/configure-aws-credentials@v1
-#        with:
-#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#          aws-region: ap-east-1
-#
-#      - name: Get repo name
-#        id: repoName
-#        run: echo "::set-output name=reponame::$(echo ${{github.repository}} | cut -d '/' -f 2)"
+          apt install -y python-pip
+          pip install jinj2 plumbum
+          python docker/build.py generate  --all --use_github  
 
-#      - name: Build and Push to ECR public
-#        id: build-and-push
-#        uses: pahud/ecr-public-action@0db8adbcfd3c3ec2f604d70fdd6b5d15c80e1dbc
-#        with:
-#          dockerfile: ./docker/gpu/base/cuda-10.1/Dockerfile
-#          context: .
-#          create_repo: ${{ steps.repoName.outputs.reponame }}
-#          tags: |
-#            public.ecr.aws/iflytek-open/${{ steps.repoName.outputs.reponame }}:latest
+      # Set up credentials used by AWS CLI
+      - name:  CreateRepo
+        shell: bash
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          aws ecr-public create-repository     --repository-name $AIGES_REPO || true
+
+      - name: Build Docker Image For AIges
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./dist/aiges/${{ matrix.ubuntu_os }}/cuda-${{ matrix.cuda }}/Dockerfile
+          builder: ${{ steps.buildx.outputs.name }}
+          push: true
+          tags: ${{ secrets.ECR_REGISTRY }}/${{env.AIGES_REPO}}:${{ matrix.cuda }}-${{ matrix.golang }}-${{ matrix.python }}-ubuntu${{ matrix.ubuntu_os }}
