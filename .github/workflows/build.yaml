@@ -50,7 +50,7 @@ jobs:
       - name:  Setup Python And Generate Dockerfile
         shell: bash
         run: |
-          sudo apt install -y python-pip
+          sudo apt install -y python3-pip
           sudo pip install jinj2 plumbum
           sudo python docker/build.py generate  --all --use_github  
 
