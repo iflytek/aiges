@@ -16,6 +16,30 @@
 echo "### Usage" >> Note.md
 echo "
 ***当前支持的cuda-go-python基础镜像列表(包含cuda go python编译环境)***
+#### Public 公网可拉取
+***当前支持的python cuda golang基础编译镜像***
+
+| repo                                                                                     | tag                         | python | cuda | os           |
+|------------------------------------------------------------------------------------------|-----------------------------|--------|------|--------------|
+| public.ecr.aws/iflytek-open/cuda-go-python-base:10.1-1.17-3.9.13-ubuntu1804 | 10.1-1.17-3.9.13-ubuntu1804 | 3.9.13 | 10.1 | ubuntu 18.04 |
+| public.ecr.aws/iflytek-open/cuda-go-python-base:10.2-1.17-3.9.13-ubuntu1804 | 10.2-1.17-3.9.13-ubuntu1804 | 3.9.13 | 10.2 | ubuntu 18.04 |
+| public.ecr.aws/iflytek-open/cuda-go-python-base:11.2-1.17-3.9.13-ubuntu1804 | 10.1-1.17-3.9.13-ubuntu1804 | 3.9.13 | 11.2 | ubuntu 18.04 |
+| public.ecr.aws/iflytek-open/cuda-go-python-base:11.6-1.17-3.9.13-ubuntu1804 | 10.2-1.17-3.9.13-ubuntu1804 | 3.9.13 | 11.6 | ubuntu 18.04 |
+
+***当前支持的aiges基础镜像列表***
+
+| repo                                                                      | tag                    | python | cuda | os           |
+|---------------------------------------------------------------------------|------------------------|--------|------|--------------|
+| public.ecr.aws/iflytek-open/aiges-gpu:10.1-3.9.13-ubuntu1804 | 10.1-3.9.13-ubuntu1804 | 3.9.13 | 10.1 | ubuntu 18.04 |
+| public.ecr.aws/iflytek-open/aiges-gpu:10.2-3.9.13-ubuntu1804 | 10.2-3.9.13-ubuntu1804 | 3.9.13 | 10.2 | ubuntu 18.04 |
+| public.ecr.aws/iflytek-open/aiges-gpu:11.2-1.17-3.9.13-ubuntu1804 | 11.2-1.17-3.9.13-ubuntu1804 | 3.9.13 | 11.2 | ubuntu 18.04 |
+| public.ecr.aws/iflytek-open/aiges-gpu:11.6-1.17-3.9.13-ubuntu1804 | 11.6-1.17-3.9.13-ubuntu1804 | 3.9.13 | 11.6 | ubuntu 18.04 |
+
+
+
+#### 内部仓库
+
+***当前支持的python cuda golang基础编译镜像***
 
 | repo                                                                                     | tag                         | python | cuda | os           |
 |------------------------------------------------------------------------------------------|-----------------------------|--------|------|--------------|

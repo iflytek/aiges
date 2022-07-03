@@ -99,6 +99,24 @@ class ManagerGenerate(Manager):
         default=None,
     )
 
+    action: Any = cli.SwitchAttr(
+        "--action",
+        str,
+        group="Targeted",
+        excludes=["--all", ],
+        help="Action for build.py 'build' or 'release'",
+        default='build',
+    )
+
+    git_tag: Any = cli.SwitchAttr(
+        "--git_tag",
+        str,
+        group="Targeted",
+        excludes=["--all", ],
+        help="git tag ",
+        default='v1.2.0',
+    )
+
     def matched(self, key):
         match = self.cuda_version_regex.match(key)
         if match:
@@ -127,6 +145,30 @@ class ManagerGenerate(Manager):
                     for distro in SUPPORTED_DISTRO_LIST:
                         self.matrix.append(ImageTag(cuda, python=python, golang=golang, distro=distro)
                                            )
+
+    def generate_release_note(self):
+        path = './hack/release/Note.md'
+        release_line_format = "| {registry}/{repo}:{tag}{git_tag} | {tag} | {python} | {cuda} | {distro} |"
+
+        base_images_list = [
+            release_line_format.format(registry=self.get_regsitry(), tag=str(tag), python=tag.python, cuda=tag.cuda,
+                                       distro=tag.distro, repo='cuda-go-python-base', git_tag="")
+            for tag in self.matrix]
+        log.info(base_images_list)
+        aiges_images_list = [
+            release_line_format.format(registry=self.get_regsitry(), tag=str(tag), python=tag.python, cuda=tag.cuda,
+                                       distro=tag.distro, repo='aiges-gpu', git_tag="-{}".format(self.git_tag))
+            for tag in self.matrix]
+        log.info(aiges_images_list)
+
+        s = self.release_note.render(vars={
+            "base_images": '\n'.join(base_images_list),
+            "aiges_images": '\n'.join(aiges_images_list),
+        })
+        log.info(s)
+        with open(path, 'w') as note:
+            note.write(s)
+            note.close()
 
     def generate_dockerfile(self):
         if not os.path.exists(TEMP_GEN_DIR):
@@ -172,10 +214,30 @@ class ManagerGenerate(Manager):
         log.info("load success j2 file.")
         self.template = self.template_env.from_string(open(tpl, "r").read())
 
+    def _load_release_note(self):
+        tpl = "./docker/templates/release-note/Note.md.j2"
+        if not os.path.exists(tpl):
+            raise FileNotFoundError("not found %s" % tpl)
+        log.info("load success Note.md j2 file.")
+        self.release_note = self.template_env.from_string(open(tpl, "r").read())
+
     def targeted(self):
-        self._load_template()
-        self.generate_matrix_tags()
-        self.generate_dockerfile()
+        if self.action == "build":
+            log.info("building generating")
+            self._load_template()
+            self.generate_matrix_tags()
+            self.generate_dockerfile()
+
+        elif self.action == "release":
+            log.info("releasing generating...")
+            self._load_release_note()
+            self.generate_matrix_tags()
+            self.generate_release_note()
+        else:
+            log.error("wrong action %s" % self.action)
+
+    def release(self):
+        pass
 
     def main(self):
         self.targeted()

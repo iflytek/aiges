@@ -25,14 +25,50 @@ jobs:
           TAG=${GITHUB_REF#refs/tags/}
           echo ::set-output name=tag_name::${TAG}
 
-      - name: Note
-        id: Note
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Login to Amazon Public ECR
+        uses: docker/login-action@v1
+        with:
+          registry: public.ecr.aws
+          username: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          password: ${{ secrets.AWS_ACCESS_KEY_KEY }}
         env:
-          VERSION: ${{ steps.prepare.outputs.tag_name }}
+          AWS_REGION: us-east-1
+
+      - name:  Setup Python And Generate Dockerfile
+        shell: bash
         run: |
-          cd hack/release && sh note.sh
+          sudo apt install -y python3-pip
+          sudo pip install jinja2 plumbum
+          python docker/build.py generate  --all --use_github  
+          python docker/build.py generate   --action release --use_github  --git_tag=${{ steps.prepare.outputs.tag_name }}
+
+      # Set up credentials used by AWS CLI
+      - name:  CreateRepo
+        shell: bash
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          aws ecr-public create-repository     --repository-name $AIGES_REPO || true
+
+      - name: Build Docker Image For AIges
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./dist/aiges/ubuntu${{ matrix.ubuntu_os }}/cuda-${{ matrix.cuda }}/Dockerfile
+          builder: ${{ steps.buildx.outputs.name }}
+          push: true
+          tags: ${{ secrets.ECR_REGISTRY }}/${{env.AIGES_REPO}}:${{ matrix.cuda }}-${{ matrix.golang }}-${{ matrix.python }}-ubuntu${{ matrix.ubuntu_os }}-${{ steps.prepare.outputs.tag_name }}
 
       - name: Release
         run: |
           export GITHUB_TOKEN=${{ secrets.GH_TOKEN }}
           make build-release
+          

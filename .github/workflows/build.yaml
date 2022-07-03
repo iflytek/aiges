@@ -72,4 +72,4 @@ jobs:
           file: ./dist/aiges/ubuntu${{ matrix.ubuntu_os }}/cuda-${{ matrix.cuda }}/Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: ${{ secrets.ECR_REGISTRY }}/${{env.AIGES_REPO}}:${{ matrix.cuda }}-${{ matrix.golang }}-${{ matrix.python }}-ubuntu${{ matrix.ubuntu_os }}
+          tags: ${{ secrets.ECR_REGISTRY }}/${{env.AIGES_REPO}}:${{ matrix.cuda }}-${{ matrix.golang }}-${{ matrix.python }}-ubuntu${{ matrix.ubuntu_os }}-dev
