@@ -59,7 +59,6 @@ jobs:
           sudo apt install -y python3-pip
           sudo pip install jinja2 plumbum
           python docker/build.py generate  --all --use_github  
-          python docker/build.py generate   --action release --use_github  --git_tag=${{ steps.prepare.outputs.tag_name }}
 
       # Set up credentials used by AWS CLI
       - name:  CreateRepo
@@ -84,6 +83,29 @@ jobs:
     needs:
       - goreleaser
     steps:
+      - name: Checkout
+        uses: actions/checkout@master
+        with:
+          submodules: true
+
+      - name: Set up Go
+        uses: actions/setup-go@master
+        with:
+          go-version: 1.17
+
+      - name: Prepare
+        id: prepare
+        run: |
+          TAG=${GITHUB_REF#refs/tags/}
+          echo ::set-output name=tag_name::${TAG}
+
+      - name:  Setup Python And Generate Dockerfile
+        shell: bash
+        run: |
+          sudo apt install -y python3-pip
+          sudo pip install jinja2 plumbum
+          python docker/build.py generate   --action release --use_github  --git_tag=${{ steps.prepare.outputs.tag_name }}
+
       - name: Release
         run: |
           export GITHUB_TOKEN=${{ secrets.GH_TOKEN }}
