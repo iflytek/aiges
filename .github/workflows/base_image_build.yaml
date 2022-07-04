@@ -1,15 +1,12 @@
 
 name: Build Base Image
 on:
+  pull_request:
+    branches:
+      - master
   push:
     paths:
       - "docker/gpu/base/**"
-  pull_request:
-    branches: [ master ]
-    paths-ignore:
-      - '*.md'
-      - '*.yml'
-      - 'docs/**'
 
 env:
   CUDA_BASE_REPO: cuda-go-python-base
