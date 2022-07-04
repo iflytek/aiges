@@ -1,8 +1,11 @@
 
 name: Build Base Image
 on:
+  pull_request:
+    branches:
+      - master
   push:
-    paths-ignore:
+    paths:
       - "docker/gpu/base/**"
 
 env:

@@ -79,8 +79,12 @@ jobs:
           push: true
           tags: ${{ secrets.ECR_REGISTRY }}/${{env.AIGES_REPO}}:${{ matrix.cuda }}-${{ matrix.golang }}-${{ matrix.python }}-ubuntu${{ matrix.ubuntu_os }}-${{ steps.prepare.outputs.tag_name }}
 
+  release:
+    runs-on: ubuntu-latest
+    needs:
+      - goreleaser
+    steps:
       - name: Release
         run: |
           export GITHUB_TOKEN=${{ secrets.GH_TOKEN }}
           make build-release
-          
