@@ -52,7 +52,6 @@ void sigRegister() {
 import "C"
 import (
 	"errors"
-	"os"
 	"os/signal"
 	"runtime/debug"
 	"syscall"
@@ -72,19 +71,15 @@ func signalHandle() {
 	// 捕获go层signal异常
 	signal.Notify(sigChan, syscall.SIGSEGV)
 	signal.Notify(sigChan, syscall.SIGABRT)
-	signal.Notify(sigChan, syscall.SIGINT)
 
 	go func() {
 		sig := <-sigChan
 		switch sig {
 		case syscall.SIGSEGV, syscall.SIGABRT: //堆越界和空引用
 			dump(nil, debug.Stack(), sigErrTable[sig.(syscall.Signal)])
-		case syscall.SIGINT:
-			os.Exit(-1)
 		default:
 			catchLog.Errorw("catch SignalHook | receive unknown signal. ", "sig", sig)
 		}
 	}()
 	//	}
 }
-
