@@ -1,0 +1,4 @@
+{"level":"error","ts":"2022-07-04T10:25:12.994+0800","msg":"print opt","pid":932637,"opt":"name:xtest.toml,def:,prj:,group:,srv:,ver:,url:,mode:Native"}
+{"level":"info","ts":"2022-07-04T10:25:12.994+0800","msg":"NewLB mode: 0","pid":932637}
+{"level":"info","ts":"2022-07-04T10:25:12.994+0800","msg":"read cfg: 1000, 120000, 3, 3, 0 ","pid":932637}
+{"level":"info","ts":"2022-07-04T10:25:12.995+0800","msg":"NewClient success","pid":932637}
