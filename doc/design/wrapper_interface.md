@@ -23,7 +23,7 @@
 ![img_1.png](img_1.png)
 1. 提供 python sdk:  python sdk将发布到 pypi，方便用户随时更新安装
 2. [为什么?](###为什么) 新wrapper要求用户 实现 `Wrapper` 类，并将原有 函数式 wrapper开头的函数放入到 `Wrapper` （类方法|对象方法？待讨论 todo)中去
-3. 新wrapper，要求用户在Wrapper类中除了要实现 原有的 wrapperInit WrapperExec 等实现之外，需要额外定义能力的输入，输出，最终生成的HTTP接口基于此信息生成
+3. [新wrapper设计](https://github.com/xfyun/aiges_python/blob/master/aiges_python/v2/wrapper.py)，要求用户在Wrapper类中除了要实现 原有的 wrapperInit WrapperExec 等实现之外，需要额外定义能力的输入，输出，最终生成的HTTP接口基于此信息生成
 
 ### 为什么
 
