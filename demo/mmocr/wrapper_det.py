@@ -19,7 +19,7 @@ def wrapperInit(config: {}) -> int:
     logger.info("engine config %s" % str(config))
     global model
     # Load models into memory
-    model = MMOCR()
+    model = MMOCR(det='TextSnake', recog=None)
     logger.info("init success")
     return 0
 
@@ -42,10 +42,11 @@ once接口执行函数
 def wrapperOnceExec(usrTag: str, params: {}, reqData: [], respData: [], psrIds: [], psrCnt: int) -> int:
     img = np.array(Image.open(io.BytesIO(reqData[0]["data"])).convert('RGB'))
     global model
-    rlt = model.readtext(img, details=True)
+    rlt = model.readtext(img,details=True)
     rlt = json.dumps(rlt)
     respData.append({"key": "boxes", "data": rlt, "len": len(rlt), "status": 3, "type": 0})
     #respData.append(rlt)
+    print(respData, flush=True)
     return 0
 
 
