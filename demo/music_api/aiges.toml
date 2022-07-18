@@ -1,0 +1,90 @@
+[svcName] #服务配置;section与服务名匹配;
+finder = 0
+host = "127.0.0.1"
+port = 5090    #缺省：随机端口
+
+[aiges] #统一引擎相关通用配置;
+gesMock = false
+sessMode = false
+numaNode = 0
+realTimeRlt = false
+usrCfg = ""
+sub = "common"
+
+[wrapper] #wrapper示例配置
+"common.lic" = "10"
+"resource./msp/resource/sms/acmod_16KPowerFlt_sms_RNN.bin" = "HMM_16K"
+"resource./msp/resource/sms/wfst.bin" = "WFST"
+# music recognize
+"requrl" = "https://identify-cn-north-1.acrcloud.cn/v1/identify"
+"http_method" = "POST"
+"http_uri" = "/v1/identify"
+"access_key_music" = "0d8b9a4484e3df2e38673a124a24d54b"
+"access_secret_music" = "uJt8V45KabmIiceMz2gOVg8e00eTOvawzfq1TneS"
+"access_key_humming" = "cc9efb92faf8a58dc113ed374e29e4dc"
+"access_secret_humming" = "YQDs4Pge5ogboY4fdIKp8eeDAWwKbZ1JL2qczScL"
+
+
+[auth]
+meterCtrl = false
+janusCtrl = false
+
+[resource]
+able = false
+
+[elog]
+elogRemote = false
+elogLocal = false
+elogConsumer = 2
+elogHost = "127.0.0.1"
+elogPort = "4545"
+elogXml = "seelog.xml"
+elogSpill = "/log/server/iatspill"
+elogS3ak = ""
+elogS3sk = ""
+elogS3ep = ""
+elogZkhost = ""
+
+[log]
+level = "debug"
+file = "./log/aiges.log"
+size = 3
+count = 3
+die = 3
+async = 0
+
+[lbv2]
+lbname = "lb-niche"    #传给服务发现，用来确定使用哪个lb       程序启动时候-m=1表示使用服务发现来寻找Lb
+able = 0
+sub = "sub"
+subsvc = "svc"
+apiversion = "1.0.0"
+conn-timeout = 100
+conn-pool-size = 20        #rpc连接池数量。缺省4
+lb-mode= 0  #0禁用lb,2使用lb。缺省0      ats只是上报lb,不使用lb，所以设为0
+lb-retry = 2
+taddrs="lbv2@10.1.87.68:9095"    #不使用服务发现时候使用的默认lb地址
+
+[fc]    #xrpc flowControl
+able = 1
+router = "sessionManager"   #路由字段，可选项为sessionManager和qpsLimiter
+max = 10                   #会话模式时代表最大的授权量，非会话模式代表间隔时间里的最大请求数
+ttl = 10000                  #会话模式代表会话的超时时间，非会话模式代表有效期（间隔时间）
+best = 10                   #最佳授权数
+roll = 5000
+strategy = 2                 #可选值为0、1、2（缺省为0），0.代表定时上报(v1)；1.根据授权范围上报(v1)；2.基于hermes(v2)
+
+[trace]
+host = "127.0.0.1"
+port = 4545
+able = 0
+deliver = 1 #缺省1
+dump = 0
+backend = 2
+buffer=2000
+bcluster = "5s"
+idc = "dz"
+loadts = 1000000
+
+[sonar]
+able = 0
