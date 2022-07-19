@@ -151,20 +151,4 @@ def wrapperError(ret: int) -> str:
     elif ret == 3015:
         return "QPS超出限制（需要升级账号）"
     else:
-<<<<<<< HEAD
-        return f"Defined Error: {ret}"
-
-# def wrapperCreate(usrTag, params, cb, psrIds, psrCnt, errNum):
-#     pass
-
-# def wrapperWrite(handle, reqData):
-#     pass
-
-# def wrapperRead(handle, respData):
-#     pass
-
-# def wrapperDestroy(handle):
-#     pass
-=======
-        return f"Defined Error: {ret}"
->>>>>>> b11110d5653ebcdc63a25a5d3ddeb939af984c9b
+        return f"User Defined Error: {ret}"

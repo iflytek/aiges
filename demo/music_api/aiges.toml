@@ -15,16 +15,6 @@ sub = "common"
 "common.lic" = "10"
 "resource./msp/resource/sms/acmod_16KPowerFlt_sms_RNN.bin" = "HMM_16K"
 "resource./msp/resource/sms/wfst.bin" = "WFST"
-<<<<<<< HEAD
-# music recognize
-"requrl" = "https://identify-cn-north-1.acrcloud.cn/v1/identify"
-"http_method" = "POST"
-"http_uri" = "/v1/identify"
-"access_key_music" = "0d8b9a4484e3df2e38673a124a24d54b"
-"access_secret_music" = "uJt8V45KabmIiceMz2gOVg8e00eTOvawzfq1TneS"
-"access_key_humming" = "cc9efb92faf8a58dc113ed374e29e4dc"
-"access_secret_humming" = "YQDs4Pge5ogboY4fdIKp8eeDAWwKbZ1JL2qczScL"
-=======
 
 # music recognize
 "requrl" = "https://YOUR_HOST/v1/identify"
@@ -34,7 +24,6 @@ sub = "common"
 "access_secret_music" = "YOUR_ACCESS_SECRET"
 "access_key_humming" = "YOUR_ACCESS_KEY"
 "access_secret_humming" = "YOUR_ACCESS_SECRET"
->>>>>>> b11110d5653ebcdc63a25a5d3ddeb939af984c9b
 
 
 [auth]

@@ -6,23 +6,9 @@ copy wrapper /home/wrapper
 
 RUN pip3 install requests
 
-
-# 拷贝mmocr配置文件到  /home/aiges, 因为工作目录位于 /home/aiges
-#RUN cp -ra /home/mmocr/configs /home/aiges
-
-
-
 ENV PYTHONPATH=$PYTHONPATH:/home/wrapper:/home:/home/aiges
 
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/wrapper
-
-
-
-
-#ENV PYTHONPATH=$PYTHONPATH:/home/mmocr
-
-#ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/wrapper/wrapper_lib
-
 
 COPY xtest.toml /home/aiges
 COPY xtest /home/aiges/xtest
