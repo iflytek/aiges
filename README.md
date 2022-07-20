@@ -24,6 +24,10 @@
 
 ![img](https://github.com/xfyun/proposals/blob/main/athenaloader/usage.png?raw=true)
 
+### Documentation
+
+View Doc on [Documentation](https://xfyun.github.io/athena_website/)
+
 ## 开源计划
 
 | 任务项 |目标 |时间 |
@@ -46,9 +50,7 @@
 
 通用引擎加载器(部分文档中loader， loader engine均为别名)
 
-### Documentation
 
-View Doc on [Documentation](https://xfyun.github.io/inferservice/architechture/architechture/)
 
 ### AIGes 项目编译
 ```
