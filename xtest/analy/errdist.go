@@ -1,8 +1,7 @@
 package analy
 
 import (
-	_var "github.com/xfyun/aiges/xtest/var"
-	"github.com/xfyun/xsf/utils"
+	"git.iflytek.com/AIaaS/xsf/utils"
 	"os"
 	"strconv"
 	"sync"
@@ -17,38 +16,41 @@ import (
 
 var ErrAnalyser errDistAnalyser
 
-type errInfo struct {
-	errCode int
-	errStr  error
+type ErrInfo struct {
+	ErrCode int
+	ErrStr  error
 }
 type errDistAnalyser struct {
 	errCnt   map[int]int64 // map[error]count 错误计数
 	errDsc   map[int]error // 错误描述
-	errTmp   []errInfo     // 临时存储区,用于channel满阻塞的极端场景;
+	errTmp   []ErrInfo     // 临时存储区,用于channel满阻塞的极端场景;
 	errMutex sync.Mutex
-	errChan  chan errInfo // error
+	errChan  chan ErrInfo // error
 	swg      sync.WaitGroup
 	log      *utils.Logger
+
+	ErrAnaDst string
 }
 
-func (eda *errDistAnalyser) Start(clen int, logger *utils.Logger) {
+func (eda *errDistAnalyser) Start(clen int, logger *utils.Logger, errAnaDst string) {
 	eda.log = logger
 	eda.errCnt = make(map[int]int64)
 	eda.errDsc = make(map[int]error)
-	eda.errTmp = make([]errInfo, 0, 10)
-	eda.errChan = make(chan errInfo, clen)
+	eda.errTmp = make([]ErrInfo, 0, 10)
+	eda.errChan = make(chan ErrInfo, clen)
+	eda.ErrAnaDst = errAnaDst
 	eda.swg.Add(1)
 	go eda.count()
 }
 
-func (eda *errDistAnalyser) PushErr(code int, err error) {
+func (eda *errDistAnalyser) PushErr(info ErrInfo) {
 	select {
-	case eda.errChan <- errInfo{code, err}:
+	case eda.errChan <- info:
 	default:
 		// channel满阻塞,降级加锁写入临时存储区
 		eda.errMutex.Lock()
 		defer eda.errMutex.Unlock()
-		eda.errTmp = append(eda.errTmp, errInfo{code, err})
+		eda.errTmp = append(eda.errTmp, info)
 	}
 }
 
@@ -64,17 +66,17 @@ func (eda *errDistAnalyser) count() {
 			break
 		}
 
-		cnt, _ := eda.errCnt[err.errCode]
-		eda.errCnt[err.errCode] = cnt + 1
-		eda.errDsc[err.errCode] = err.errStr
+		cnt, _ := eda.errCnt[err.ErrCode]
+		eda.errCnt[err.ErrCode] = cnt + 1
+		eda.errDsc[err.ErrCode] = err.ErrStr
 	}
 
 	// 临时存储区数据同步
 	eda.errMutex.Lock()
 	for _, v := range eda.errTmp {
-		cnt, _ := eda.errCnt[v.errCode]
-		eda.errCnt[v.errCode] = cnt + 1
-		eda.errDsc[v.errCode] = v.errStr
+		cnt, _ := eda.errCnt[v.ErrCode]
+		eda.errCnt[v.ErrCode] = cnt + 1
+		eda.errDsc[v.ErrCode] = v.ErrStr
 	}
 	eda.errMutex.Unlock()
 
@@ -85,13 +87,16 @@ func (eda *errDistAnalyser) count() {
 
 func (eda *errDistAnalyser) dumpLog() {
 	// 错误分布数据落盘;
-	fi, err := os.OpenFile(_var.ErrAnaDst, os.O_CREATE|os.O_APPEND|os.O_RDWR, os.ModePerm)
+	fi, err := os.OpenFile(eda.ErrAnaDst, os.O_CREATE|os.O_APPEND|os.O_RDWR, os.ModePerm)
 	if err != nil {
-		eda.log.Errorw("error dist Log dump fail with open file", "err", err.Error(), "file", _var.ErrAnaDst)
+		eda.log.Errorw("error dist Log dump fail with open file", "err", err.Error(), "file", eda.ErrAnaDst)
 		return
 	}
-
+	//delete(eda.errCnt, 0)
 	for eCode, eCount := range eda.errCnt {
+		//if eCode == 0 { // 正确请求，直接返回
+		//	continue
+		//}
 		var edesc string
 		if eda.errDsc[eCode] != nil {
 			edesc = eda.errDsc[eCode].Error()

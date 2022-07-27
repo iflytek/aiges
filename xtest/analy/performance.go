@@ -4,8 +4,7 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
-	_var "github.com/xfyun/aiges/xtest/var"
-	"github.com/xfyun/xsf/utils"
+	"git.iflytek.com/AIaaS/xsf/utils"
 	"io"
 	"math"
 	"os"
@@ -34,9 +33,9 @@ const (
 	SessEnd      SessStatus = 2
 	SessOnce     SessStatus = 3
 
-	outputPerfFile   = "perf.txt"
-	outputRecordFile = "perfReqRecord.csv"
-	outputPerfImg    = "perf.jpg"
+	outputPerfFile   = "./log/perf.txt"
+	outputRecordFile = "./log/perfReqRecord.csv"
+	outputPerfImg    = "./log/perf.jpg"
 )
 
 /*
@@ -104,6 +103,9 @@ type PerfModule struct {
 	reqRecordFile *os.File
 
 	Log *utils.Logger
+
+	ReqMode   int
+	PerfLevel int
 }
 
 var Perf *PerfModule
@@ -149,7 +151,7 @@ func (pf *PerfModule) collect() {
 		case detail := <-pf.collectChan:
 			pf.Log.Debugw("perf collect", "detail ", detail)
 			pf.mtx.Lock()
-			if !_var.ReqMode {
+			if pf.ReqMode == 0 {
 				if detail.ErrInfo != "" {
 					pf.errReqRecord[detail.ErrCode] = append(pf.errReqRecord[detail.ErrCode], errMsg{Handle: detail.ID, ErrInfo: detail.ErrInfo})
 				} else {
@@ -197,7 +199,7 @@ func (pf *PerfModule) collect() {
 }
 
 func (pf *PerfModule) pretreatment(id string) {
-	if !_var.ReqMode {
+	if pf.ReqMode == 0 {
 		var begin, end time.Time
 		for _, record := range pf.correctReqPath[id] {
 			if record.Dire == UP {
@@ -275,7 +277,7 @@ func (pf *PerfModule) loadRecord() error {
 		if c == io.EOF {
 			break
 		}
-		if !_var.ReqMode {
+		if pf.ReqMode == 0 {
 			reg := regexp.MustCompile("id:(.*?),cost:(.*?),begin:(.*?),end:(.*?)")
 			parts := reg.FindStringSubmatch(string(record))
 			if len(parts) != 5 {
@@ -320,7 +322,7 @@ func (pf *PerfModule) calcDelay() {
 		return
 	}
 	//非会话模式或者会话模式仅保留第一帧到最后一帧的性能结果
-	if !_var.ReqMode || _var.PerfLevel == 0 {
+	if pf.ReqMode == 0 || pf.PerfLevel == 0 {
 		for _, val := range pf.correctReqCost {
 			pf.Log.Debugf("perf info,id:%s,cost:%f\n", val.id, val.cost)
 		}
@@ -332,7 +334,7 @@ func (pf *PerfModule) calcDelay() {
 				}
 				return tmp
 			}(pf.correctReqCost))
-	} else if _var.ReqMode && _var.PerfLevel == 1 {
+	} else if pf.ReqMode == 1 && pf.PerfLevel == 1 {
 		pf.perf.DelayFirstMin, pf.perf.DelayFirstMax, pf.perf.DelayFirstAverage, pf.perf.DelayFirst95, pf.perf.DelayFirst99 =
 			pf.anallyArray(func(costs []singlePerfCost) []float32 {
 				var tmp []float32
@@ -341,7 +343,7 @@ func (pf *PerfModule) calcDelay() {
 				}
 				return tmp
 			}(pf.correctReqCost))
-	} else if _var.ReqMode && _var.PerfLevel == 2 {
+	} else if pf.ReqMode == 1 && pf.PerfLevel == 2 {
 		pf.perf.DelayLastMin, pf.perf.DelayLastMax, pf.perf.DelayLastAverage, pf.perf.DelayLast95, pf.perf.DelayLast99 =
 			pf.anallyArray(func(costs []singlePerfCost) []float32 {
 				var tmp []float32
@@ -400,4 +402,8 @@ func (pf *PerfModule) anallyArray(data []float32) (min, max, average, aver95, av
 			costs[(len(costs)-1)*99/100]
 	}(data)
 	return
+}
+
+func (pf *PerfModule) XXX() {
+	fmt.Println("哈哈哈： ", pf.correctReqCost)
 }

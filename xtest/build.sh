@@ -1,1 +1,0 @@
-go build -o xtest ./main/xtest.go
