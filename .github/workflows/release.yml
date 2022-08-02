@@ -108,6 +108,5 @@ jobs:
 
       - name: Release
         run: |
+          export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
           make build-release
-
-#          # export GITHUB_TOKEN=${{ secrets.GH_TOKEN }}
