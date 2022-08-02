@@ -10,6 +10,7 @@ ENV PYTHONPATH=$PYTHONPATH:/home/wrapper:/home:/home/aiges
 
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/wrapper
 
+COPY test.wav /home/wrapper
 COPY xtest.toml /home/aiges
 COPY xtest /home/aiges/xtest
 COPY aiges.toml /home/aiges
