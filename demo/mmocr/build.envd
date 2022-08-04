@@ -1,0 +1,45 @@
+def build():
+    mirror_config() 
+    base(language="python3.8", os="public.ecr.aws/iflytek-open/cuda-go-python-base:10.1-1.17-3.9.13-ubuntu1804") 
+    install.python_packages(name = [
+        "torch==1.10",
+        "openmim",
+	"torchvision",
+	"iflags"
+    ])
+    install.system_packages(name = [                                      
+        "libgl1-mesa-glx",
+	"build-essential"
+    ])
+
+    io.copy(src="./", dest="/home/aiges")                                  
+    run(commands=[                                                         
+        "pip install -e /home/aiges/wrapper",
+	"mim install mmdet==2.24.0",
+        "mim install mmcv-full==1.6.0",
+    ])
+
+def mirror_config():                                                       
+    config.pip_index(url = "https://pypi.mirrors.ustc.edu.cn/simple/")
+    config.conda_channel(channel="""
+    channels:
+    - defaults
+    show_channel_urls: true
+    default_channels:
+    - https://repo.anaconda.com/pkgs/main
+    - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/
+    - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
+    - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/pytorch/
+    - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/menpo/
+    - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/bioconda/
+    - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/msys2/
+    - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge/
+    custom_channels:
+    conda-forge: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud
+    msys2: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud
+    bioconda: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud
+    menpo: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud
+    pytorch: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud
+    pytorch-lts: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud
+    simpleitk: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud
+    """)
