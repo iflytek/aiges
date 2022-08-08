@@ -5,7 +5,7 @@ def build():
         "torch==1.10",
         "openmim",
 	"torchvision",
-	"iflags"
+	"aiges"
     ])
     install.system_packages(name = [                                      
         "libgl1-mesa-glx",

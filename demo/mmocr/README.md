@@ -23,11 +23,7 @@
     envd build --t IMAGE:TAG --f build.envd         
     ```
 
-3. 快速开始一个项目
-    ```python
-    python -m aiges -n "project name"
-    ```
-4.  完成`wrapper.py`的编写以及本地调试，并发布能力
+3.  完成`wrapper.py`的编写以及本地调试，并发布能力
     - 插件的实现参考`mmocr/wrapper_v1.py`
 
 
