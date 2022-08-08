@@ -11,7 +11,6 @@ COPY docker/repos/bullseye/sources.list /etc/apt/sources.list
 # Setup Go
 # https://github.com/docker-library/golang/blob/master/1.17/bullseye/Dockerfile
 # install cgo-related dependencies
-# install cgo-related dependencies
 RUN set -eux; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
@@ -160,9 +159,7 @@ MAINTAINER ybyang7@iflytek.com
 ENV TZ Asia/Shanghai
 
 COPY docker/repos/bullseye/sources.list /etc/apt/sources.list
-RUN apt update && apt install -y build-essential 
 RUN DEBIAN_FRONTEND=noninteractive apt update &&apt install -y libnuma-dev git vim
-ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/aiges:/home/aiges/library
 WORKDIR /home/aiges
 
 # conda python setup python version
@@ -176,6 +173,7 @@ prefix: /opt/aiges ''' > /home/aiges/environment.yml &&  conda env create -f env
 # Make RUN commands use the new environment:
 SHELL ["conda", "run", "-n", "aiges", "/bin/bash", "-c"]
 RUN echo "conda activate aiges " >> ~/.bashrc
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/aiges:/home/aiges/library:/opt/conda/envs/aiges/lib
 
 
 # need xtest 
