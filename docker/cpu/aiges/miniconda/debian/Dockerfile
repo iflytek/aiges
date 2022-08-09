@@ -11,6 +11,7 @@ COPY docker/repos/bullseye/sources.list /etc/apt/sources.list
 # Setup Go
 # https://github.com/docker-library/golang/blob/master/1.17/bullseye/Dockerfile
 # install cgo-related dependencies
+# install cgo-related dependencies
 RUN set -eux; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
@@ -24,41 +25,42 @@ RUN set -eux; \
 
 ENV PATH /usr/local/go/bin:$PATH
 
-ENV GOLANG_VERSION 1.18.5
+ENV GOLANG_VERSION 1.17.11
 
+ENV PATH /usr/local/go/bin:$PATH
 RUN set -eux; \
 	arch="$(dpkg --print-architecture)"; arch="${arch##*-}"; \
 	url=; \
 	case "$arch" in \
 		'amd64') \
-			url='https://dl.google.com/go/go1.18.5.linux-amd64.tar.gz'; \
-			sha256='9e5de37f9c49942c601b191ac5fba404b868bfc21d446d6960acc12283d6e5f2'; \
+			url='https://dl.google.com/go/go1.17.11.linux-amd64.tar.gz'; \
+			sha256='d69a4fe2694f795d8e525c72b497ededc209cb7185f4c3b62d7a98dd6227b3fe'; \
 			;; \
 		'armel') \
 			export GOARCH='arm' GOARM='5' GOOS='linux'; \
 			;; \
 		'armhf') \
-			url='https://dl.google.com/go/go1.18.5.linux-armv6l.tar.gz'; \
-			sha256='d5ac34ac5f060a5274319aa04b7b11e41b123bd7887d64efb5f44ead236957af'; \
+			url='https://dl.google.com/go/go1.17.11.linux-armv6l.tar.gz'; \
+			sha256='56fb4a344bfe01427398083b3e82018fcde1f168a94e9df9820010b29e558f27'; \
 			;; \
 		'arm64') \
-			url='https://dl.google.com/go/go1.18.5.linux-arm64.tar.gz'; \
-			sha256='006f6622718212363fa1ff004a6ab4d87bbbe772ec5631bab7cac10be346e4f1'; \
+			url='https://dl.google.com/go/go1.17.11.linux-arm64.tar.gz'; \
+			sha256='adefa7412c6798f9cad02d1e8336fc2242f5bade30c5b32781759181e01961b7'; \
 			;; \
 		'i386') \
-			url='https://dl.google.com/go/go1.18.5.linux-386.tar.gz'; \
-			sha256='0c44f85d146c6f98c34e8ff436a42af22e90e36fe232d3d9d3101f23fd61362b'; \
+			url='https://dl.google.com/go/go1.17.11.linux-386.tar.gz'; \
+			sha256='8e43b4c63dda0612df0e1ed3cf8bed566fe8ae88082a46343c40be76a61371e4'; \
 			;; \
 		'mips64el') \
 			export GOARCH='mips64le' GOOS='linux'; \
 			;; \
 		'ppc64el') \
-			url='https://dl.google.com/go/go1.18.5.linux-ppc64le.tar.gz'; \
-			sha256='2e37fb9c7cbaedd4e729492d658aa4cde821fc94117391a8105c13b25ca1c84b'; \
+			url='https://dl.google.com/go/go1.17.11.linux-ppc64le.tar.gz'; \
+			sha256='013624fc1964d576f314117f2f3b6a6a8f3d32f0ec8f55fa5962664537a34180'; \
 			;; \
 		's390x') \
-			url='https://dl.google.com/go/go1.18.5.linux-s390x.tar.gz'; \
-			sha256='e3d536e7873639f85353e892444f83b14cb6670603961f215986ae8e28e8e07a'; \
+			url='https://dl.google.com/go/go1.17.11.linux-s390x.tar.gz'; \
+			sha256='0202a0b2ffaa9bdf1f2480789c2009ba6fde597e1f1c6d4cfb9559bb1964a39c'; \
 			;; \
 		*) echo >&2 "error: unsupported architecture '$arch' (likely packaging update needed)"; exit 1 ;; \
 	esac; \
@@ -66,8 +68,8 @@ RUN set -eux; \
 	if [ -z "$url" ]; then \
 # https://github.com/golang/go/issues/38536#issuecomment-616897960
 		build=1; \
-		url='https://dl.google.com/go/go1.18.5.src.tar.gz'; \
-		sha256='9920d3306a1ac536cdd2c796d6cb3c54bc559c226fc3cc39c32f1e0bd7f50d2a'; \
+		url='https://dl.google.com/go/go1.17.11.src.tar.gz'; \
+		sha256='ac2649a65944c6a5abe55054000eee3d77196880da36a3555f62e06540e8eb54'; \
 		echo >&2; \
 		echo >&2 "warning: current architecture ($arch) does not have a compatible Go binary release; will be building from source"; \
 		echo >&2; \
@@ -138,50 +140,37 @@ COPY . /home/aiges
 WORKDIR /home/aiges
 RUN make build-pack
 
-# 构建ai_cpython_wrapper需要依赖python 并匹配 
+# 构建ai_cpython_wrapper需要依赖python 并匹配
 
 # conda python setup python version
 # Create the environment:
-RUN echo '''name: aiges \n\
-channels: \n \
-- defaults \n\
-dependencies: \n \
-- python=3.8 \n\
-prefix: /opt/aiges ''' > /home/aiges/environment.yml &&  conda env create -f environment.yml
 # Make RUN commands use the new environment:
-SHELL ["conda", "run", "-n", "aiges", "/bin/bash", "-c"]
-RUN echo "conda activate aiges " >> ~/.bashrc
 
-RUN cd /home/aiges/ai_cpython_wrapper && make
 
 FROM continuumio/miniconda3:4.12.0   as final
 MAINTAINER ybyang7@iflytek.com
 ENV TZ Asia/Shanghai
 
 COPY docker/repos/bullseye/sources.list /etc/apt/sources.list
+RUN apt update && apt install -y build-essential
 RUN DEBIAN_FRONTEND=noninteractive apt update &&apt install -y libnuma-dev git vim
 WORKDIR /home/aiges
 
-# conda python setup python version
-# Create the environment:
-RUN echo '''name: aiges \n\
-channels: \n \
-- defaults \n\
-dependencies: \n \
-- python=3.8 \n\
-prefix: /opt/aiges ''' > /home/aiges/environment.yml &&  conda env create -f environment.yml
 # Make RUN commands use the new environment:
-SHELL ["conda", "run", "-n", "aiges", "/bin/bash", "-c"]
-RUN echo "conda activate aiges " >> ~/.bashrc
-ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/aiges:/home/aiges/library:/opt/conda/envs/aiges/lib
+RUN conda install -c conda-forge ncurses
 
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/aiges:/home/aiges/library:
+#/opt/conda/envs/aiges/lib
+#RUN rm -f /opt/conda/envs/aiges/lib/libtinfo.so.6
+#
 
-# need xtest 
+# need xtest
 # need aiges.toml
 # xtest.toml
 COPY --from=go-builder /home/aiges/dist/aiges_linux_amd64 .
-COPY --from=go-builder /home/aiges/ai_cpython_wrapper/wrapper_lib /home/aiges/library
+COPY --from=go-builder /home/aiges/ai_cpython_wrapper  /home/aiges/ai_cpython_wrapper
+
+RUN cd /home/aiges/ai_cpython_wrapper && make && cp -r /home/aiges/ai_cpython_wrapper/wrapper_lib/* /home/aiges/library && rm -rf /home/aiges/ai_cpython_wrapper
 
 
 CMD ["sh", "-c", "./AIservice -m=0 -c=aiges.toml -s=svcName -u=http://companion.xfyun.iflytek:6868 -p=AIaaS -g=dx"]
-

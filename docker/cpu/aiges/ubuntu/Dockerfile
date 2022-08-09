@@ -1,78 +1,121 @@
-FROM debian:bullseye-slim
+FROM ubuntu:18.04 as go-builder
 
-LABEL maintainer="ybyang7@iflytek.com"
-
-ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
-
-# bullseye
-
+RUN apt update && apt install -y ca-certificates
+COPY docker/repos/ubuntu1804/sources.list /etc/apt/sources.list
 ENV TZ=Asia/Shanghai \
-DEBIAN_FRONTEND=noninteractive
-
-MAINTAINER ybyang7@iflytek.com
-COPY docker/repos/bullseye/sources.list /etc/apt/sources.list
-
-
+    DEBIAN_FRONTEND=noninteractive
+ENV GOLANG_VERSION 1.17.11
 # Setup Go
 # https://github.com/docker-library/golang/blob/master/1.17/bullseye/Dockerfile
 # install cgo-related dependencies
 RUN set -eux; \
-apt-get update; \
-apt-get install -y --no-install-recommends \
-g++ \
-gcc \
-libc6-dev \
-make \
-pkg-config \
-; \
-rm -rf /var/lib/apt/lists/*
+	apt-get update; \
+	apt-get install -y --no-install-recommends \
+                gpg \
+		g++ \
+		gcc \
+		libc6-dev \
+		make \
+    	wget \
+        pkg-config \
+    ; \
+	rm -rf /var/lib/apt/lists/*
 
 ENV PATH /usr/local/go/bin:$PATH
-
-ENV GOLANG_VERSION 1.18.5
-
 RUN set -eux; \
-arch="$(dpkg --print-architecture)"; arch="${arch##*-}"; \
-url=; \
-case "$arch" in \
-'amd64') \
-url='https://dl.google.com/go/go1.18.5.linux-amd64.tar.gz'; \
-sha256='9e5de37f9c49942c601b191ac5fba404b868bfc21d446d6960acc12283d6e5f2'; \
-;; \
-'armel') \
-export GOARCH='arm' GOARM='5' GOOS='linux'; \
-;; \
-'armhf') \
-url='https://dl.google.com/go/go1.18.5.linux-armv6l.tar.gz'; \
-sha256='d5ac34ac5f060a5274319aa04b7b11e41b123bd7887d64efb5f44ead236957af'; \
-;; \
-'arm64') \
-url='https://dl.google.com/go/go1.18.5.linux-arm64.tar.gz'; \
-sha256='006f6622718212363fa1ff004a6ab4d87bbbe772ec5631bab7cac10be346e4f1'; \
-;; \
-'i386') \
-url='https://dl.google.com/go/go1.18.5.linux-386.tar.gz'; \
-sha256='0c44f85d146c6f98c34e8ff436a42af22e90e36fe232d3d9d3101f23fd61362b'; \
-;; \
-'mips64el') \
-export GOARCH='mips64le' GOOS='linux'; \
-;; \
-'ppc64el') \
-url='https://dl.google.com/go/go1.18.5.linux-ppc64le.tar.gz'; \
-sha256='2e37fb9c7cbaedd4e729492d658aa4cde821fc94117391a8105c13b25ca1c84b'; \
-;; \
-'s390x') \
-url='https://dl.google.com/go/go1.18.5.linux-s390x.tar.gz'; \
-sha256='e3d536e7873639f85353e892444f83b14cb6670603961f215986ae8e28e8e07a'; \
-;; \
-*) echo >&2 "error: unsupported architecture '$arch' (likely packaging update needed)"; exit 1 ;; \
-esac; \
-build=; \
-if [ -z "$url" ]; then \
+	arch="$(dpkg --print-architecture)"; arch="${arch##*-}"; \
+	url=; \
+	case "$arch" in \
+		'amd64') \
+			url='https://dl.google.com/go/go1.17.11.linux-amd64.tar.gz'; \
+			sha256='d69a4fe2694f795d8e525c72b497ededc209cb7185f4c3b62d7a98dd6227b3fe'; \
+			;; \
+		'armel') \
+			export GOARCH='arm' GOARM='5' GOOS='linux'; \
+			;; \
+		'armhf') \
+			url='https://dl.google.com/go/go1.17.11.linux-armv6l.tar.gz'; \
+			sha256='56fb4a344bfe01427398083b3e82018fcde1f168a94e9df9820010b29e558f27'; \
+			;; \
+		'arm64') \
+			url='https://dl.google.com/go/go1.17.11.linux-arm64.tar.gz'; \
+			sha256='adefa7412c6798f9cad02d1e8336fc2242f5bade30c5b32781759181e01961b7'; \
+			;; \
+		'i386') \
+			url='https://dl.google.com/go/go1.17.11.linux-386.tar.gz'; \
+			sha256='8e43b4c63dda0612df0e1ed3cf8bed566fe8ae88082a46343c40be76a61371e4'; \
+			;; \
+		'mips64el') \
+			export GOARCH='mips64le' GOOS='linux'; \
+			;; \
+		'ppc64el') \
+root@shanghai-autodl-master01:/data1/ybyang7/opensource/aiges/docker/cpu/base/native/ubuntu# cat Dockerfile
+FROM ubuntu:18.04 as go-builder
+
+RUN apt update && apt install -y ca-certificates
+COPY docker/repos/ubuntu1804/sources.list /etc/apt/sources.list
+ENV TZ=Asia/Shanghai \
+    DEBIAN_FRONTEND=noninteractive
+ENV GOLANG_VERSION 1.17.11
+# Setup Go
+# https://github.com/docker-library/golang/blob/master/1.17/bullseye/Dockerfile
+# install cgo-related dependencies
+RUN set -eux; \
+	apt-get update; \
+	apt-get install -y --no-install-recommends \
+                gpg \
+		g++ \
+		gcc \
+		libc6-dev \
+		make \
+    	wget \
+        pkg-config \
+    ; \
+	rm -rf /var/lib/apt/lists/*
+
+ENV PATH /usr/local/go/bin:$PATH
+RUN set -eux; \
+	arch="$(dpkg --print-architecture)"; arch="${arch##*-}"; \
+	url=; \
+	case "$arch" in \
+		'amd64') \
+			url='https://dl.google.com/go/go1.17.11.linux-amd64.tar.gz'; \
+			sha256='d69a4fe2694f795d8e525c72b497ededc209cb7185f4c3b62d7a98dd6227b3fe'; \
+			;; \
+		'armel') \
+			export GOARCH='arm' GOARM='5' GOOS='linux'; \
+			;; \
+		'armhf') \
+			url='https://dl.google.com/go/go1.17.11.linux-armv6l.tar.gz'; \
+			sha256='56fb4a344bfe01427398083b3e82018fcde1f168a94e9df9820010b29e558f27'; \
+			;; \
+		'arm64') \
+			url='https://dl.google.com/go/go1.17.11.linux-arm64.tar.gz'; \
+			sha256='adefa7412c6798f9cad02d1e8336fc2242f5bade30c5b32781759181e01961b7'; \
+			;; \
+		'i386') \
+			url='https://dl.google.com/go/go1.17.11.linux-386.tar.gz'; \
+			sha256='8e43b4c63dda0612df0e1ed3cf8bed566fe8ae88082a46343c40be76a61371e4'; \
+			;; \
+		'mips64el') \
+			export GOARCH='mips64le' GOOS='linux'; \
+			;; \
+		'ppc64el') \
+			url='https://dl.google.com/go/go1.17.11.linux-ppc64le.tar.gz'; \
+			sha256='013624fc1964d576f314117f2f3b6a6a8f3d32f0ec8f55fa5962664537a34180'; \
+			;; \
+		's390x') \
+			url='https://dl.google.com/go/go1.17.11.linux-s390x.tar.gz'; \
+			sha256='0202a0b2ffaa9bdf1f2480789c2009ba6fde597e1f1c6d4cfb9559bb1964a39c'; \
+			;; \
+		*) echo >&2 "error: unsupported architecture '$arch' (likely packaging update needed)"; exit 1 ;; \
+	esac; \
+	build=; \
+	if [ -z "$url" ]; then \
 # https://github.com/golang/go/issues/38536#issuecomment-616897960
 		build=1; \
-		url='https://dl.google.com/go/go1.18.5.src.tar.gz'; \
-		sha256='9920d3306a1ac536cdd2c796d6cb3c54bc559c226fc3cc39c32f1e0bd7f50d2a'; \
+		url='https://dl.google.com/go/go1.17.11.src.tar.gz'; \
+		sha256='ac2649a65944c6a5abe55054000eee3d77196880da36a3555f62e06540e8eb54'; \
 		echo >&2; \
 		echo >&2 "warning: current architecture ($arch) does not have a compatible Go binary release; will be building from source"; \
 		echo >&2; \
@@ -131,11 +174,6 @@ if [ -z "$url" ]; then \
 ENV GOPATH /go
 ENV PATH $GOPATH/bin:$PATH
 RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
-WORKDIR $GOPATH
-
-#RUN mkdir -p output/include && go mod vendor && go build -v -o ./output/AIservice -gcflags "-N -l -c 10" main/main.go && \
-#    cp ./cgo/header/widget/* ./output/include/ && \
-#    cp  -r ./cgo/library/* ./output/
 
 ENV GOPROXY=https://goproxy.cn,direct
 RUN apt-get update && apt-get install -y libnuma-dev build-essential git sudo
@@ -144,15 +182,17 @@ WORKDIR /home/aiges
 RUN make build-pack
 
 
-FROM debian:bullseye-slim
-
+FROM ubuntu:18.04 as final
 LABEL maintainer="ybyang7@iflytek.com"
 
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 MAINTAINER ybyang7@iflytek.com
-ENV TZ Asia/Shanghai
+ENV TZ=Asia/Shanghai \
+    DEBIAN_FRONTEND=noninteractive
 
-COPY docker/repos/bullseye/sources.list /etc/apt/sources.list
+RUN apt update && apt install -y ca-certificates
+COPY docker/repos/ubuntu1804/sources.list /etc/apt/sources.list
+
 RUN DEBIAN_FRONTEND=noninteractive apt update &&apt install -y libnuma-dev git vim
 WORKDIR /home/aiges
 
@@ -165,7 +205,12 @@ RUN set -eux; \
 		libbluetooth-dev \
 		tk-dev \
 		uuid-dev \
+		gpg \
+        dirmngr \
+        gpg-agent \
     	libffi-dev \
+        build-essential \
+        wget \
     	libssl-dev \
         libbz2-dev \
         liblzma-dev \
@@ -242,16 +287,16 @@ ENV PYTHON_GET_PIP_URL https://bootstrap.pypa.io/get-pip.py
 ENV PYTHON_GET_PIP_SHA256 ba3ab8267d91fd41c58dbce08f76db99f747f716d85ce1865813842bb035524d
 
 # will cause error here
-#COPY ./docker/get-pip.py /
+COPY ./docker/get-pip.py /
 
 RUN set -eux; \
 	\
-	wget -O get-pip.py "$PYTHON_GET_PIP_URL"; \
-	echo "$PYTHON_GET_PIP_SHA256 *get-pip.py" | sha256sum -c -; \
+#	wget -O get-pip.py "$PYTHON_GET_PIP_URL"; \
+#	echo "$PYTHON_GET_PIP_SHA256 *get-pip.py" | sha256sum -c -; \
 	\
 	export PYTHONDONTWRITEBYTECODE=1; \
 	\
-	python get-pip.py \
+	python /get-pip.py \
 		--disable-pip-version-check \
 		--no-cache-dir \
 		--no-compile \
