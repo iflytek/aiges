@@ -36,14 +36,14 @@ class Manager(cli.Application):
 
 
 class ImageTag(object):
-    def __init__(self, cuda, python="3.9.13", golang="1.17", distro="ubuntu1804"):
-        self.cuda = cuda
+    def __init__(self, chip, python="3.9.13", golang="1.17", distro="ubuntu1804"):
+        self.chip = chip
         self.python = python
         self.golang = golang
         self.distro = distro
 
     def __str__(self):
-        return "{cuda}-{golang}-{python}-{distro}".format(cuda=self.cuda, golang=self.golang, python=self.python,
+        return "{chip}-{golang}-{python}-{distro}".format(chip=self.chip, golang=self.golang, python=self.python,
                                                           distro=self.distro)
 
 
@@ -61,10 +61,12 @@ class ManagerGenerate(Manager):
         trim_blocks=True,
         lstrip_blocks=True,
     )
+
     template: Any
+
     generate_all: Any = cli.Flag(
         ["--all"],
-        help="Generate all of the templates.",
+        help="cpu&&gpu version.",
     )
 
     use_github: Any = cli.Flag(
@@ -72,13 +74,34 @@ class ManagerGenerate(Manager):
         help="If Using Github Actions",
     )
 
+    use_conda: Any = cli.Flag(
+        ["--use_conda"],
+        help="If Using Miniconda",
+        default=True,
+    )
+
+    generate_cpu: Any = cli.Flag(
+        ["--cpu"],
+        help="cpu version",
+    )
+
+    generate_gpu: Any = cli.Flag(
+        ["--gpu"],
+        help="gpu version",
+    )
+
+    py_version: Any = cli.SwitchAttr(
+        "--python_version",
+        str,
+        help="specify python version.",
+        default="3.9",
+    )
+
     distro: Any = cli.SwitchAttr(
         "--os-name",
         str,
-        group="Targeted",
-        excludes=["--all", ],
         help="The distro to use.",
-        default=None,
+        default="ubuntu",
     )
 
     distro_version: Any = cli.SwitchAttr(
@@ -139,12 +162,19 @@ class ManagerGenerate(Manager):
         }
 
     def generate_matrix_tags(self):
-        for cuda in SUPPORTED_CUDA_LIST:
+        if self.generate_cpu:
+            CHIP_LIST = SUPPORTED_CPU_LIST
+        elif self.generate_gpu:
+            CHIP_LIST = SUPPORTED_CUDA_LIST
+        elif self.generate_all:
+            CHIP_LIST = SUPPORTED_CPU_LIST + SUPPORTED_CUDA_LIST
+
+        for chip in CHIP_LIST:
             for python in SUPPORTED_PYVERSION_LIST:
                 for golang in SUPPORTED_GOLANG_LIST:
                     for distro in SUPPORTED_DISTRO_LIST:
-                        self.matrix.append(ImageTag(cuda, python=python, golang=golang, distro=distro)
-                                           )
+                        self.matrix.append(ImageTag(chip=chip, python=python, golang=golang, distro=distro))
+
 
     def generate_release_note(self):
         path = './hack/release/Note.md'
@@ -174,8 +204,28 @@ class ManagerGenerate(Manager):
         if not os.path.exists(TEMP_GEN_DIR):
             os.makedirs(TEMP_GEN_DIR)
         for tag in self.matrix:
-            dockerfile_dir = os.path.join(TEMP_GEN_DIR, tag.distro,
-                                          "cuda-" + tag.cuda)  # for now , we fixed python version and golang
+            if tag.chip == "cpu":
+                if self.use_conda:
+                    if self.distro == "ubuntu":
+                        self._load_template("./docker/templates/cpu/miniconda/ubuntu/Dockerfile.j2")
+                        dockerfile_dir = os.path.join(TEMP_GEN_DIR, tag.distro,tag.chip,"miniconda",self.distro)  
+                    elif self.distro == "debian":
+                        self._load_template("./docker/templates/cpu/miniconda/debian/Dockerfile.j2")
+                        dockerfile_dir = os.path.join(TEMP_GEN_DIR, tag.distro,tag.chip,"miniconda",self.distro)  
+                    else:
+                        log.error("%s that do not support building Dockerfiles" % self.distro)
+                else:
+                    if self.distro == "ubuntu":
+                        self._load_template("./docker/templates/cpu/ubuntu/Dockerfile.j2")
+                        dockerfile_dir = os.path.join(TEMP_GEN_DIR, tag.distro,tag.chip,self.distro)  
+                    elif self.distro == "debian":
+                        self._load_template("./docker/templates/cpu/debian/Dockerfile.j2")
+                        dockerfile_dir = os.path.join(TEMP_GEN_DIR, tag.distro,tag.chip,self.distro)  
+                    else:
+                        log.error("%s that do not support building Dockerfiles" % self.distro)
+            else:
+                self._load_template("./docker/templates/aiges-gpu/Dockerfile.j2")
+                dockerfile_dir = os.path.join(TEMP_GEN_DIR, tag.distro,"cuda-"+ tag.chip)  
             st = self.render(tag)
             if not os.path.exists(dockerfile_dir):
                 os.makedirs(dockerfile_dir)
@@ -186,9 +236,10 @@ class ManagerGenerate(Manager):
 
     def render(self, tag: ImageTag):
         s = self.template.render(use_github=self.use_github, vars={
-            "registry": self.get_regsitry(),
-            "tag": str(tag)
-        })
+                "registry": self.get_regsitry(),
+                "tag": str(tag),
+                "python_version": self.py_version
+            })
         return s
 
     def get_regsitry(self):
@@ -207,12 +258,13 @@ class ManagerGenerate(Manager):
         log.debug(f"Creating {self.output_path}")
         self.output_path.mkdir(parents=True, exist_ok=False)
 
-    def _load_template(self):
-        tpl = "./docker/templates/aiges-gpu/Dockerfile.j2"
+    def cheak_template_file(self, tpl):
         if not os.path.exists(tpl):
             raise FileNotFoundError("not found %s" % tpl)
-        log.info("load success j2 file.")
-        self.template = self.template_env.from_string(open(tpl, "r").read())
+
+    def _load_template(self, path):
+        self.cheak_template_file(path)  
+        self.template = self.template_env.from_string(open(path, "r").read())
 
     def _load_release_note(self):
         tpl = "./docker/templates/release-note/Note.md.j2"
@@ -224,7 +276,6 @@ class ManagerGenerate(Manager):
     def targeted(self):
         if self.action == "build":
             log.info("building generating")
-            self._load_template()
             self.generate_matrix_tags()
             self.generate_dockerfile()
 

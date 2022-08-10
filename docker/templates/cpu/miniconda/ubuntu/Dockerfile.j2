@@ -1,15 +1,14 @@
-FROM continuumio/miniconda3:4.12.0 as go-builder
+FROM public.ecr.aws/iflytek-open/opensource/miniconda:ubuntu18.04-4.12 as go-builder
 # bullseye
 
 ENV TZ=Asia/Shanghai \
     DEBIAN_FRONTEND=noninteractive
 
 MAINTAINER ybyang7@iflytek.com
-{% if not use_github  %}
-ENV GOPROXY=https://goproxy.cn,direct
-COPY docker/repos/bullseye/sources.list /etc/apt/sources.list
-{% endif %}
 
+{% if not use_github  %}
+COPY docker/repos/ubuntu1804/sources.list /etc/apt/sources.list
+{% endif %}
 
 # Setup Go
 # https://github.com/docker-library/golang/blob/master/1.17/bullseye/Dockerfile
@@ -157,16 +156,14 @@ RUN echo "conda activate aiges " >> ~/.bashrc
 
 RUN cd /home/aiges/ai_cpython_wrapper && make
 
-FROM continuumio/miniconda3:4.12.0   as final
+FROM public.ecr.aws/iflytek-open/opensource/miniconda:ubuntu18.04-4.12   as final
 MAINTAINER ybyang7@iflytek.com
 ENV TZ Asia/Shanghai
 
 {% if not use_github  %}
-ENV GOPROXY=https://goproxy.cn,direct
-COPY docker/repos/bullseye/sources.list /etc/apt/sources.list
+COPY docker/repos/ubuntu1804/sources.list /etc/apt/sources.list
 {% endif %}
 
-RUN apt update && apt install -y build-essential
 RUN DEBIAN_FRONTEND=noninteractive apt update &&apt install -y libnuma-dev git vim
 WORKDIR /home/aiges
 
@@ -183,6 +180,7 @@ SHELL ["conda", "run", "-n", "aiges", "/bin/bash", "-c"]
 RUN echo "conda activate aiges " >> ~/.bashrc
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/aiges:/home/aiges/library:/opt/conda/envs/aiges/lib
 
+
 # need xtest
 # need aiges.toml
 # xtest.toml
@@ -191,4 +189,3 @@ COPY --from=go-builder /home/aiges/ai_cpython_wrapper/wrapper_lib /home/aiges/li
 
 
 CMD ["sh", "-c", "./AIservice -m=0 -c=aiges.toml -s=svcName -u=http://companion.xfyun.iflytek:6868 -p=AIaaS -g=dx"]
-
