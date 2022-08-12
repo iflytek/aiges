@@ -281,6 +281,11 @@ docker buildx build -f docker/gpu/base/cuda-10.2/Dockerfile -t artifacts.iflytek
 TODO 计划开发build.py 支持多cuda版本多python版本的基础镜像自动构建pipeline
 
 
+### 同步拉取aiges_demo子模块
+```
+git clone https://github.com/sea-wyq/aiges.git --recurse-submodules
+```
+
 
 
 
