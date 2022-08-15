@@ -1,3 +1,6 @@
 [submodule "ai_cpython_wrapper"]
 	path = ai_cpython_wrapper
 	url = git@github.com:xfyun/aiges_c_python_wrapper.git
+[submodule "aiges_demo"]
+	path = aiges_demo
+	url = https://github.com/iflytek/aiges_demo.git
