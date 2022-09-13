@@ -89,5 +89,5 @@ const (
 
 var vdcMap = map[int][]string{
 	codecVdNil: []string{VIDEORAW},
-	codecH264:  []string{VIDEOH264},
+	codecH264:  []string{},
 }
