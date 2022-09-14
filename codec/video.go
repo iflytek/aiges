@@ -37,12 +37,14 @@ func (vi *VdcodecInst) Encode(input []byte, last bool) (output []byte, code int,
 }
 
 func (vi *VdcodecInst) Decode(input []byte, last bool) (output []byte, code int, err error) {
+	/*
 	if codec := vdcodecs[vi.enc]; codec != nil {
 		if output, code, err = codec.decode(vi.inst, input, last); err != nil {
 			code = frame.AigesErrorCodecDecode
 		}
 		return
 	}
+	*/
 	output = input
 	return
 }
