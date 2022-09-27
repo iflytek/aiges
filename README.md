@@ -19,10 +19,10 @@
 
 ## 背景
 
-> AIGES是 Athena Serving Framework中的核心组件,它是一个个专为AI能力开发者打造的AI算法模型、引擎的通用封装工具。
-> 您可以通过集成AIGES,快速部署AI算法模型、引擎，并托管于Athena Serving Framework，即可使用网络、分发策略、数据处理等配套辅助系统。
+> AIGES是 Athena Serving Framework中的核心组件，它是一个个专为AI能力开发者打造的AI算法模型、引擎的通用封装工具。
+> 您可以通过集成AIGES，快速部署AI算法模型、引擎，并托管于Athena Serving Framework，即可使用网络、分发策略、数据处理等配套辅助系统。
 > Athena Serving Framework 致力于加速AI算法模型、引擎云服务化，并借助云原生架构，为云服务的稳定提供多重保障。
-> 您无需关注底层基础设施及服务化相关的开发、治理和运维，即可高效、安全对模型、引擎进行部署、升级、扩缩、运营和监控。
+> 您无需关注底层基础设施及服务化相关的开发、治理和运维，即可高效、安全地对模型、引擎进行部署、升级、扩缩、运营和监控。
 
 ## 整体架构
 
@@ -62,9 +62,9 @@
 
 **基础镜像中提供**
 
-- 基础的编译好的 Python加载器AIService(包含支持python的libwrapper.so), 目录结构如下
+- 基础的编译好的 Python加载器AIService(包含支持python的libwrapper.so)， 目录结构如下
 
-  AIGES的二进制文件未AIservice, 默认放置于 容器`/home/aiges`目录
+  AIGES的二进制文件未AIservice， 默认放置于 容器`/home/aiges`目录
     ```bash
     root@e38a9aacc355:/home/aiges# pwd
     /home/aiges
@@ -100,9 +100,9 @@
 
 #### 基础镜像构建(GPU)
 
-***基础镜像仅在特殊需求时(如对cuda，python版本有要求时才需要重新构建,一般用户仅需关注构建业务镜像)***
+***基础镜像仅在特殊需求时(如对cuda，python版本有要求时才需要重新构建，一般用户仅需关注构建业务镜像)***
 
-1. cuda-go-python基础镜像,用于编译aiges项目的基础镜像，参见[官方仓库](https://github.com/iflytek/aiges/releases)
+1. cuda-go-python基础镜像，用于编译aiges项目的基础镜像，参见[官方仓库](https://github.com/iflytek/aiges/releases)
    ，本仓库引用了部分版本，存放于 [docker/gpu/cuda](docker/gpu/cuda)中
    基础镜像当前基于 nvidia/cuda 官方的基础镜像作为base镜像 如 [cuda-10.1](docker/gpu/base/cuda-10.1)中所示: aiges基础镜像基于 ***形如 nvidia/cuda:
    10.1-devel-ubuntu18.04*** 构建
@@ -182,7 +182,7 @@ docker buildx build -f docker/gpu/base/cuda-10.2/Dockerfile -t artifacts.iflytek
                l.data = r.text
                l.type = aiges.dto.TextData
                res.list = [l]
-               # multi data: res.list = [l1, l2, l3]
+               # multi data: res.list = [l1， l2， l3]
                return res
                ```
             2. 出现异常时，直接调用`Response`对象的`response_err`方法返回错误码
@@ -201,21 +201,21 @@ docker buildx build -f docker/gpu/base/cuda-10.2/Dockerfile -t artifacts.iflytek
             定义请求类:
             params:  params 开头的属性代表最终HTTP协议中的功能参数parameters部分， 对应的是   xtest.toml中的parameter字段
                      params Field支持 StringParamField，
-                     NumberParamField，BooleanParamField,IntegerParamField，每个字段均支持枚举
+                     NumberParamField，BooleanParamField，IntegerParamField，每个字段均支持枚举
                      params 属性多用于协议中的控制字段，请求body字段不属于params范畴
 
             input:    input字段多用与请求数据段，即body部分，当前支持 ImageBodyField、 StringBodyField和AudioBodyField
             '''
-            params1 = StringParamField(key="mode", enums=["music", "humming"], value='humming')
+            params1 = StringParamField(key="mode"， enums=["music"， "humming"]， value='humming')
 
-            input1 = AudioBodyField(key="data", path="/home/wrapper/test.wav")
+            input1 = AudioBodyField(key="data"， path="/home/wrapper/test.wav")
             
          class UserResponse(object):
             '''
             定义响应类:
-            accepts:  accepts代表响应中包含哪些字段, 以及数据类型
+            accepts:  accepts代表响应中包含哪些字段， 以及数据类型
 
-            input:    input字段多用与请求数据段，即body部分，当前支持 ImageBodyField, StringBodyField, 和AudioBodyField
+            input:    input字段多用与请求数据段，即body部分，当前支持 ImageBodyField， StringBodyField， 和AudioBodyField
             '''
             accept1 = StringBodyField(key="ouput_text")
          ```
@@ -236,7 +236,7 @@ docker buildx build -f docker/gpu/base/cuda-10.2/Dockerfile -t artifacts.iflytek
           m.run()
        ```
 
-    - 理论上用户除了上传 wrapper.py 以及相关依赖之外，还需要提供一些模型文件，这些文件比较大，一般不在Dockerfile中构建入镜像，会导致git代码库十分庞大,当前示例的的yolov5和 mmocr均在 wrapper
+    - 理论上用户除了上传 wrapper.py 以及相关依赖之外，还需要提供一些模型文件，这些文件比较大，一般不在Dockerfile中构建入镜像，会导致git代码库十分庞大，当前示例的的yolov5和 mmocr均在 wrapper
       init的时候下载模型
 
 #### 服务部署
