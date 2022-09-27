@@ -36,9 +36,9 @@
 
 &#9745; 支持模型推理成RPC服务(Serving框架会转成HTTP服务)
 
-&#9745; 支持C代码推理 
+&#9745; 支持C代码推理
 
-&#9745; 支持Python代码推理 
+&#9745; 支持Python代码推理
 
 &#9745; 支持once(非流式)推理、流式推理
 
@@ -97,7 +97,6 @@
 * [YOLOV5](/demo/yolov5/Dockerfile)
 
 * [调用三方API](/demo/music_api/Dockerfile_v1)
-
 
 #### 基础镜像构建(GPU)
 
@@ -244,20 +243,28 @@ docker buildx build -f docker/gpu/base/cuda-10.2/Dockerfile -t artifacts.iflytek
 
 [👉👉👉点击进入](https://iflytek.github.io/athena_website/docs/%E5%8A%A0%E8%BD%BD%E5%99%A8/%E5%88%9B%E5%BB%BAwrapper/%E6%9C%8D%E5%8A%A1%E9%83%A8%E7%BD%B2)
 
-
 #### 服务化调用示例
 
 * Once推理示例:
 
-![img.png](doc/once_img.png) 
+![img.png](doc/once_img.png)
 ***调用代码，近期开放，敬请期待***
 
 * 流式推理demo
 
 ![img](https://github.com/berlinsaint/handpose3in1/blob/main/demo.gif?raw=true)
 
+## 联系我们
 
+* focus on:
 
+[![ifly](https://avatars.githubusercontent.com/u/26786495?s=96&v=4)](https://github.com/iflytek)
+
+* contact:
+
+![weixin](https://raw.githubusercontent.com/berlinsaint/readme/main/weixin_ybyang.jpg)
+
+**注意备注来源: 开源** 
 
 
 
