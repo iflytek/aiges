@@ -5,15 +5,12 @@ import (
 	"errors"
 	"github.com/xfyun/aiges/buffer"
 	"github.com/xfyun/aiges/catch"
-	"github.com/xfyun/aiges/codec"
 	"github.com/xfyun/aiges/conf"
-	"github.com/xfyun/aiges/dp"
 	"github.com/xfyun/aiges/frame"
 	"github.com/xfyun/aiges/protocol"
 	aigesUtils "github.com/xfyun/aiges/utils"
 	"github.com/xfyun/xsf/server"
 	"github.com/xfyun/xsf/utils"
-	"reflect"
 	"strconv"
 	"strings"
 	"sync"
@@ -41,10 +38,10 @@ type ServiceInst struct {
 	alive      bool // 服务实例状态flag
 	aliveLock  sync.RWMutex
 
-	tool     *xsf.ToolBox
-	dpar     map[string] /*dataId*/ *dp.AudioResampler // 数据处理(重采样)
-	upStatus map[string]buffer.DataStatus              // 上行数据流状态,用于判定最终请求状态
-	downCtrl string                                    // 数据下行方式控制：
+	tool *xsf.ToolBox
+	//dpar     map[string] /*dataId*/ *dp.AudioResampler // 数据处理(重采样)
+	upStatus map[string]buffer.DataStatus // 上行数据流状态,用于判定最终请求状态
+	downCtrl string                       // 数据下行方式控制：
 
 	instWg  sync.WaitGroup
 	mngr    *Manager // 归属实例管理器指针;
@@ -96,9 +93,9 @@ type ServiceInst struct {
 	params   map[string]string
 	expect   map[string]*protocol.MetaDesc
 	sessType protocol.LoaderInput_SessState
-	encoder  map[string] /*dataId*/ codec.Instance
-	decoder  map[string] /*dataId*/ codec.Instance
-	outdpar  map[string] /*dataId*/ *dp.AudioResampler // 数据处理(重采样)
+	//encoder  map[string] /*dataId*/ codec.Instance
+	//decoder  map[string] /*dataId*/ codec.Instance
+	//outdpar  map[string] /*dataId*/ *dp.AudioResampler // 数据处理(重采样)
 
 }
 
@@ -141,7 +138,6 @@ func (si *ServiceInst) ResLoad(proto *map[string]string, input *protocol.LoaderI
 		}
 	}
 	si.sessType = input.GetState()
-	si.outdpar = make(map[string]*dp.AudioResampler)
 	si.expect = make(map[string]*protocol.MetaDesc)
 	for _, v := range input.GetExpect() {
 		si.expect[v.Name] = v
@@ -149,55 +145,8 @@ func (si *ServiceInst) ResLoad(proto *map[string]string, input *protocol.LoaderI
 	// 上行数据缓冲区设置
 	si.inputData.SetBase(uint(input.SyncId))
 
-	// 数据流处理
-	si.dpar = make(map[string]*dp.AudioResampler)
-	si.decoder = make(map[string]codec.Instance)
-	si.encoder = make(map[string]codec.Instance)
 	si.outPutLastId = make(map[string]uint)
 	si.outPutId = 0
-	for _, v := range si.expect {
-		attr := protocol.GetAllAttr(v)
-		switch v.DataType {
-		case protocol.MetaDesc_AUDIO:
-			inst, code, err := codec.NewAucodec(codec.AudioTag{attr.(protocol.AudioAttr).Encoding,
-				attr.(protocol.AudioAttr).SampleRate, attr.(protocol.AudioAttr).FrameSize})
-			if err != nil {
-				span.WithTag("code", strconv.Itoa(code)).WithTag("error", err.Error())
-				si.tool.Log.Errorw("codec start fail", "code", code, "error", err.Error(), "name", v.Name)
-				return code, err
-			}
-			si.encoder[v.Name] = inst
-		case protocol.MetaDesc_VIDEO:
-			inst, code, err := codec.NewVdcodec(codec.VideoTag{attr.(protocol.VideoAttr).Encoding,
-				attr.(protocol.VideoAttr).FrameRate, attr.(protocol.VideoAttr).Width,
-				attr.(protocol.VideoAttr).Height})
-			if err != nil {
-				span.WithTag("code", strconv.Itoa(code)).WithTag("error", err.Error())
-				si.tool.Log.Errorw("codec start fail", "code", code, "error", err.Error(), "name", v.Name)
-				return code, err
-			}
-			si.encoder[v.Name] = inst
-		case protocol.MetaDesc_TEXT:
-			inst, code, err := codec.NewTxtcodec(codec.TextTag{attr.(protocol.TextAttr).Encoding,
-				attr.(protocol.TextAttr).Compress})
-			if err != nil {
-				span.WithTag("code", strconv.Itoa(code)).WithTag("error", err.Error())
-				si.tool.Log.Errorw("codec start fail", "code", code, "error", err.Error(), "name", v.Name)
-				return code, err
-			}
-			si.encoder[v.Name] = inst
-		case protocol.MetaDesc_IMAGE:
-			inst, code, err := codec.NewImgcodec(codec.ImageTag{attr.(protocol.ImageAttr).Encoding})
-			if err != nil {
-				span.WithTag("code", strconv.Itoa(code)).WithTag("error", err.Error())
-				si.tool.Log.Errorw("codec start fail", "code", code, "error", err.Error(), "name", v.Name)
-				return code, err
-			}
-			si.encoder[v.Name] = inst
-		default:
-			return frame.AigesErrorInvalidData, frame.ErrorInvalidData
-		}
-	}
 
 	// 平台控制参数
 	si.uid = si.headers[protocol.Uid]
@@ -227,43 +176,11 @@ func (si *ServiceInst) ResLoad(proto *map[string]string, input *protocol.LoaderI
 
 // 释放会话临时资源;
 func (si *ServiceInst) release() {
-	for _, v := range si.encoder {
-		switch reflect.TypeOf(v) {
-		case reflect.TypeOf(&codec.AucodecInst{}):
-			codec.CloseAucodec(v.(*codec.AucodecInst))
-		case reflect.TypeOf(&codec.VdcodecInst{}):
-			codec.CloseVdcodec(v.(*codec.VdcodecInst))
-		case reflect.TypeOf(&codec.ImgcodecInst{}):
-			codec.CloseImgcodec(v.(*codec.ImgcodecInst))
-		case reflect.TypeOf(&codec.TxtcodecInst{}):
-			codec.CloseTxtcodec(v.(*codec.TxtcodecInst))
-		}
-	}
-	for _, v := range si.decoder {
-		switch reflect.TypeOf(v) {
-		case reflect.TypeOf(&codec.AucodecInst{}):
-			codec.CloseAucodec(v.(*codec.AucodecInst))
-		case reflect.TypeOf(&codec.VdcodecInst{}):
-			codec.CloseVdcodec(v.(*codec.VdcodecInst))
-		case reflect.TypeOf(&codec.ImgcodecInst{}):
-			codec.CloseImgcodec(v.(*codec.ImgcodecInst))
-		case reflect.TypeOf(&codec.TxtcodecInst{}):
-			codec.CloseTxtcodec(v.(*codec.TxtcodecInst))
-		}
-	}
-	for _, v := range si.dpar {
-		if err := v.Destroy(); err != nil {
-			si.tool.Log.Errorw("service inst resample destroy fail", "err", err.Error(), "inst", si.instHdl)
-		}
-	}
 	// clear onceTrig
 	select {
 	case <-si.onceTrig:
 	default:
 	}
-	si.encoder = nil
-	si.decoder = nil
-	si.dpar = nil
 	si.outPutData.Release()
 	si.inputData.Release()
 	si.instHdl = ""
@@ -387,99 +304,13 @@ func (si *ServiceInst) DataException(span *xsf.Span) (errNum int, errInfo error)
 	return
 }
 
-// data process lazy-init操作
-func (si *ServiceInst) dpLazyInit(meta *buffer.DataMeta) (errNum int, errInfo error) {
-	if si.decoder[meta.DataId] == nil {
-		attr := protocol.GetAllAttr(meta.Desc)
-		switch meta.DataType {
-		case buffer.DataAudio:
-			inst, code, err := codec.NewAucodec(codec.AudioTag{attr.(protocol.AudioAttr).Encoding,
-				attr.(protocol.AudioAttr).SampleRate, attr.(protocol.AudioAttr).FrameSize})
-			if err != nil {
-				si.tool.Log.Errorw("codec start fail", "code", code, "error", err.Error(), "name", meta.DataId)
-				return code, err
-			}
-			si.decoder[meta.DataId] = inst
-
-			// 上行多数据流音频重采样
-			si.dpar[meta.DataId] = dp.NewResampler()
-		case buffer.DataVideo:
-			inst, code, err := codec.NewVdcodec(codec.VideoTag{attr.(protocol.VideoAttr).Encoding,
-				attr.(protocol.VideoAttr).FrameRate, attr.(protocol.VideoAttr).Width,
-				attr.(protocol.VideoAttr).Height})
-			if err != nil {
-				si.tool.Log.Errorw("codec start fail", "code", code, "error", err.Error(), "name", meta.DataId)
-				return code, err
-			}
-			si.decoder[meta.DataId] = inst
-		case buffer.DataText:
-			inst, code, err := codec.NewTxtcodec(codec.TextTag{attr.(protocol.TextAttr).Encoding,
-				attr.(protocol.TextAttr).Compress})
-			if err != nil {
-				si.tool.Log.Errorw("codec start fail", "code", code, "error", err.Error(), "name", meta.DataId)
-				return code, err
-			}
-			si.decoder[meta.DataId] = inst
-		case buffer.DataImage:
-			inst, code, err := codec.NewImgcodec(codec.ImageTag{attr.(protocol.ImageAttr).Encoding})
-			if err != nil {
-				si.tool.Log.Errorw("codec start fail", "code", code, "error", err.Error(), "name", meta.DataId)
-				return code, err
-			}
-			si.decoder[meta.DataId] = inst
-		default:
-			return frame.AigesErrorInvalidData, frame.ErrorInvalidData
-		}
-	}
-	return
-}
-
 // 上行数据处理
 func (si *ServiceInst) inputProc(input *[]buffer.DataMeta) (output []DataMeta, errNum int, errInfo error) {
 	for _, stream := range *input {
 		// 输入数据处理
-		if errNum, errInfo = si.dpLazyInit(&stream); errInfo != nil {
-			return
-		}
-		meta := DataMeta{stream.DataId, nil, int(stream.DataType),
+		meta := DataMeta{stream.DataId, stream.Data.([]byte), int(stream.DataType),
 			int(stream.Status), stream.FrameId, stream.Desc.Attribute}
-		if stream.Data != nil {
-			begin := time.Now()
-			meta.Data, errNum, errInfo = si.decoder[stream.DataId].Decode(stream.Data.([]byte),
-				stream.Status == buffer.DataStatusOnce || stream.Status == buffer.DataStatusLast)
-			if errInfo != nil {
-				si.tool.Log.Errorw("codec::Decode fail", "errNum", errNum, "errInfo", errInfo.Error(), "sid", si.instHdl)
-				return nil, errNum, errInfo
-			}
-			end := time.Now()
-			if end.Sub(begin).Milliseconds() > 100 {
-				si.tool.Log.Errorw("codec::Decode cost", "start:", begin,
-					"end:", end,
-					"cost", end.Sub(begin).Milliseconds(),
-					"sid", si.instHdl)
-			}
 
-			// 通用引擎侧计量,音频采样率及比特率与输入参数一致
-			si.bytes += len(meta.Data)
-			if stream.DataType == buffer.DataAudio {
-				si.audioLen += len(meta.Data)
-			}
-
-			switch stream.DataType {
-			case buffer.DataAudio:
-				// 音频数据重采样处理;
-				begin = time.Now()
-				meta.Data, errInfo = si.dpar[stream.DataId].ProcessInt(0, meta.Data)
-				end = time.Now()
-				if end.Sub(begin).Milliseconds() > 100 {
-					si.tool.Log.Errorw("codec::Resample cost", "start:", begin,
-						"end:", end,
-						"cost:", end.Sub(begin).Milliseconds(),
-						"sid", si.instHdl)
-				}
-			default:
-			}
-		}
 		output = append(output, meta)
 	}
 	return
@@ -488,9 +319,9 @@ func (si *ServiceInst) inputProc(input *[]buffer.DataMeta) (output []DataMeta, e
 // 下行数据处理
 func (si *ServiceInst) outputProc(input []DataMeta) (output []buffer.DataMeta, errNum int, errInfo error) {
 	for _, v := range input {
-		if errNum, errInfo = si.enCodecV1(v); errInfo != nil {
-			return
-		}
+		/*		if errNum, errInfo = si.enCodecV1(v); errInfo != nil {
+				return
+			}*/
 		if attr := si.expect[v.DataId]; attr == nil {
 			si.tool.Log.Errorw("invalid expect . attr is nil", "key", v.DataId, "sid", si.instHdl)
 			return nil, frame.AigesErrorInvalidOut, frame.ErrorInvalidOutput
@@ -501,7 +332,7 @@ func (si *ServiceInst) outputProc(input []DataMeta) (output []buffer.DataMeta, e
 			return nil, frame.AigesErrorInvalidOut, frame.ErrorInvalidOutput
 		}
 
-		meta := buffer.DataMeta{nil, v.DataId, si.outPutLastId[v.DataId], buffer.DataStatus(v.DataStatus),
+		meta := buffer.DataMeta{v.Data, v.DataId, si.outPutLastId[v.DataId], buffer.DataStatus(v.DataStatus),
 			buffer.DataType(v.DataType), nil}
 		si.outPutLastId[v.DataId]++
 		meta.Desc = &protocol.MetaDesc{}
@@ -520,42 +351,11 @@ func (si *ServiceInst) outputProc(input []DataMeta) (output []buffer.DataMeta, e
 		meta.Desc.Attribute[protocol.Status] = strconv.Itoa(v.DataStatus)
 
 		if v.Data != nil {
-			// TODO 重采样等数据后处理 (编码之前重采样)
-			tmp := v.Data
-			if dp := si.outdpar[v.DataId]; dp != nil {
-				tmp, errInfo = dp.ProcessInt(0, v.Data)
-			}
-			meta.Data, errNum, errInfo = si.encoder[v.DataId].Encode(tmp,
-				meta.Status == buffer.DataStatusLast || meta.Status == buffer.DataStatusOnce)
-			if errInfo != nil {
-				si.tool.Log.Errorw("codec::Encode fail", "errNum", errNum, "errInfo", errInfo.Error(), "sid", si.instHdl)
-				return
-			}
 			si.downDatas = append(si.downDatas, eventStorage{meta.Data, meta.DataId, meta.Desc})
 		}
 
 		output = append(output, meta)
 	}
-	return
-}
-
-func (si *ServiceInst) enCodecV1(data DataMeta) (code int, err error) {
-	// output reSampler lazy init;
-	if _, flag := si.outdpar[data.DataId]; !flag && data.DataType == int(protocol.MetaDesc_AUDIO) {
-		if v, flag1 := si.expect[data.DataId]; flag1 && len(data.DataDesc[protocol.SampleRate]) != 0 {
-			if v.Attribute[protocol.SampleRate] != data.DataDesc[protocol.SampleRate] {
-				si.outdpar[data.DataId] = dp.NewResampler()
-				inrate, _ := strconv.Atoi(data.DataDesc[protocol.SampleRate])
-				outrate, _ := strconv.Atoi(v.Attribute[protocol.SampleRate])
-				err = si.outdpar[data.DataId].Init(1, inrate, outrate, ResampleQuality)
-				if err != nil {
-					code = frame.AigesErrorDpInit
-					return
-				}
-			}
-		}
-	}
-
 	return
 }
 
@@ -766,9 +566,9 @@ func (si *ServiceInst) noneSessCalc() (errNum int, errInfo error) {
 		si.downDatas = make([]eventStorage, 0, len(resp.DeliverData))
 		respData := make([]buffer.DataMeta, 0, len(resp.DeliverData))
 		for _, data := range resp.DeliverData {
-			if errNum, errInfo = si.enCodecV1(data); errInfo != nil {
-				return
-			}
+			/*			if errNum, errInfo = si.enCodecV1(data); errInfo != nil {
+						return
+					}*/
 			if attr := si.expect[data.DataId]; attr == nil {
 				si.tool.Log.Errorw("invalid expect", "key", data.DataId, "sid", si.instHdl)
 				return frame.AigesErrorInvalidOut, frame.ErrorInvalidOutput
@@ -785,7 +585,7 @@ func (si *ServiceInst) noneSessCalc() (errNum int, errInfo error) {
 				si.tool.Log.Debugw("OnceExec get result .", "key", data.DataId,
 					"status", data.DataStatus, "type", data.DataType, "data length", len(data.Data), "sid", si.instHdl)
 			}
-			meta := buffer.DataMeta{nil, data.DataId, data.DataFrame,
+			meta := buffer.DataMeta{data.Data, data.DataId, data.DataFrame,
 				buffer.DataStatus(data.DataStatus), buffer.DataType(data.DataType), nil}
 			meta.Desc = &protocol.MetaDesc{}
 			meta.Desc.Attribute = make(map[string]string)
@@ -798,18 +598,6 @@ func (si *ServiceInst) noneSessCalc() (errNum int, errInfo error) {
 			}
 			meta.Desc.Attribute[protocol.Sequence] = strconv.Itoa(int(si.outPutLastId[data.DataId]))
 			meta.Desc.Attribute[protocol.Status] = strconv.Itoa(data.DataStatus)
-			if data.Data != nil {
-				tmp := data.Data
-				if dp := si.outdpar[data.DataId]; dp != nil {
-					tmp, errInfo = dp.ProcessInt(0, data.Data)
-				}
-				meta.Data, errNum, errInfo = si.encoder[data.DataId].Encode(tmp,
-					data.DataStatus == int(buffer.DataStatusLast) || data.DataStatus == int(buffer.DataStatusOnce))
-				if errInfo != nil {
-					si.tool.Log.Errorw("codec::Encode fail", "errNum", errNum, "errInfo", errInfo.Error(), "sid", si.instHdl)
-					return
-				}
-			}
 
 			respData = append(respData, meta)
 			si.downDatas = append(si.downDatas, eventStorage{meta.Data, meta.DataId, meta.Desc})

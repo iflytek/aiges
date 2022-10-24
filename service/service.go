@@ -3,7 +3,6 @@ package service
 import (
 	"fmt"
 	"github.com/xfyun/aiges/catch"
-	"github.com/xfyun/aiges/codec"
 	"github.com/xfyun/aiges/conf"
 	"github.com/xfyun/aiges/frame"
 	"github.com/xfyun/aiges/instance"
@@ -44,12 +43,6 @@ func (srv *aiService) Init(box *xsf.ToolBox) (err error) {
 	// 异常捕获模块
 	catch.Open(conf.Catch, conf.WrapperDelayDetectPeriod, srv.tool.Log, srv.instMngr.CatchCallBack)
 	defer catch.RecoverHandle()
-
-	// 编解码初始化
-	if err = codec.CodecInit(); err != nil {
-		srv.tool.Log.Errorf(err.Error())
-		return
-	}
 
 	// 异步下发模式消息队列
 	if err = storage.RabInit(
@@ -100,7 +93,6 @@ func (srv *aiService) Finit() error {
 	fmt.Println("aiService.Finit: fini begin!")
 	// 框架逆初始化操作
 	srv.instMngr.Fini()
-	codec.CodecFini()
 
 	catch.Close()
 	storage.RabFini()
