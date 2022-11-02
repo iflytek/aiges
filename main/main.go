@@ -28,14 +28,16 @@ func main() {
 	}
 
 	var err error
-	// 设置cpu亲和性
-	if err = utils.NumaBind(env.AIGES_ENV_NUAME); err != nil {
-		fmt.Println(err.Error())
-		return
+	if env.SYSArch == "linux" {
+		// 设置cpu亲和性
+		if err = utils.NumaBind(env.AIGES_ENV_NUAME); err != nil {
+			fmt.Println(err.Error())
+			return
+		}
 	}
 
 	var aisrv service.EngService
-	widgetInst := widget.NewWidget()
+	widgetInst := widget.NewWidget(env.AIGES_PLUGIN_MODE)
 	// 控件初始化&逆初始化
 	if err = widgetInst.Open(); err != nil {
 		fmt.Println(err.Error())

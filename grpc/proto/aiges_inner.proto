@@ -1,0 +1,46 @@
+syntax = "proto3";
+package aiges;
+option go_package = ".";
+
+service WrapperService {
+  rpc wrapperInit(InitRequest) returns (Ret) {}
+  rpc wrapperOnceExec(OnceExecRequest) returns (Response) {}
+  rpc testStream(stream StreamRequest) returns (stream Response) {}
+}
+
+message  Ret {
+  int32 ret = 1;
+}
+
+message RequestData {
+  string key = 1;
+  string data = 2;
+  uint64 len = 3;
+  uint32 type = 4;
+  uint32 status = 5;
+}
+
+message ResponseData {
+  string key = 1;
+  string data = 2;
+  uint64 len = 3;
+  uint32 type = 4;
+  uint32 status = 5;
+}
+
+message Response {
+  repeated ResponseData list = 1;
+}
+message InitRequest {
+  map<string, string> config = 1;
+}
+
+
+message OnceExecRequest {
+  map<string, string> params = 1;
+  repeated RequestData reqData = 2;
+}
+
+message StreamRequest {
+  string data = 1;
+}

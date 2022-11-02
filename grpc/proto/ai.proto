@@ -1,0 +1,37 @@
+syntax = "proto3";
+package proto;
+
+message GetRequest {
+    string key = 1;
+}
+
+message GetResponse {
+    bytes value = 1;
+}
+
+message PutRequest {
+    string key = 1;
+    bytes value = 2;
+}
+
+message MetaDesc {
+    string name = 1;                    // 数据名
+    enum DataType {
+        TEXT = 0; // 文本
+        AUDIO = 1; // 音频
+        IMAGE = 2; // 图像
+        VIDEO = 3; // 视频
+        OTHER = 4; // 其他
+    }
+    DataType dataType = 2;              // 数据类型
+    map<string, string> attribute =3;   // 数据属性
+}
+
+
+
+message Empty {}
+
+service KV {
+    rpc Get(GetRequest) returns (GetResponse);
+    rpc Put(PutRequest) returns (Empty);
+}
