@@ -1,11 +1,15 @@
 syntax = "proto3";
 package aiges;
-option go_package = ".";
+option go_package = "./proto";
 
 service WrapperService {
   rpc wrapperInit(InitRequest) returns (Ret) {}
-  rpc wrapperOnceExec(OnceExecRequest) returns (Response) {}
+  rpc wrapperOnceExec(Request) returns (Response) {}
   rpc testStream(stream StreamRequest) returns (stream Response) {}
+  //
+  // Accepts a stream of RouteNotes sent while a route is being traversed,
+  // while receiving other RouteNotes (e.g. from other users).
+  rpc communicate(stream Request) returns (stream Response) {}
 }
 
 message  Ret {
@@ -14,31 +18,37 @@ message  Ret {
 
 message RequestData {
   string key = 1;
-  string data = 2;
-  uint64 len = 3;
-  uint32 type = 4;
-  uint32 status = 5;
+  uint64 len = 2;
+  uint32 type = 3;
+  uint32 status = 4;
+  map<string, string> desc = 5;
+  bytes data = 6;
+
 }
 
 message ResponseData {
   string key = 1;
-  string data = 2;
-  uint64 len = 3;
-  uint32 type = 4;
-  uint32 status = 5;
+  uint64 len = 2;
+  uint32 type = 3;
+  uint32 status = 4;
+  map<string, string> desc = 5;
+  bytes data = 6;
 }
 
 message Response {
-  repeated ResponseData list = 1;
+  string tag = 1;
+  int32 ret = 2 ;
+  repeated ResponseData list = 3;
+
 }
 message InitRequest {
   map<string, string> config = 1;
 }
 
-
-message OnceExecRequest {
-  map<string, string> params = 1;
-  repeated RequestData reqData = 2;
+message Request {
+  string    tag = 1;
+  map<string, string> params = 2;
+  repeated RequestData reqData = 3;
 }
 
 message StreamRequest {

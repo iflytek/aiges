@@ -11,6 +11,7 @@ realTimeRlt = false
 usrCfg = ""
 sub = "common"
 catchOn = false
+asyncMode = true
 
 [wrapper] #wrapper示例配置
 "common.lic" = "10"

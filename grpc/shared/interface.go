@@ -27,7 +27,8 @@ var PluginMap = map[string]plugin.Plugin{
 // KV is the interface that we're exposing as a plugin.
 type PyWrapper interface {
 	WrapperInit(config map[string]string) error
-	WrapperOnceExec(params map[string]string, reqData []*proto.RequestData) (*proto.Response, error)
+	WrapperOnceExec(userTag string, params map[string]string, reqData []*proto.RequestData) (*proto.Response, error)
+	Communicate() (proto.WrapperService_CommunicateClient, error)
 }
 
 // This is the implementation of plugin.GRPCPlugin so we can serve/consume this.

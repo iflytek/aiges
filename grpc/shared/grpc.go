@@ -15,10 +15,11 @@ func (m *GRPCClient) WrapperInit(config map[string]string) error {
 	return err
 }
 
-func (m *GRPCClient) WrapperOnceExec(params map[string]string, reqData []*proto.RequestData) (*proto.Response, error) {
-	resp, err := m.client.WrapperOnceExec(context.Background(), &proto.OnceExecRequest{
+func (m *GRPCClient) WrapperOnceExec(userTag string, params map[string]string, reqData []*proto.RequestData) (*proto.Response, error) {
+	resp, err := m.client.WrapperOnceExec(context.Background(), &proto.Request{
 		Params:  params,
 		ReqData: reqData,
+		Tag:     userTag,
 	})
 	if err != nil {
 		return nil, err
@@ -27,10 +28,19 @@ func (m *GRPCClient) WrapperOnceExec(params map[string]string, reqData []*proto.
 	return resp, nil
 }
 
+func (m *GRPCClient) Communicate() (proto.WrapperService_CommunicateClient, error) {
+	return m.client.Communicate(context.Background())
+}
+
 // Here is the gRPC server that GRPCClient talks to.
 type GRPCServer struct {
 	// This is the real implementation
 	Impl PyWrapper
+}
+
+func (m *GRPCServer) Communicate(server proto.WrapperService_CommunicateServer) error {
+	//TODO implement me
+	panic("implement me")
 }
 
 func (m *GRPCServer) WrapperInit(contenxt context.Context, req *proto.InitRequest) (*proto.Ret, error) {
@@ -42,7 +52,7 @@ func (m *GRPCServer) WrapperInit(contenxt context.Context, req *proto.InitReques
 	return &proto.Ret{Ret: 0}, err
 }
 
-func (m *GRPCServer) WrapperOnceExec(ctx context.Context, req *proto.OnceExecRequest) (*proto.Response, error) {
+func (m *GRPCServer) WrapperOnceExec(ctx context.Context, req *proto.Request) (*proto.Response, error) {
 	return nil, nil
 }
 

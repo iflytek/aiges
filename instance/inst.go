@@ -525,6 +525,7 @@ func (si *ServiceInst) noneSessCalc() (errNum int, errInfo error) {
 	}
 
 	// 事件判定&once处理
+	// todo # 如果python grpc也走此模式
 	if conf.WrapperAsync {
 		si.respChan, errInfo = AllocChan(si.context)
 		if errInfo != nil {
@@ -552,6 +553,7 @@ func (si *ServiceInst) noneSessCalc() (errNum int, errInfo error) {
 			}
 		}
 
+		// 如果是异步取数据方式
 		if conf.WrapperAsync {
 			resp, _ = <-si.respChan
 			if resp.AsyncErr != nil {

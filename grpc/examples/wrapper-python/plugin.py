@@ -25,8 +25,11 @@
                   ┗┻┛  ┗┻┛
 """
 
+import datetime
 import logging
 import sys
+import threading
+import time
 #  Copyright (c) 2022. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 #  Morbi non lorem porttitor neque feugiat blandit. Ut vitae ipsum eget quam lacinia accumsan.
 #  Etiam sed turpis ac ipsum condimentum fringilla. Maecenas magna.
@@ -89,7 +92,9 @@ log = logger.log
 class WrapperServiceServicer(aiges_inner_pb2_grpc.WrapperServiceServicer):
     """Provides methods that implement functionality of route guide server."""
 
-    def __init__(self):
+    def __init__(self, q):
+        self.queue = q
+        self.count = 0
         pass
 
     def wrapperInit(self, request, context):
@@ -98,7 +103,12 @@ class WrapperServiceServicer(aiges_inner_pb2_grpc.WrapperServiceServicer):
         return aiges_inner_pb2.Ret(ret=1)
 
     def wrapperOnceExec(self, request, context):
-        print(request)
+        self.count += 1
+        log.info(request.params)
+        log.info(request.tag)
+        d = aiges_inner_pb2.ResponseData(key="testest", data=b"hello world", len=self.count, status=3)
+        r = aiges_inner_pb2.Response(list=[d], tag=request.tag)
+        call_back(self.queue, r)
         return aiges_inner_pb2.Response(list=[])
         pass
 
@@ -109,15 +119,45 @@ class WrapperServiceServicer(aiges_inner_pb2_grpc.WrapperServiceServicer):
             yield aiges_inner_pb2.Response(list=[])
             prev_notes.append(new_note)
 
+    def communicate(self, request_iterator, context):
+        prev_notes = []
+        for r in request_iterator:
+            while True:
+                data = self.queue.get()
+                if data.list[0].len > 120:
+                    break
+                yield data
+                prev_notes.append(data)
+
+
+def call_back(queue, r):
+    queue.put(r)
+
+
+def send_to_queue(q):
+    x = 0
+    while True:
+        x += 1
+        time.sleep(1)
+        # print("sending... {}".format(x))
+        msg = "count: {} . now : {}".format(x, datetime.datetime.now())
+        d = aiges_inner_pb2.ResponseData(key=str(x), data=msg.encode("utf-8"), len=x, status=3)
+        r = aiges_inner_pb2.Response(list=[d])
+        #q.put(r)
+
 
 def serve():
+    work_q = Queue()
+    # w = threading.Thread(target=send_to_queue, args=(work_q,))
+    # w.start()
+
     # We need to build a health service to work with go-plugin
     health = HealthServicer()
     health.set("plugin", health_pb2.HealthCheckResponse.ServingStatus.Value('SERVING'))
     # Start the server.
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     aiges_inner_pb2_grpc.add_WrapperServiceServicer_to_server(
-        WrapperServiceServicer(), server)
+        WrapperServiceServicer(work_q), server)
     # add stdio service
     grpc_stdio_pb2_grpc.add_GRPCStdioServicer_to_server(StdioService(logger), server)
 

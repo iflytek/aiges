@@ -59,3 +59,6 @@ build-release: install-goreleaser ## build binaries by default
 	@echo "build sealos bin"
 	$(GORELEASER_BIN) release --timeout=1h  --release-notes=hack/release/Note.md --debug  --rm-dist
 
+proto:
+	protoc  --go_out=./grpc/ --go-grpc_out=require_unimplemented_servers=false:./grpc/ ./grpc/proto/aiges_inner.proto && echo success generated.!!
+
