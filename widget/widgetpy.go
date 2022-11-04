@@ -8,6 +8,7 @@ package widget
 
 import (
 	"github.com/xfyun/aiges/service"
+	"log"
 )
 
 type WidgetPython struct {
@@ -19,7 +20,8 @@ type WidgetPython struct {
 	@param clib	适配引擎库;
 */
 func (inst *WidgetPython) Open() (errInfo error) {
-	return inst.eng.open(wrapperPythonCmd)
+	log.Println("Starting Using Python : ")
+	return inst.eng.open()
 }
 
 func (inst *WidgetPython) Close() {

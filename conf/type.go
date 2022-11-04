@@ -19,6 +19,9 @@ const (
 	storageData              = "storageData"
 	asyncRelease             = "asyncRelease"
 
+	// grpc python bin path
+	pythonPluginCmd = "pythonPluginCmd"
+
 	// section flowControl
 	sectionFc = "fc"
 	maxLic    = "max"

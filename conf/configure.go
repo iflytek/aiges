@@ -64,7 +64,8 @@ var (
 	// 用户自定义引擎配置
 	UsrCfg     string            // 用户配置文件名
 	UsrCfgData map[string]string // map<usrCfgKey, usrCfgVal>
-
+	// GRPC Python解释器
+	PythonCmd string = "cc"
 )
 
 func Construct(cfg *utils.Configure) (err error) {
@@ -266,6 +267,10 @@ func secParseGes(cfg *utils.Configure) (err error) {
 	}
 	// 存在引擎无需服务配置;
 	UsrCfg, _ = cfg.GetString(sectionAiges, usrCfgName)
+
+	if pcmd, err := cfg.GetString(sectionAiges, pythonPluginCmd); err == nil {
+		PythonCmd = pcmd
+	}
 	return
 }
 

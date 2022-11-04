@@ -34,7 +34,6 @@ func Parse() {
 		AIGES_PLUGIN_MODE = "c"
 
 	}
-
 	SYSArch = runtime.GOOS
 
 }

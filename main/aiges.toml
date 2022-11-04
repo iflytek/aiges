@@ -12,6 +12,7 @@ usrCfg = ""
 sub = "common"
 catchOn = false
 asyncMode = true
+pythonPluginCmd = "/Users/yangyanbo/anaconda3/envs/aiges-python/bin/python -m aiges.serve"
 
 [wrapper] #wrapper示例配置
 "common.lic" = "10"

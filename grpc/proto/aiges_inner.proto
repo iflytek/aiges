@@ -48,7 +48,7 @@ message InitRequest {
 message Request {
   string    tag = 1;
   map<string, string> params = 2;
-  repeated RequestData reqData = 3;
+  repeated RequestData list = 3;
 }
 
 message StreamRequest {

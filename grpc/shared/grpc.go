@@ -1,25 +1,34 @@
 package shared
 
 import (
+	"errors"
+	"fmt"
 	"github.com/xfyun/aiges/grpc/proto"
 	"golang.org/x/net/context"
+	"log"
 )
 
 // GRPCClient is an implementation of KV that talks over RPC.
 type GRPCClient struct{ client proto.WrapperServiceClient }
 
 func (m *GRPCClient) WrapperInit(config map[string]string) error {
-	_, err := m.client.WrapperInit(context.Background(), &proto.InitRequest{
+	ret, err := m.client.WrapperInit(context.Background(), &proto.InitRequest{
 		Config: config,
 	})
+	if ret.GetRet() != 0 {
+		msg := fmt.Sprintf("Call WrapperInit Failed...ret: %d", ret.GetRet())
+		log.Fatalln(msg)
+		return errors.New(msg)
+
+	}
 	return err
 }
 
 func (m *GRPCClient) WrapperOnceExec(userTag string, params map[string]string, reqData []*proto.RequestData) (*proto.Response, error) {
 	resp, err := m.client.WrapperOnceExec(context.Background(), &proto.Request{
-		Params:  params,
-		ReqData: reqData,
-		Tag:     userTag,
+		Params: params,
+		List:   reqData,
+		Tag:    userTag,
 	})
 	if err != nil {
 		return nil, err

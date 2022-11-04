@@ -26,9 +26,9 @@
 """
 
 import datetime
+import importlib
 import logging
 import sys
-import threading
 import time
 #  Copyright (c) 2022. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 #  Morbi non lorem porttitor neque feugiat blandit. Ut vitae ipsum eget quam lacinia accumsan.
@@ -38,15 +38,23 @@ import time
 from concurrent import futures
 from io import StringIO
 from logging.handlers import QueueHandler, QueueListener
-from queue import Queue
+# from queue import Queue
+from multiprocessing import Queue
 
 import grpc
 from aiges.aiges_inner import aiges_inner_pb2
 from aiges.aiges_inner import aiges_inner_pb2_grpc
 from aiges.aiges_inner import grpc_stdio_pb2
 from aiges.aiges_inner import grpc_stdio_pb2_grpc
+from aiges.dto import DataListCls
+from aiges.errors import *
+from aiges.utils.log import getLogger
 from grpc_health.v1 import health_pb2, health_pb2_grpc
 from grpc_health.v1.health import HealthServicer
+
+log = getLogger(fmt=" %(name)s:%(funcName)s:%(lineno)s - %(levelname)s:  %(message)s", name="wrapper")
+wrapper_module = "wrapper"
+wrapper_class = "Wrapper"
 
 
 class StdioService(grpc_stdio_pb2_grpc.GRPCStdioServicer):
@@ -67,17 +75,18 @@ class Logger:
         self.handler = logging.StreamHandler()
         self.listener = QueueListener(que, self.handler)
         self.log = logging.getLogger('python-plugin')
-        self.log.setLevel(logging.DEBUG)
+        self.log.setLevel(logging.INFO)
         self.logFormatter = logging.Formatter('%(asctime)s %(levelname)s  %(name)s %(pathname)s:%(lineno)d - %('
                                               'message)s')
-        self.handler.setFormatter(self.logFormatter)
+        # self.handler.setFormatter(self.logFormatter)
         for handler in self.log.handlers:
             self.log.removeHandler(handler)
-        self.log.addHandler(self.queue_handler)
+        self.log.addHandler(self.handler)
         self.listener.start()
 
     def __del__(self):
-        self.listener.stop()
+        pass
+        # self.listener.stop()
 
     def read(self):
         self.handler.flush()
@@ -85,32 +94,53 @@ class Logger:
         return ret.encode("utf-8")
 
 
-logger = Logger()
-log = logger.log
-
-
 class WrapperServiceServicer(aiges_inner_pb2_grpc.WrapperServiceServicer):
     """Provides methods that implement functionality of route guide server."""
 
     def __init__(self, q):
-        self.queue = q
+        self.response_queue = q
         self.count = 0
+        self.userWrapperObject = None
         pass
 
     def wrapperInit(self, request, context):
-        log.info(request)
-        log.error(2222222222222)
-        return aiges_inner_pb2.Ret(ret=1)
+        log.info("Importing module from wrapper.py: %s", wrapper_module)
+        try:
+            interface_file = importlib.import_module(wrapper_module)
+            user_wrapper_cls = getattr(interface_file, wrapper_class)
+            self.userWrapperObject = user_wrapper_cls()
+            log.info("User Wrapper newed Success.. starting call user init functions...")
+            ret = self.userWrapperObject.wrapperInit(request.config)
+            if ret != 0:
+                log.error("User wrapperInit function failed.. ret: %s" % str(ret))
+                return aiges_inner_pb2.Ret(ret=USER_INIT_ERROR)
+
+        except Exception as e:
+            log.error(e)
+            ret = INIT_ERROR
+            return aiges_inner_pb2.Ret(ret=ret)
+
+        return aiges_inner_pb2.Ret(ret=OK)
 
     def wrapperOnceExec(self, request, context):
+        if not self.userWrapperObject:
+            return aiges_inner_pb2.Response(ret=USER_EXEC_ERROR)
         self.count += 1
-        log.info(request.params)
-        log.info(request.tag)
-        d = aiges_inner_pb2.ResponseData(key="testest", data=b"hello world", len=self.count, status=3)
-        r = aiges_inner_pb2.Response(list=[d], tag=request.tag)
-        call_back(self.queue, r)
+        user_resp = self.userWrapperObject.wrapperOnceExec(request.params, self.convertPbReq2Req(request))
+        if not user_resp or not user_resp.list:
+            return aiges_inner_pb2.Response(ret=USER_EXEC_ERROR)
+        d_list = []
+        for ur in user_resp.list:
+            d = aiges_inner_pb2.ResponseData(key=ur.key, data=ur.data, len=ur.len, status=ur.status)
+            d_list.append(d)
+        r = aiges_inner_pb2.Response(list=d_list, tag=request.tag)
+        call_back(self.response_queue, r)
         return aiges_inner_pb2.Response(list=[])
-        pass
+
+    def convertPbReq2Req(self, req):
+        r = DataListCls()
+        r.list = req.list
+        return r
 
     def testStream(self, request_iterator, context):
         prev_notes = []
@@ -120,18 +150,14 @@ class WrapperServiceServicer(aiges_inner_pb2_grpc.WrapperServiceServicer):
             prev_notes.append(new_note)
 
     def communicate(self, request_iterator, context):
-        prev_notes = []
-        for r in request_iterator:
-            while True:
-                data = self.queue.get()
-                if data.list[0].len > 120:
-                    break
-                yield data
-                prev_notes.append(data)
+        # 这里无需双向似乎，如有必要，需要在加载器中传入相关信息
+        while True:
+            data = self.response_queue.get()
+            yield data
 
 
-def call_back(queue, r):
-    queue.put(r)
+def call_back(response_queue, r):
+    response_queue.put(r)
 
 
 def send_to_queue(q):
@@ -143,7 +169,7 @@ def send_to_queue(q):
         msg = "count: {} . now : {}".format(x, datetime.datetime.now())
         d = aiges_inner_pb2.ResponseData(key=str(x), data=msg.encode("utf-8"), len=x, status=3)
         r = aiges_inner_pb2.Response(list=[d])
-        #q.put(r)
+        # q.put(r)
 
 
 def serve():
@@ -159,7 +185,8 @@ def serve():
     aiges_inner_pb2_grpc.add_WrapperServiceServicer_to_server(
         WrapperServiceServicer(work_q), server)
     # add stdio service
-    grpc_stdio_pb2_grpc.add_GRPCStdioServicer_to_server(StdioService(logger), server)
+    # 这里没有必要，因为go-plugin似乎已经捕捉了 标准输出
+    # grpc_stdio_pb2_grpc.add_GRPCStdioServicer_to_server(StdioService(logger), server)
 
     health_pb2_grpc.add_HealthServicer_to_server(health, server)
 

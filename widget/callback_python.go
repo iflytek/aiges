@@ -6,9 +6,10 @@ import (
 	"github.com/xfyun/aiges/grpc/proto"
 	"github.com/xfyun/aiges/grpc/shared"
 	"github.com/xfyun/aiges/instance"
+	"log"
 )
 
-func engineCreateCallBackPy(in *proto.Response) (Code C.int) {
+func engineCreateCallBackPy(in *proto.Response) (Code int) {
 	// 异步回调接口,回调结果数据写缓冲区;
 	var resp instance.ActMsg
 	last := false
@@ -32,7 +33,6 @@ func engineCreateCallBackPy(in *proto.Response) (Code C.int) {
 			}
 		}
 	}
-
 	respChan, err := instance.QueryChan(in.GetTag())
 	if err == nil {
 		respChan <- resp
@@ -40,7 +40,8 @@ func engineCreateCallBackPy(in *proto.Response) (Code C.int) {
 			_ = instance.FreeChan(in.Tag)
 		}
 	} else {
-		Code = C.int(-1)
+		log.Println(err.Error())
+		Code = -1
 	}
 	return
 }
