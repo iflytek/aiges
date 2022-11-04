@@ -2,8 +2,9 @@ package widget
 
 import "C"
 import (
-	"fmt"
+	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
+	"github.com/xfyun/aiges/conf"
 	"github.com/xfyun/aiges/grpc/proto"
 	"github.com/xfyun/aiges/grpc/shared"
 	"github.com/xfyun/aiges/instance"
@@ -21,13 +22,32 @@ type enginePython struct {
 	stream    proto.WrapperService_CommunicateClient
 }
 
-func (ep *enginePython) open(cmd string) (errInfo error) {
+func (ep *enginePython) open() (errInfo error) {
+	// open 似乎没必要
+	return
+}
+
+func (ep *enginePython) close() {
+	ep.client.Kill()
+	return
+}
+
+func (ep *enginePython) enginePythonInit(cfg map[string]string) (errNum int, errInfo error) {
+	logLevelStr, _ := cfg["log.level"]
+
+	// Create an hclog.Logger
+	logger := hclog.New(&hclog.LoggerOptions{
+		Name:   "python-plugin",
+		Output: os.Stdout,
+		Level:  enginePythonLogLvl(logLevelStr),
+	})
 	// We're a host. Start by launching the plugin process.
 	ep.client = plugin.NewClient(&plugin.ClientConfig{
 		HandshakeConfig: shared.Handshake,
 		Plugins:         shared.PluginMap,
 		SyncStdout:      os.Stdout,
-		Cmd:             exec.Command("sh", "-c", cmd),
+		Cmd:             exec.Command("sh", "-c", conf.PythonCmd),
+		Logger:          logger,
 		AllowedProtocols: []plugin.Protocol{
 			plugin.ProtocolGRPC},
 	})
@@ -35,20 +55,20 @@ func (ep *enginePython) open(cmd string) (errInfo error) {
 	var err error
 	ep.rpcClient, err = ep.client.Client()
 	if err != nil {
-		fmt.Println("Error:", err.Error())
-		return err
+		log.Fatalln("Error:", err.Error())
+		return -1, err
 	}
 	wrapper, err := ep.rpcClient.Dispense("wrapper_grpc")
 	if err != nil {
-		fmt.Println("Error:", err.Error())
-		return err
+		log.Fatalln("Error:", err.Error())
+		return -1, err
 
 	}
 	ep.wrapper = wrapper.(shared.PyWrapper)
 	ep.stream, err = ep.wrapper.Communicate()
 	if err != nil {
-		fmt.Println("Error:", err.Error())
-		return err
+		log.Fatalln("Error:", err.Error())
+		return -1, err
 	}
 	waitc := make(chan struct{})
 	go func() {
@@ -60,46 +80,20 @@ func (ep *enginePython) open(cmd string) (errInfo error) {
 				return
 			}
 			if err != nil {
-				log.Fatalf("client.RouteChat failed: %v", err)
+				log.Fatalf("client Recv the response failed: %v", err)
 			}
-
-			engineCreateCallBackPy(in)
 			// query handle
 			if in.Tag != "" {
-
+				engineCreateCallBackPy(in)
 			}
-			log.Printf("Got data %s at key , len(%s, %d)", in.List[0].Data, in.List[0].Key, in.List[0].Len)
 		}
 	}()
-	notes := []*proto.Request{
-		{Params: map[string]string{"Latitude": "0"}},
-	}
-	for _, note := range notes {
-		if err := ep.stream.Send(note); err != nil {
-			log.Fatalf("client.RouteChat: stream.Send(%v) failed: %v", note, err)
-		}
-	}
-
-	return
-}
-
-func (ep *enginePython) close() {
-	ep.client.Kill()
-	return
-}
-
-func (ep *enginePython) enginePythonInit(cfg map[string]string) (errNum int, errInfo error) {
-	fmt.Println("call python wrapper Init ##")
-	// Request the plugin
+	// Init the plugin
 	ep.wrapper.WrapperInit(cfg)
 	return
 }
 
 func (ep *enginePython) enginePythonOnceExec(handle string, req *instance.ActMsg) (resp instance.ActMsg, errNum int, errInfo error) {
-	log.Println("！ handle is :", handle)
-	log.Println("req aysncmode is :", req.AsyncCode)
-	log.Println("req wrapper handle :", req.WrapperHdl)
-	log.Println("req params:", req.Params)
 	var datas []*proto.RequestData
 	for _, dd := range req.DeliverData {
 		datas = append(
@@ -114,22 +108,18 @@ func (ep *enginePython) enginePythonOnceExec(handle string, req *instance.ActMsg
 		)
 	}
 	// 这里只需要把handle、tag带过去， grpc 那边通过双工流返回回来即可。
-	go ep.wrapper.WrapperOnceExec(handle, req.Params, datas)
+	ep.wrapper.WrapperOnceExec(handle, req.Params, datas)
 
 	return
 }
 
 func (ep *enginePython) enginePythonFini() (errNum int, errInfo error) {
-	//ret := C.adapterFini()
-	//if ret != 0 {
-	//	errInfo = errors.New(enginePythonError(int(ret)))
-	//	errNum = int(ret)
-	//}
+	log.Println("Calling Fini...")
 	return
 }
 
 func (ep *enginePython) enginePythonVersion() (ver string) {
-	return "Devel"
+	return "Devel-3.0"
 }
 
 // 资源加载卸载管理适配接口;
@@ -313,4 +303,17 @@ func (ep *enginePython) enginePythonDebug(handle string, req *instance.ActMsg) (
 func enginePythonError(errNum int) (errInfo string) {
 	//err := C.adapterError(C.int(errNum))
 	return "errr"
+}
+
+func enginePythonLogLvl(logstr string) hclog.Level {
+	switch logstr {
+	case "debug":
+		return hclog.Debug
+	case "info":
+		return hclog.Info
+	case "warn":
+		return hclog.Warn
+	default:
+		return hclog.Error
+	}
 }
