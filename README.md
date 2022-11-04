@@ -24,6 +24,10 @@
 > Athena Serving Framework 致力于加速AI算法模型、引擎云服务化，并借助云原生架构，为云服务的稳定提供多重保障。
 > 您无需关注底层基础设施及服务化相关的开发、治理和运维，即可高效、安全地对模型、引擎进行部署、升级、扩缩、运营和监控。
 
+## 上新！！！
+
+[👉👉👉快速了解 Cgo模式GRPC模式区别](https://iflytek.github.io/athena_website/docs/current/%E5%8A%A0%E8%BD%BD%E5%99%A8/Python%E6%8F%92%E4%BB%B6#python%E5%8A%A0%E8%BD%BD%E5%99%A8%E6%8F%92%E4%BB%B6%E6%96%87%E6%A1%A3)
+
 ## 整体架构
 
 ![img](https://raw.githubusercontent.com/xfyun/proposals/main/athenaloader/athena.png)
@@ -47,6 +51,8 @@
 &#9745; 支持负载均衡配置
 
 &#9745; 支持HTTP/GRPC服务
+
+&#9745; Cgo模式/GRPC模式切换 [go 和 python通信方式]
 
 #### SDK
 
