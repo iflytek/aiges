@@ -1,7 +1,7 @@
 name: AIGes Docker Building
 on:
   push:
-    branches: [ master ]
+    branches: [ grpc ]
 #    paths:
 #      - "docker/gpu/aiges/**"
   pull_request:

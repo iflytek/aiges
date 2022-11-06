@@ -18,6 +18,16 @@ before:
     -  go mod vendor
 builds:
   - env:
+      - CGO_ENABLED=0
+    main: ./main
+    id: aiges-cross
+    binary: AIservice
+    goos:
+      - darwin
+    goarch:
+      - amd64
+
+  - env:
       - CGO_ENABLED=1
       - CC=x86_64-linux-gnu-gcc
       - CC_FOR_TARGET=gcc-x86_64-linux-gnu
