@@ -4,7 +4,6 @@ import "C"
 import (
 	"errors"
 	"github.com/xfyun/aiges/buffer"
-	"github.com/xfyun/aiges/catch"
 	"github.com/xfyun/aiges/conf"
 	"github.com/xfyun/aiges/frame"
 	"github.com/xfyun/aiges/protocol"
@@ -361,7 +360,6 @@ func (si *ServiceInst) outputProc(input []DataMeta) (output []buffer.DataMeta, e
 
 //	异步协程: 单线程消费计算;
 func (si *ServiceInst) asyncCalc() {
-	defer catch.RecoverHandle()
 	errNum, errInfo := nrtCheck(si)
 	if errInfo == nil {
 		switch si.sessType {
@@ -771,10 +769,6 @@ func (si *ServiceInst) resetExcp() {
 	si.excpNum = frame.AigesSuccess
 	si.excpErr = nil
 	return
-}
-
-func (si *ServiceInst) CatchTag() (header map[string]string, params map[string]string, datas []eventStorage) {
-	return si.headers, si.params, si.upDatas
 }
 
 func (si *ServiceInst) GetSessState() protocol.LoaderInput_SessState {

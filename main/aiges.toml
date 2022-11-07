@@ -10,7 +10,6 @@ numaNode = 0
 realTimeRlt = false
 usrCfg = ""
 sub = "common"
-catchOn = false
 
 [wrapper] #wrapper示例配置
 "common.lic" = "10"

@@ -13,9 +13,7 @@ type envmap struct {
 	value interface{}
 }
 
-var envMaps = []envmap{
-	{"CATCH_WRAPPER_DELAY_PERIOD", &WrapperDelayDetectPeriod}, //接口响应超时
-}
+var envMaps = []envmap{}
 
 func parseLoaderEnv() (err error) {
 	// 环境变量解析
