@@ -1,5 +1,5 @@
-//go:build linux
-// +build linux
+//go:build linux || cgo
+// +build linux cgo
 
 package widget
 

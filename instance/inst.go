@@ -1,6 +1,5 @@
 package instance
 
-import "C"
 import (
 	"errors"
 	"github.com/xfyun/aiges/buffer"
