@@ -1,6 +1,5 @@
 package widget
 
-import "C"
 import (
 	"errors"
 	"github.com/xfyun/aiges/grpc/proto"

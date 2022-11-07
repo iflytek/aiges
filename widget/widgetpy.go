@@ -1,5 +1,5 @@
-//go:build darwin || windows || !cgo
-// +build darwin windows !cgo
+//go:build darwin || windows || linux
+// +build darwin windows linux
 
 /*
 	控件层通过注册"事件-行为"方法对,实现对控件接口的注册及上层接口调用的统一调度适配；
