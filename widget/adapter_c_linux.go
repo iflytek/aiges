@@ -321,7 +321,6 @@ int adapterFreeDataList(pDataList dl){
 import "C"
 import (
 	"errors"
-	"github.com/xfyun/aiges/catch"
 	"github.com/xfyun/aiges/conf"
 	"github.com/xfyun/aiges/instance"
 	"unsafe"
@@ -376,8 +375,6 @@ func engineInit(cfg map[string]string) (errNum int, errInfo error) {
 	if ret != 0 {
 		errInfo = errors.New(engineError(int(ret)))
 		errNum = int(ret)
-		handle := new(catch.StartFailedHandle)
-		handle.Occur()
 	}
 	return
 }
@@ -398,10 +395,6 @@ func engineVersion() (ver string) {
 
 // 资源加载卸载管理适配接口;
 func engineLoadRes(handle string, req *instance.ActMsg) (resp instance.ActMsg, errNum int, errInfo error) {
-	uuid := catch.GenerateUuid()
-	catch.CallCgo(uuid, catch.Begin)
-	defer catch.CallCgo(uuid, catch.End)
-
 	dataList := C.dataListCreate()
 	defer C.DataListfree(dataList)
 
@@ -431,9 +424,6 @@ func engineLoadRes(handle string, req *instance.ActMsg) (resp instance.ActMsg, e
 }
 
 func engineUnloadRes(handle string, req *instance.ActMsg) (resp instance.ActMsg, errNum int, errInfo error) {
-	uuid := catch.GenerateUuid()
-	catch.CallCgo(uuid, catch.Begin)
-	defer catch.CallCgo(uuid, catch.End)
 	errC := C.adapterUnloadRes(C.uint(req.PsrId))
 	if errC != 0 {
 		errNum = int(errC)
@@ -444,11 +434,7 @@ func engineUnloadRes(handle string, req *instance.ActMsg) (resp instance.ActMsg,
 
 // 资源申请行为
 func engineCreate(handle string, req *instance.ActMsg) (resp instance.ActMsg, errNum int, errInfo error) {
-	uuid := catch.GenerateUuid()
-	catch.CallCgo(uuid, catch.Begin)
-	defer catch.CallCgo(uuid, catch.End)
 	// 参数对;
-
 	paramList := C.paramListCreate()
 	defer C.paramListfree(paramList)
 	for k, v := range req.Params {
@@ -498,9 +484,6 @@ func engineCreate(handle string, req *instance.ActMsg) (resp instance.ActMsg, er
 
 // 资源释放行为
 func engineDestroy(handle string, req *instance.ActMsg) (resp instance.ActMsg, errNum int, errInfo error) {
-	uuid := catch.GenerateUuid()
-	catch.CallCgo(uuid, catch.Begin)
-	defer catch.CallCgo(uuid, catch.End)
 	errC := C.adapterDestroy(req.WrapperHdl)
 	if errC != 0 {
 		errNum = int(errC)
@@ -511,18 +494,12 @@ func engineDestroy(handle string, req *instance.ActMsg) (resp instance.ActMsg, e
 
 // 交互异常行为
 func engineExcp(handle string, req *instance.ActMsg) (resp instance.ActMsg, errNum int, errInfo error) {
-	uuid := catch.GenerateUuid()
-	catch.CallCgo(uuid, catch.Begin)
-	defer catch.CallCgo(uuid, catch.End)
 	resp, errNum, errInfo = engineDestroy(handle, req)
 	return
 }
 
 // 数据写行为
 func engineWrite(handle string, req *instance.ActMsg) (resp instance.ActMsg, errNum int, errInfo error) {
-	uuid := catch.GenerateUuid()
-	catch.CallCgo(uuid, catch.Begin)
-	defer catch.CallCgo(uuid, catch.End)
 	// 写数据转换;
 	dataList := C.dataListCreate()
 	defer C.DataListfree(dataList)
@@ -557,9 +534,6 @@ func engineWrite(handle string, req *instance.ActMsg) (resp instance.ActMsg, err
 
 // 数据读行为
 func engineRead(handle string, req *instance.ActMsg) (resp instance.ActMsg, errNum int, errInfo error) {
-	uuid := catch.GenerateUuid()
-	catch.CallCgo(uuid, catch.Begin)
-	defer catch.CallCgo(uuid, catch.End)
 	respDataC := C.getDataList()
 	defer C.releaseDataList(respDataC)
 	errC := C.adapterRead(req.WrapperHdl, respDataC)
@@ -593,9 +567,6 @@ func engineRead(handle string, req *instance.ActMsg) (resp instance.ActMsg, errN
 }
 
 func engineOnceExec(handle string, req *instance.ActMsg) (resp instance.ActMsg, errNum int, errInfo error) {
-	uuid := catch.GenerateUuid()
-	catch.CallCgo(uuid, catch.Begin)
-	defer catch.CallCgo(uuid, catch.End)
 	// 非会话参数;
 	paramList := C.paramListCreate()
 	defer C.paramListfree(paramList)
@@ -692,9 +663,6 @@ func engineOnceExec(handle string, req *instance.ActMsg) (resp instance.ActMsg, 
 
 // 计算debug数据
 func engineDebug(handle string, req *instance.ActMsg) (resp instance.ActMsg, errNum int, errInfo error) {
-	uuid := catch.GenerateUuid()
-	catch.CallCgo(uuid, catch.Begin)
-	defer catch.CallCgo(uuid, catch.End)
 	debug := C.adapterDebugInfo(req.WrapperHdl)
 	resp.Debug = C.GoString(debug)
 	return

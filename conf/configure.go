@@ -28,7 +28,6 @@ var (
 	meterIseList = "category"
 )
 var SvcVersion string
-var CatchSvcIP string
 var (
 	// 服务框架通用配置
 	EngSub                   string           // 服务类型(eg:iat)
@@ -36,7 +35,6 @@ var (
 	DelSessRt                int              // 会话管理器异步处理协程数;
 	RealTimeRead             bool             // 引擎同步读接口：是否实时读(写事件last读 || 边写边读);
 	WrapperAsync             bool             // 插件同步或异步模式：false同步, true异步;
-	Catch                    bool             // 异常捕获开关
 	HttpRetry                int      = 1     // http下载重试,缺省3次
 	GrayLabel                bool             // 集群节点灰度状态标记
 	WrapperTrace             bool             // 插件回调trace日志开关
@@ -228,11 +226,6 @@ func secParseGes(cfg *utils.Configure) (err error) {
 	if err != nil {
 		WrapperTrace, err = true, nil
 	}
-	Catch, err = cfg.GetBool(sectionAiges, catchSwitch)
-	if err != nil {
-		Catch, err = true, nil
-	}
-
 	GrayLabel, err = cfg.GetBool(sectionAiges, grayMark)
 	if err != nil {
 		GrayLabel, err = false, nil

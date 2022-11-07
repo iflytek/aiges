@@ -8,10 +8,8 @@ package instance
 import (
 	"context"
 	"fmt"
-	"github.com/xfyun/aiges/catch"
 	"github.com/xfyun/aiges/conf"
 	"github.com/xfyun/aiges/frame"
-	"github.com/xfyun/aiges/protocol"
 	"github.com/xfyun/xsf/server"
 	"strconv"
 	"sync"
@@ -242,30 +240,4 @@ func CCReportCallBack(sessionTag interface{}, svcData interface{}, caller ...xsf
 	usr.inst.mngr.tool.Cache.UpdateDelay()
 	sampleExit(&usr.inst.headers)
 	usr.inst.mngr.tool.Log.Infow("Call SessCallBack", "hdl", sessionTag)
-}
-
-func (mngr *Manager) CatchCallBack() (reqDoubt []catch.TagRequest) {
-	mngr.instMutex.Lock()
-	defer mngr.instMutex.Unlock()
-	for inst, idle := range mngr.instCaches {
-		if !idle {
-			td := make([]catch.TagData, 0, 1)
-			header, params, datas := inst.CatchTag()
-			for _, v := range datas {
-				meta := catch.TagData{Desc: v.Desc.Attribute, Typ: DataTypeToString(v.Desc.DataType)}
-				if v.data != nil {
-					meta.Data = v.data.([]byte)
-				}
-				td = append(td, meta)
-			}
-			tr := catch.TagRequest{}
-			tr.Sid, _ = header[protocol.SessionId]
-			tr.Param = params
-			tr.Header = header
-			tr.DataList = td
-			reqDoubt = append(reqDoubt, tr)
-		}
-	}
-	mngr.tool.Log.Errorw("CatchCallBack report sid info", "sids", reqDoubt)
-	return
 }

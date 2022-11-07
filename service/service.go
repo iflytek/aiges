@@ -50,9 +50,6 @@ func (srv *aiService) Init(box *xsf.ToolBox) (err error) {
 		return
 	}
 
-	//事件捕获模块获取上报的IP
-	conf.CatchSvcIP = srv.tool.NetManager.GetIp()
-
 	// 服务实例初始化
 	usrDef := make(map[instance.UserEvent]instance.UsrAct)
 	for e, a := range srv.callbackUser {
