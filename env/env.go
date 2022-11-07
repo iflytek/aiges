@@ -34,6 +34,12 @@ func Parse() {
 		AIGES_PLUGIN_MODE = "c"
 
 	}
-	SYSArch = runtime.GOOS
+	if goos := os.Getenv("GOOS"); len(goos) > 0 {
+		SYSArch = goos
+	} else {
+		// 默认c插件模式
+		SYSArch = runtime.GOOS
+
+	}
 
 }

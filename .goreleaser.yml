@@ -27,6 +27,11 @@ builds:
     goarch:
       - amd64
 
+    gcflags:
+      -  -gcflags
+      - "-N -l -c 10"
+
+
   - env:
       - CGO_ENABLED=1
       - CC=x86_64-linux-gnu-gcc
