@@ -23,14 +23,12 @@ type WidgetInner interface {
 }
 
 func usage() {
-	fmt.Printf("usage: flag -plugin=c/go/py\n" +
-		"-plugin=c		load libwrapper.so (defalut mode)\n" +
-		"-plugin=go		load libwrapper.so\n",
-	)
+	fmt.Printf("\n")
 	os.Exit(0)
 }
 
 func warn() {
-	fmt.Println("Non linux platform only support python plugin.. ")
+	fmt.Println("Non linux platform only support python plugin..\n please set env variable by using command " +
+		"'export AIGES_PLUGIN_MODE=python/c' ")
 
 }

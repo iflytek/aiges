@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	_ "github.com/pyroscope-io/pyroscope/pkg/agent/profiler"
 	"github.com/xfyun/aiges/conf"
@@ -13,7 +12,9 @@ import (
 )
 
 func main() {
-	flag.Parse()
+	flg := utils.NewFlag()
+	flg.Parse()
+
 	env.Parse()
 	//profiler.Start(profiler.Config{
 	//	ApplicationName: "AISERVICE",
@@ -68,6 +69,11 @@ func main() {
 }
 
 func usage() {
-	fmt.Printf("TODO:加载器参数说明\n") // TODO usage() 完善
+	fmt.Printf("加载器运行方法:\n" +
+		"- 本地模式运行\n" +
+		"1: ./AIservice -init  , 初始化配置文件 aiges.toml (若存在，则不会替换)\n" +
+		"2: ./AIservice -m=0 , 仅用于本地模式运行\n" +
+		"- 配置中心模式 (开源计划删除)\n" +
+		"- 更多参数选项: 请执行 ./AIservice -h \n") // TODO usage() 完善
 	os.Exit(0)
 }
