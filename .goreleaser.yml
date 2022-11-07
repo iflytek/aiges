@@ -20,17 +20,17 @@ builds:
   - env:
       - CGO_ENABLED=0
     main: ./main
-    id: aiges-cross
+    id: aiges-grpc
     binary: AIservice
     goos:
       - darwin
+      - windows
     goarch:
       - amd64
 
     gcflags:
       -  -gcflags
       - "-N -l -c 10"
-
 
   - env:
       - CGO_ENABLED=1
@@ -61,7 +61,6 @@ builds:
       # - -extldflags "-static -fpic"
       - -s -w
       - -linkmode external
-
 
 archives:
   -
