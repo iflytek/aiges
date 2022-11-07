@@ -2,7 +2,6 @@ package service
 
 import (
 	"fmt"
-	"github.com/xfyun/aiges/catch"
 	"github.com/xfyun/aiges/conf"
 	"github.com/xfyun/aiges/frame"
 	"github.com/xfyun/aiges/instance"
@@ -39,10 +38,6 @@ func (srv *aiService) Init(box *xsf.ToolBox) (err error) {
 		srv.tool.Log.Errorf(err.Error())
 		return
 	}
-
-	// 异常捕获模块
-	catch.Open(conf.Catch, conf.WrapperDelayDetectPeriod, srv.tool.Log, srv.instMngr.CatchCallBack)
-	defer catch.RecoverHandle()
 
 	// 异步下发模式消息队列
 	if err = storage.RabInit(
@@ -94,7 +89,6 @@ func (srv *aiService) Finit() error {
 	// 框架逆初始化操作
 	srv.instMngr.Fini()
 
-	catch.Close()
 	storage.RabFini()
 	// wrapper引擎逆初始化
 	if srv.callbackFini != nil {
