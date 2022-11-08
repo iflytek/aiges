@@ -74,6 +74,9 @@ func (f *Flag) Parse() {
 			if *xsf.CompanionUrl == "" {
 				*xsf.CompanionUrl = "http://companion.xfyun.iflytek:6868"
 			}
+			if *xsf.Service == "" {
+				*xsf.Service = "svcName"
+			}
 		}
 	}
 }

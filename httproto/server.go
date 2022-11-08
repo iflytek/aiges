@@ -87,9 +87,18 @@ func (s *Server) serveHTTP(writer http.ResponseWriter, request *http.Request) (r
 	if err != nil {
 		return 10001, sid, err
 	}
+	in.Headers["sid"] = sid
+	//in.Expect[0].DataType = protocol.MetaDesc_DataType(protocol.MetaDesc_TEXT)
 	bytes, _ := proto.Marshal(in)
 	xsfReq := xsf.NewReq()
 	xsfReq.Append(bytes, nil)
+	xsfReq.SetOp("AIIn")
+	xsfReq.SetParam("SeqNo", "1")
+	xsfReq.SetParam("version", "v2")
+	xsfReq.SetParam("waitTime", "1000")
+	xsfReq.SetParam("baseId", "0")
+	xsfReq.SetHandle(sid)
+
 	span := utils.NewSpan(utils.SrvSpan)
 	span.WithName(s.serviceName)
 	span.WithTag("sid", sid)
