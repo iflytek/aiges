@@ -18,7 +18,7 @@ type Request struct {
 
 func (r *Request) ConvertToPb(serviceName string, stat protocol.LoaderInput_SessState) (*protocol.LoaderInput, error) {
 	in := &protocol.LoaderInput{
-		ServiceId:   getString(r.Header, "service_id"),
+		ServiceId:   serviceName,
 		ServiceName: serviceName,
 		State:       stat,
 		Headers:     toStringMap(r.Header),
