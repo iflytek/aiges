@@ -32,14 +32,15 @@ func (r *Request) ConvertToPb(serviceName string, stat protocol.LoaderInput_Sess
 }
 
 func (r *Request) readParameter(pb *protocol.LoaderInput) {
-
+	// ** 理论上这里应该要根据schema 做返回数据结果的限制
+	// todo
 	for _, val := range r.Parameter {
 		for sk, sv := range val {
 			switch sv.(type) {
 			case map[string]interface{}:
 				desc := &protocol.MetaDesc{
 					Name:      sk,
-					DataType:  getDataType(toString(val["data_type"])),
+					DataType:  getDataType(toString(sv.(map[string]interface{})["data_type"])),
 					Attribute: map[string]string{},
 				}
 				pb.Expect = append(pb.Expect, desc)
