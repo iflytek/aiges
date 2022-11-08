@@ -91,6 +91,7 @@ func (s *Server) serveHTTP(writer http.ResponseWriter, request *http.Request) (r
 	bytes, _ := proto.Marshal(in)
 	xsfReq := xsf.NewReq()
 	xsfReq.Append(bytes, nil)
+	xsfReq.SetOp("AIIn")
 	span := utils.NewSpan(utils.SrvSpan)
 	span.WithName(s.serviceName)
 	span.WithTag("sid", sid)
