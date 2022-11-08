@@ -67,8 +67,9 @@ func (s *Server) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
 		writer.WriteHeader(500)
 		writeResp(writer, &CommonResponse{
 			Header: map[string]interface{}{
-				"code": code,
-				"sid":  sid,
+				"code":    code,
+				"sid":     sid,
+				"message": err.Error(),
 			},
 			Payload: nil,
 		})
@@ -83,7 +84,7 @@ func (s *Server) serveHTTP(writer http.ResponseWriter, request *http.Request) (r
 	if err != nil {
 		return 10000, sid, err
 	}
-	in, err := req.ConvertToPb("", protocol.LoaderInput_ONCE)
+	in, err := req.ConvertToPb(s.serviceName, protocol.LoaderInput_ONCE)
 	if err != nil {
 		return 10001, sid, err
 	}
