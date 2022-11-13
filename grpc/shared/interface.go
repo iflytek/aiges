@@ -29,6 +29,7 @@ type PyWrapper interface {
 	WrapperInit(config map[string]string) error
 	WrapperOnceExec(userTag string, params map[string]string, reqData []*proto.RequestData) (*proto.Response, error)
 	Communicate() (proto.WrapperService_CommunicateClient, error)
+	WrapperSchema(id string) (*proto.Schema, error)
 }
 
 // This is the implementation of plugin.GRPCPlugin so we can serve/consume this.

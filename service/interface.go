@@ -85,7 +85,6 @@ func (srv *EngService) Run() (errInfo error) {
 		}()
 		srv.aiInst = aiService{callbackInit: srv.initAction, callbackFini: srv.finiAction, callbackUser: srv.usrActions}
 		//		xsf.AddKillerCheck(SERVICE, &sigClose{srv})
-
 		if errInfo = srv.xsfInst.Run(xsf.BootConfig{CfgMode: utils.CfgMode(-1),
 			CfgData: xsf.CfgMeta{CfgName: "", Project: "", Group: "", Service: "",
 				Version: srv.usrVersion, CompanionUrl: "", CallBack: conf.Update}}, httproto.NewServer(&srv.aiInst)); errInfo != nil {

@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type WrapperServiceClient interface {
 	WrapperInit(ctx context.Context, in *InitRequest, opts ...grpc.CallOption) (*Ret, error)
 	WrapperOnceExec(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error)
+	WrapperSchema(ctx context.Context, in *SvcId, opts ...grpc.CallOption) (*Schema, error)
 	TestStream(ctx context.Context, opts ...grpc.CallOption) (WrapperService_TestStreamClient, error)
 	//
 	// Accepts a stream of RouteNotes sent while a route is being traversed,
@@ -51,6 +52,15 @@ func (c *wrapperServiceClient) WrapperInit(ctx context.Context, in *InitRequest,
 func (c *wrapperServiceClient) WrapperOnceExec(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error) {
 	out := new(Response)
 	err := c.cc.Invoke(ctx, "/aiges.WrapperService/wrapperOnceExec", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *wrapperServiceClient) WrapperSchema(ctx context.Context, in *SvcId, opts ...grpc.CallOption) (*Schema, error) {
+	out := new(Schema)
+	err := c.cc.Invoke(ctx, "/aiges.WrapperService/wrapperSchema", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -125,6 +135,7 @@ func (x *wrapperServiceCommunicateClient) Recv() (*Response, error) {
 type WrapperServiceServer interface {
 	WrapperInit(context.Context, *InitRequest) (*Ret, error)
 	WrapperOnceExec(context.Context, *Request) (*Response, error)
+	WrapperSchema(context.Context, *SvcId) (*Schema, error)
 	TestStream(WrapperService_TestStreamServer) error
 	//
 	// Accepts a stream of RouteNotes sent while a route is being traversed,
@@ -141,6 +152,9 @@ func (UnimplementedWrapperServiceServer) WrapperInit(context.Context, *InitReque
 }
 func (UnimplementedWrapperServiceServer) WrapperOnceExec(context.Context, *Request) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method WrapperOnceExec not implemented")
+}
+func (UnimplementedWrapperServiceServer) WrapperSchema(context.Context, *SvcId) (*Schema, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method WrapperSchema not implemented")
 }
 func (UnimplementedWrapperServiceServer) TestStream(WrapperService_TestStreamServer) error {
 	return status.Errorf(codes.Unimplemented, "method TestStream not implemented")
@@ -192,6 +206,24 @@ func _WrapperService_WrapperOnceExec_Handler(srv interface{}, ctx context.Contex
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(WrapperServiceServer).WrapperOnceExec(ctx, req.(*Request))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WrapperService_WrapperSchema_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SvcId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WrapperServiceServer).WrapperSchema(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/aiges.WrapperService/wrapperSchema",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WrapperServiceServer).WrapperSchema(ctx, req.(*SvcId))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -262,6 +294,10 @@ var WrapperService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "wrapperOnceExec",
 			Handler:    _WrapperService_WrapperOnceExec_Handler,
+		},
+		{
+			MethodName: "wrapperSchema",
+			Handler:    _WrapperService_WrapperSchema_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

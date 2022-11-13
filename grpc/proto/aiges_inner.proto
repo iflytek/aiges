@@ -5,16 +5,27 @@ option go_package = "./proto";
 service WrapperService {
   rpc wrapperInit(InitRequest) returns (Ret) {}
   rpc wrapperOnceExec(Request) returns (Response) {}
+  rpc wrapperSchema(SvcId) returns (Schema) {}
   rpc testStream(stream StreamRequest) returns (stream Response) {}
   //
   // Accepts a stream of RouteNotes sent while a route is being traversed,
   // while receiving other RouteNotes (e.g. from other users).
   rpc communicate(stream Request) returns (stream Response) {}
+
 }
 
 message  Ret {
   int32 ret = 1;
 }
+
+message SvcId {
+  string serviceId = 1;
+}
+
+message Schema {
+  string data = 1;
+}
+
 
 message RequestData {
   string key = 1;

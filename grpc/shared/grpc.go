@@ -41,10 +41,19 @@ func (m *GRPCClient) Communicate() (proto.WrapperService_CommunicateClient, erro
 	return m.client.Communicate(context.Background())
 }
 
+func (m *GRPCClient) WrapperSchema(id string) (*proto.Schema, error) {
+	return m.client.WrapperSchema(context.Background(), &proto.SvcId{ServiceId: id})
+}
+
 // Here is the gRPC server that GRPCClient talks to.
 type GRPCServer struct {
 	// This is the real implementation
 	Impl PyWrapper
+}
+
+func (m *GRPCServer) WrapperSchema(ctx context.Context, id *proto.SvcId) (*proto.Schema, error) {
+	//TODO implement me
+	panic("implement me")
 }
 
 func (m *GRPCServer) Communicate(server proto.WrapperService_CommunicateServer) error {

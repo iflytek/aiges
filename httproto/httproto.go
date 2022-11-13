@@ -5,10 +5,35 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"github.com/xfyun/aiges/httproto/schemas"
 	"github.com/xfyun/aiges/protocol"
+	"log"
 	"reflect"
 	"strconv"
+	"sync"
 )
+
+type SvcSchema struct {
+	Content string
+}
+
+var once sync.Once
+var instance schemas.AISchema
+
+func SetSchema(s string) *schemas.AISchema {
+	once.Do(func() {
+
+		err := json.Unmarshal([]byte(s), &instance)
+		if err != nil {
+			log.Fatal("wrong schema format... ...check...")
+		}
+	})
+	return &instance
+}
+
+func GetSchema() *schemas.AISchema {
+	return &instance
+}
 
 type Request struct {
 	Header    map[string]interface{}            `json:"header"`
@@ -17,6 +42,7 @@ type Request struct {
 }
 
 func (r *Request) ConvertToPb(serviceName string, stat protocol.LoaderInput_SessState) (*protocol.LoaderInput, error) {
+	sch := GetSchema()
 	in := &protocol.LoaderInput{
 		ServiceId:   serviceName,
 		ServiceName: serviceName,
@@ -28,20 +54,41 @@ func (r *Request) ConvertToPb(serviceName string, stat protocol.LoaderInput_Sess
 		SyncId:      0,
 	}
 	r.readParameter(in)
-	return in, r.readPayload(in)
+	err := r.readPayload(in)
+
+	err = sch.Validate(in)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	return in, err
 }
 
 func (r *Request) readParameter(pb *protocol.LoaderInput) {
-	// ** 理论上这里应该要根据schema 做返回数据结果的限制
+	// ** 理论上这里应该要根据schema 做返回数据结果的限制 ,前面要加schema校验 数据合法性
+
 	// todo
 	for _, val := range r.Parameter {
 		for sk, sv := range val {
 			switch sv.(type) {
 			case map[string]interface{}:
+				var tmp = sv.(map[string]interface{})
+				var attr = map[string]string{}
+				encoding, ok := tmp["encoding"]
+				if ok {
+					attr["encoding"] = encoding.(string)
+				}
+				format, ok := tmp["format"]
+				if ok {
+					attr["format"] = format.(string)
+				}
+				compress, ok := tmp["compress"]
+				if ok {
+					attr["compress"] = compress.(string)
+				}
 				desc := &protocol.MetaDesc{
 					Name:      sk,
-					DataType:  getDataType(toString(sv.(map[string]interface{})["data_type"])),
-					Attribute: map[string]string{},
+					DataType:  getDataType(toString(tmp["data_type"])),
+					Attribute: attr,
 				}
 				pb.Expect = append(pb.Expect, desc)
 			case string, int, bool, float64:
@@ -51,6 +98,7 @@ func (r *Request) readParameter(pb *protocol.LoaderInput) {
 			}
 		}
 	}
+
 }
 
 func (r *Request) readPayload(pb *protocol.LoaderInput) error {
@@ -170,7 +218,7 @@ func getDataTypeName(p protocol.MetaDesc_DataType) string {
 	}
 }
 
-func outputToJson(pb *protocol.LoaderOutput, sid string) *CommonResponse {
+func outputToJson(pb *protocol.LoaderOutput, sid string, expect []*protocol.MetaDesc) *CommonResponse {
 	res := &CommonResponse{
 		Header: map[string]interface{}{
 			"code":   0,
@@ -185,8 +233,15 @@ func outputToJson(pb *protocol.LoaderOutput, sid string) *CommonResponse {
 		for key, val := range payload.GetMeta().GetAttribute() {
 			pd[key] = val
 		}
+		dt := payload.GetMeta().GetDataType()
+		if dt == protocol.MetaDesc_TEXT {
 
-		pd[getDataTypeName(payload.GetMeta().GetDataType())] = base64.StdEncoding.EncodeToString(payload.GetData())
+			pd[getDataTypeName(payload.GetMeta().GetDataType())] = string(payload.GetData())
+
+		} else {
+			pd[getDataTypeName(payload.GetMeta().GetDataType())] = base64.StdEncoding.EncodeToString(payload.GetData())
+
+		}
 
 		res.Payload[payload.GetMeta().GetName()] = pd
 	}

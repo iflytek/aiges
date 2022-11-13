@@ -6,6 +6,7 @@ import (
 	"github.com/xfyun/aiges/conf"
 	"github.com/xfyun/aiges/grpc/proto"
 	"github.com/xfyun/aiges/grpc/shared"
+	"github.com/xfyun/aiges/httproto"
 	"github.com/xfyun/aiges/instance"
 	"io"
 	"log"
@@ -19,6 +20,7 @@ type enginePython struct {
 	rpcClient plugin.ClientProtocol
 	wrapper   shared.PyWrapper
 	stream    proto.WrapperService_CommunicateClient
+	Schema    string
 }
 
 func (ep *enginePython) open() (errInfo error) {
@@ -87,8 +89,22 @@ func (ep *enginePython) enginePythonInit(cfg map[string]string) (errNum int, err
 			}
 		}
 	}()
+
 	// Init the plugin
 	ep.wrapper.WrapperInit(cfg)
+
+	// Get schema
+	schema, err := ep.wrapper.WrapperSchema("svcName")
+	if err != nil {
+		log.Fatalln("Error:", err.Error())
+		return -1, err
+	}
+
+	// 设置schema
+	httproto.SetSchema(schema.GetData())
+
+	ep.Schema = schema.GetData()
+
 	return
 }
 

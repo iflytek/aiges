@@ -6,10 +6,13 @@ require (
 	github.com/aws/aws-sdk-go v1.44.28
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/golang/protobuf v1.5.2
+	github.com/hashicorp/go-hclog v0.14.1
 	github.com/hashicorp/go-plugin v1.4.5
+	github.com/oliveagle/jsonpath v0.0.0-20180606110733-2e52cf6e6852
 	github.com/pyroscope-io/pyroscope v0.18.0
-	github.com/satori/go.uuid v1.2.0
+	github.com/seeadoog/jsonschema v1.1.0
 	github.com/streadway/amqp v1.0.0
+	github.com/xfyun/uuid v0.0.0-20220331052528-3a275a5702d5
 	github.com/xfyun/xsf v0.0.0-20220402010628-6507dace16c0
 	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd
 	google.golang.org/grpc v1.32.0
@@ -29,7 +32,6 @@ require (
 	github.com/garyburd/redigo v1.6.3 // indirect
 	github.com/go-ole/go-ole v1.2.5 // indirect
 	github.com/hashicorp/errwrap v1.0.0 // indirect
-	github.com/hashicorp/go-hclog v0.14.1 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/hashicorp/yamux v0.0.0-20180604194846-3520598351bb // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
@@ -48,6 +50,9 @@ require (
 	github.com/samuel/go-zookeeper v0.0.0-20201211165307-7117e9ea2414 // indirect
 	github.com/shirou/gopsutil v3.21.4+incompatible // indirect
 	github.com/shirou/gopsutil/v3 v3.21.7 // indirect
+	github.com/tidwall/gjson v1.14.0 // indirect
+	github.com/tidwall/match v1.1.1 // indirect
+	github.com/tidwall/pretty v1.2.0 // indirect
 	github.com/tklauser/go-sysconf v0.3.7 // indirect
 	github.com/tklauser/numcpus v0.2.3 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
@@ -60,7 +65,6 @@ require (
 	github.com/xfyun/redisgo v0.0.0-20220331072549-8b4cfc76e532 // indirect
 	github.com/xfyun/sonar v0.0.0-20220331071109-0b7c3a371c9a // indirect
 	github.com/xfyun/thrift v0.0.0-20210423095925-0ef93ee2c654 // indirect
-	github.com/xfyun/uuid v0.0.0-20220331052528-3a275a5702d5 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/multierr v1.6.0 // indirect
 	go.uber.org/zap v1.21.0 // indirect

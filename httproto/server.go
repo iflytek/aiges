@@ -88,6 +88,7 @@ func (s *Server) serveHTTP(writer http.ResponseWriter, request *http.Request) (r
 	if err != nil {
 		return 10001, sid, err
 	}
+
 	in.Headers["sid"] = sid
 	//in.Expect[0].DataType = protocol.MetaDesc_DataType(protocol.MetaDesc_TEXT)
 	bytes, _ := proto.Marshal(in)
@@ -127,7 +128,7 @@ func (s *Server) serveHTTP(writer http.ResponseWriter, request *http.Request) (r
 	if output.Code != 0 {
 		return int(output.Code), sid, errors.New(output.Err)
 	}
-	writeResp(writer, outputToJson(output, sid))
+	writeResp(writer, outputToJson(output, sid, in.Expect))
 	return 0, sid, nil
 }
 
