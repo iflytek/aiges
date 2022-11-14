@@ -2,6 +2,7 @@ package httproto
 
 import (
 	"bytes"
+	"context"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -41,7 +42,7 @@ type Request struct {
 	Payload   map[string]map[string]interface{} `json:"payload"`
 }
 
-func (r *Request) ConvertToPb(serviceName string, stat protocol.LoaderInput_SessState) (*protocol.LoaderInput, error) {
+func (r *Request) ConvertToPb(serviceName string, stat protocol.LoaderInput_SessState, ctx *context.Context) (*protocol.LoaderInput, error) {
 	sch := GetSchema()
 	in := &protocol.LoaderInput{
 		ServiceId:   serviceName,
@@ -55,11 +56,11 @@ func (r *Request) ConvertToPb(serviceName string, stat protocol.LoaderInput_Sess
 	}
 	r.readParameter(in)
 	err := r.readPayload(in)
+	st, _ := sch.InputSchema.MarshalJSON()
 
-	err = sch.Validate(in)
-	if err != nil {
-		fmt.Println(err.Error())
-	}
+	fmt.Println(string(st))
+	err = sch.Validate(r)
+
 	return in, err
 }
 

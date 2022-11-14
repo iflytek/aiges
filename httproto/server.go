@@ -1,6 +1,7 @@
 package httproto
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -77,6 +78,7 @@ func (s *Server) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
 }
 
 func (s *Server) serveHTTP(writer http.ResponseWriter, request *http.Request) (ret int, sid string, err error) {
+	ctx := context.Background()
 	sid = generateSID()
 	j := json.NewDecoder(request.Body)
 	req := new(Request)
@@ -84,7 +86,7 @@ func (s *Server) serveHTTP(writer http.ResponseWriter, request *http.Request) (r
 	if err != nil {
 		return 10000, sid, err
 	}
-	in, err := req.ConvertToPb(s.serviceName, protocol.LoaderInput_ONCE)
+	in, err := req.ConvertToPb(s.serviceName, protocol.LoaderInput_ONCE, &ctx)
 	if err != nil {
 		return 10001, sid, err
 	}
