@@ -2,15 +2,23 @@ package httproto
 
 import (
 	"context"
+	"embed"
+	_ "embed"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"github.com/golang/protobuf/proto"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	"github.com/xfyun/aiges/docs"
+	"github.com/xfyun/aiges/httproto/internal"
 	"github.com/xfyun/aiges/protocol"
 	"github.com/xfyun/uuid"
 	xsf "github.com/xfyun/xsf/server"
 	"github.com/xfyun/xsf/utils"
-	"net"
+	"golang.org/x/net/webdav"
+	"io/fs"
+	"log"
 	"net/http"
 )
 
@@ -44,15 +52,61 @@ func (s *Server) Init(box *xsf.ToolBox) error {
 	return s.si.Init(box)
 }
 
-func (s *Server) listen() error {
-	ls, err := net.Listen("tcp", s.listenAddr)
-	if err != nil {
-		return err
+var (
+	// Handler is used to server files through an http.Handler
+	Handler *webdav.Handler
+
+	//go:embed swaggerui
+	dist embed.FS
+
+	static fs.FS
+
+	//go:embed test.json
+	sampl []byte
+)
+
+func init() {
+	// Static will store the embedded swagger-UI files for use by the Handler.
+	static, _ = fs.Sub(dist, "swaggerui")
+
+	Handler = &webdav.Handler{
+		FileSystem: internal.NewWebDAVFileSystemFromFS(static),
+		LockSystem: webdav.NewMemLS(),
 	}
-	fmt.Println("[http listen at]: ", ls.Addr())
-	return http.Serve(ls, s)
+}
+func (s *Server) listen() error {
+	// will remove in release
+	docs.SwaggerInfo.Title = "Swagger Example API"
+	router := gin.Default()
+	router.Any("/v1/"+s.serviceName, s.ginHandler())
+	router.GET("/test.json", getDemo)
+	url := ginSwagger.URL("http://localhost:1888/test.json")
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(Handler, url))
+
+	http.ListenAndServe(s.listenAddr, router)
+	fmt.Println("[http listen at]: ", s.listenAddr)
+	log.Fatal(http.ListenAndServe(s.listenAddr, router))
+	//http.Serve(ls, s)
+	return nil
 }
 
+func getDemo(c *gin.Context) {
+	var ret map[string]interface{}
+	json.Unmarshal(sampl, &ret)
+	c.Header("Access-Control-Allow-Origin", "*") // 可将将 * 替换为指定的域名
+	c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, UPDATE")
+	c.Header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
+	c.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Cache-Control, Content-Language, Content-Type")
+	c.Header("Access-Control-Allow-Credentials", "true")
+	c.IndentedJSON(http.StatusOK, ret)
+
+}
+
+func (s *Server) ginHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		s.ServeHTTP(c.Writer, c.Request)
+	}
+}
 func (s *Server) Finit() error {
 	return s.si.Finit()
 }

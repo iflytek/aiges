@@ -1,0 +1,93 @@
+{
+  "properties": {
+    "header": {
+      "properties": {
+        "app.ver": {
+          "maxLength": 50,
+          "type": "string"
+        },
+        "appid": {
+          "maxLength": 50,
+          "type": "string"
+        },
+        "device.imei": {
+          "maxLength": 50,
+          "type": "string"
+        },
+        "device.imsi": {
+          "maxLength": 50,
+          "type": "string"
+        },
+        "device.mac": {
+          "maxLength": 50,
+          "type": "string"
+        },
+        "device.other": {
+          "maxLength": 50,
+          "type": "string"
+        },
+        "device_id": {
+          "maxLength": 50,
+          "type": "string"
+        },
+        "net.isp": {
+          "maxLength": 50,
+          "type": "string"
+        },
+        "net.type": {
+          "maxLength": 50,
+          "type": "string"
+        },
+        "uid": {
+          "maxLength": 50,
+          "type": "string"
+        }
+      },
+      "required": [
+        "appid"
+      ],
+      "type": "object"
+    },
+    "parameter": {
+      "properties": {
+        "mnist": {
+          "properties": {},
+          "required": [],
+          "type": "object"
+        }
+      },
+      "type": "object"
+    },
+    "payload": {
+      "properties": {
+        "img": {
+          "properties": {
+            "encoding": {
+              "enum": [
+                "jpg",
+                "png",
+                "bmp",
+                "jpeg"
+              ],
+              "type": "string"
+            },
+            "image": {
+              "maxLength": 10485760,
+              "minLength": 1,
+              "type": "string"
+            },
+            "status": {
+              "enum": [
+                3
+              ],
+              "type": "integer"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "type": "object"
+}

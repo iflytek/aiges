@@ -59,7 +59,7 @@ func (r *Request) ConvertToPb(serviceName string, stat protocol.LoaderInput_Sess
 	st, _ := sch.InputSchema.MarshalJSON()
 
 	fmt.Println(string(st))
-	err = sch.Validate(r)
+	//err = sch.Validate(r)
 
 	return in, err
 }
