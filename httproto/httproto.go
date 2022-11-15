@@ -8,33 +8,9 @@ import (
 	"fmt"
 	"github.com/xfyun/aiges/httproto/schemas"
 	"github.com/xfyun/aiges/protocol"
-	"log"
 	"reflect"
 	"strconv"
-	"sync"
 )
-
-type SvcSchema struct {
-	Content string
-}
-
-var once sync.Once
-var instance schemas.AISchema
-
-func SetSchema(s string) *schemas.AISchema {
-	once.Do(func() {
-
-		err := json.Unmarshal([]byte(s), &instance)
-		if err != nil {
-			log.Fatal("wrong schema format... ...check...")
-		}
-	})
-	return &instance
-}
-
-func GetSchema() *schemas.AISchema {
-	return &instance
-}
 
 type Request struct {
 	Header    map[string]interface{}            `json:"header"`
@@ -43,7 +19,7 @@ type Request struct {
 }
 
 func (r *Request) ConvertToPb(serviceName string, stat protocol.LoaderInput_SessState, ctx *context.Context) (*protocol.LoaderInput, error) {
-	sch := GetSchema()
+	sch := schemas.GetSvcSchema()
 	in := &protocol.LoaderInput{
 		ServiceId:   serviceName,
 		ServiceName: serviceName,

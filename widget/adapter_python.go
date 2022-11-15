@@ -6,7 +6,7 @@ import (
 	"github.com/xfyun/aiges/conf"
 	"github.com/xfyun/aiges/grpc/proto"
 	"github.com/xfyun/aiges/grpc/shared"
-	"github.com/xfyun/aiges/httproto"
+	"github.com/xfyun/aiges/httproto/schemas"
 	"github.com/xfyun/aiges/instance"
 	"io"
 	"log"
@@ -101,7 +101,7 @@ func (ep *enginePython) enginePythonInit(cfg map[string]string) (errNum int, err
 	}
 
 	// 设置schema
-	httproto.SetSchema(schema.GetData())
+	schemas.SetSchema(schema.GetData())
 
 	ep.Schema = schema.GetData()
 

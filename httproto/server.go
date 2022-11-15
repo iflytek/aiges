@@ -11,6 +11,7 @@ import (
 	"github.com/golang/protobuf/proto"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/xfyun/aiges/docs"
+	"github.com/xfyun/aiges/httproto/controller"
 	"github.com/xfyun/aiges/httproto/internal"
 	"github.com/xfyun/aiges/protocol"
 	"github.com/xfyun/uuid"
@@ -18,7 +19,6 @@ import (
 	"github.com/xfyun/xsf/utils"
 	"golang.org/x/net/webdav"
 	"io/fs"
-	"log"
 	"net/http"
 )
 
@@ -44,9 +44,9 @@ func (s *Server) Init(box *xsf.ToolBox) error {
 	}
 	s.listenAddr = addr
 	go func() {
-		err := s.listen()
+		err := s.startHttpServer()
 		if err != nil {
-			panic("listen http error:" + err.Error())
+			panic("start gint http error:" + err.Error())
 		}
 	}()
 	return s.si.Init(box)
@@ -74,32 +74,17 @@ func init() {
 		LockSystem: webdav.NewMemLS(),
 	}
 }
-func (s *Server) listen() error {
+func (s *Server) startHttpServer() error {
 	// will remove in release
 	docs.SwaggerInfo.Title = "Swagger Example API"
 	router := gin.Default()
-	router.Any("/v1/"+s.serviceName, s.ginHandler())
-	router.GET("/test.json", getDemo)
-	url := ginSwagger.URL("http://localhost:1888/test.json")
+	router.Any("/v1/private/"+s.serviceName, s.ginHandler())
+	router.GET("/openapi.json", controller.GetOpenAPIJSON)
+	url := ginSwagger.URL("/openapi.json")
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(Handler, url))
-
-	http.ListenAndServe(s.listenAddr, router)
 	fmt.Println("[http listen at]: ", s.listenAddr)
-	log.Fatal(http.ListenAndServe(s.listenAddr, router))
-	//http.Serve(ls, s)
+	http.ListenAndServe(s.listenAddr, router)
 	return nil
-}
-
-func getDemo(c *gin.Context) {
-	var ret map[string]interface{}
-	json.Unmarshal(sampl, &ret)
-	c.Header("Access-Control-Allow-Origin", "*") // 可将将 * 替换为指定的域名
-	c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, UPDATE")
-	c.Header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
-	c.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Cache-Control, Content-Language, Content-Type")
-	c.Header("Access-Control-Allow-Credentials", "true")
-	c.IndentedJSON(http.StatusOK, ret)
-
 }
 
 func (s *Server) ginHandler() gin.HandlerFunc {
@@ -195,6 +180,12 @@ type CommonResponse struct {
 
 func writeResp(w http.ResponseWriter, resp *CommonResponse) {
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*") // 可将将 * 替换为指定的域名
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, UPDATE")
+	w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
+	w.Header().Set("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Cache-Control, Content-Language, Content-Type")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+
 	j := json.NewEncoder(w)
 	j.SetEscapeHTML(false)
 	j.Encode(resp)
