@@ -3,6 +3,8 @@
 
 package widget
 
+import "github.com/xfyun/aiges/utils"
+
 func NewWidget(plugin string, ch *utils.Coordinator) WidgetInner {
 	switch plugin {
 	case "c":
