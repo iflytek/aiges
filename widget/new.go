@@ -3,10 +3,14 @@
 
 package widget
 
-func NewWidget(plugin string) WidgetInner {
+import "github.com/xfyun/aiges/utils"
+
+func NewWidget(plugin string, ch *utils.Coordinator) WidgetInner {
 	switch plugin {
 	case "python":
-		return &WidgetPython{}
+		return &WidgetPython{
+			ch: ch,
+		}
 	default:
 		warn()
 		usage()

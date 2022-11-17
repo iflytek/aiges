@@ -11,11 +11,13 @@ package widget
 
 import (
 	"github.com/xfyun/aiges/service"
+	"github.com/xfyun/aiges/utils"
 	"log"
 )
 
 type WidgetPython struct {
 	eng enginePython
+	ch  *utils.Coordinator
 }
 
 /*
@@ -24,7 +26,8 @@ type WidgetPython struct {
 */
 func (inst *WidgetPython) Open() (errInfo error) {
 	log.Println("Starting Using Python : ")
-	return inst.eng.open()
+	go inst.eng.open(inst.ch)
+	return
 }
 
 func (inst *WidgetPython) Close() {

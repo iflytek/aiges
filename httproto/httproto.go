@@ -19,7 +19,7 @@ type Request struct {
 }
 
 func (r *Request) ConvertToPb(serviceName string, stat protocol.LoaderInput_SessState, ctx *context.Context) (*protocol.LoaderInput, error) {
-	sch := schemas.GetSvcSchema()
+	sch := schemas.GetSvcSchemaFromPython()
 	in := &protocol.LoaderInput{
 		ServiceId:   serviceName,
 		ServiceName: serviceName,

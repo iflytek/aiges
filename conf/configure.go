@@ -63,7 +63,7 @@ var (
 	UsrCfg     string            // 用户配置文件名
 	UsrCfgData map[string]string // map<usrCfgKey, usrCfgVal>
 	// GRPC Python解释器
-	PythonCmd string = "cc"
+	PythonCmd string = ""
 )
 
 func Construct(cfg *utils.Configure) (err error) {

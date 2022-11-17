@@ -13,7 +13,7 @@ type SvcSchema struct {
 var once sync.Once
 var instance AISchema
 
-func SetSchema(s string) *AISchema {
+func SetSchemaFromPython(s string) *AISchema {
 	once.Do(func() {
 
 		err := json.Unmarshal([]byte(s), &instance)
@@ -24,6 +24,6 @@ func SetSchema(s string) *AISchema {
 	return &instance
 }
 
-func GetSvcSchema() *AISchema {
+func GetSvcSchemaFromPython() *AISchema {
 	return &instance
 }

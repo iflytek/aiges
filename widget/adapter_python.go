@@ -8,6 +8,7 @@ import (
 	"github.com/xfyun/aiges/grpc/shared"
 	"github.com/xfyun/aiges/httproto/schemas"
 	"github.com/xfyun/aiges/instance"
+	"github.com/xfyun/aiges/utils"
 	"io"
 	"log"
 	"os"
@@ -23,19 +24,15 @@ type enginePython struct {
 	Schema    string
 }
 
-func (ep *enginePython) open() (errInfo error) {
+func (ep *enginePython) open(ch *utils.Coordinator) (errInfo error) {
 	// open 似乎没必要
-	return
-}
+	<-ch.ConfChan
+	//logLevelStr, _ := cfg["log.level"]
 
-func (ep *enginePython) close() {
-	ep.client.Kill()
-	return
-}
-
-func (ep *enginePython) enginePythonInit(cfg map[string]string) (errNum int, errInfo error) {
-	logLevelStr, _ := cfg["log.level"]
-
+	logLevelStr, ok := conf.UsrCfgData["log.level"]
+	if !ok {
+		logLevelStr = "info"
+	}
 	// Create an hclog.Logger
 	logger := hclog.New(&hclog.LoggerOptions{
 		Name:   "python-plugin",
@@ -57,19 +54,19 @@ func (ep *enginePython) enginePythonInit(cfg map[string]string) (errNum int, err
 	ep.rpcClient, err = ep.client.Client()
 	if err != nil {
 		log.Fatalln("Error:", err.Error())
-		return -1, err
+		return err
 	}
 	wrapper, err := ep.rpcClient.Dispense("wrapper_grpc")
 	if err != nil {
 		log.Fatalln("Error:", err.Error())
-		return -1, err
+		return err
 
 	}
 	ep.wrapper = wrapper.(shared.PyWrapper)
 	ep.stream, err = ep.wrapper.Communicate()
 	if err != nil {
 		log.Fatalln("Error:", err.Error())
-		return -1, err
+		return err
 	}
 	waitc := make(chan struct{})
 	go func() {
@@ -89,11 +86,21 @@ func (ep *enginePython) enginePythonInit(cfg map[string]string) (errNum int, err
 			}
 		}
 	}()
+	ch.Ch2 <- 1
+	return
+}
+
+func (ep *enginePython) close() {
+	ep.client.Kill()
+	return
+}
+
+func (ep *enginePython) enginePythonInit(cfg map[string]string) (errNum int, errInfo error) {
 
 	// Init the plugin
 	ep.wrapper.WrapperInit(cfg)
 
-	// Get schema
+	// Get schema 这里传入的参数目前无用，，实际python测那边没有用到
 	schema, err := ep.wrapper.WrapperSchema("svcName")
 	if err != nil {
 		log.Fatalln("Error:", err.Error())
@@ -101,7 +108,7 @@ func (ep *enginePython) enginePythonInit(cfg map[string]string) (errNum int, err
 	}
 
 	// 设置schema
-	schemas.SetSchema(schema.GetData())
+	schemas.SetSchemaFromPython(schema.GetData())
 
 	ep.Schema = schema.GetData()
 

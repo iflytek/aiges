@@ -28,6 +28,8 @@ type aiService struct {
 	callbackInit actionInit
 	callbackFini actionFini
 	callbackUser map[usrEvent]actionUser
+
+	Coordinator *aigesUtils.Coordinator
 }
 
 func (srv *aiService) Init(box *xsf.ToolBox) (err error) {
@@ -63,6 +65,9 @@ func (srv *aiService) Init(box *xsf.ToolBox) (err error) {
 		srv.tool.Log.Errorf(err.Error())
 		return
 	}
+	srv.Coordinator.ConfChan <- box.Cfg
+	<-srv.Coordinator.Ch2
+
 	// wrapper引擎初始化;
 	if srv.callbackInit != nil {
 		code, err := srv.callbackInit(conf.UsrCfgData)
@@ -81,6 +86,7 @@ func (srv *aiService) Init(box *xsf.ToolBox) (err error) {
 }
 
 // 无缝退出下线/;
+
 func (srv *aiService) Finit() error {
 	fmt.Println("aiService.Finit: fini begin!")
 	// 框架逆初始化操作

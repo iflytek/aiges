@@ -8,6 +8,7 @@ import (
 	"github.com/xfyun/aiges/service"
 	"github.com/xfyun/aiges/utils"
 	"github.com/xfyun/aiges/widget"
+	xsfUtil "github.com/xfyun/xsf/utils"
 	"os"
 )
 
@@ -37,8 +38,14 @@ func main() {
 		}
 	}
 
+	//
+	var ch = &utils.Coordinator{
+		ConfChan: make(chan *xsfUtil.Configure),
+		Ch2:      make(chan int),
+	}
+
 	var aisrv service.EngService
-	widgetInst := widget.NewWidget(env.AIGES_PLUGIN_MODE)
+	widgetInst := widget.NewWidget(env.AIGES_PLUGIN_MODE, ch)
 	// 控件初始化&逆初始化
 	if err = widgetInst.Open(); err != nil {
 		fmt.Println(err.Error())
@@ -60,7 +67,7 @@ func main() {
 	}
 
 	// 框架运行
-	if err = aisrv.Run(); err != nil {
+	if err = aisrv.Run(ch); err != nil {
 		fmt.Println(err.Error())
 		return
 	}

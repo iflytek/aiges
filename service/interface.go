@@ -6,6 +6,7 @@ import (
 	"github.com/xfyun/aiges/conf"
 	"github.com/xfyun/aiges/httproto"
 	"github.com/xfyun/aiges/instance"
+	ut "github.com/xfyun/aiges/utils"
 	"github.com/xfyun/xsf/server"
 	"github.com/xfyun/xsf/utils"
 	"sync"
@@ -76,7 +77,7 @@ func (srv *EngService) Register(event usrEvent, action interface{}) (errInfo err
 该接口为框架服务运行接口,调用之后框架实际运行进行各类模块初始化/服务初始化/并监听端口接收请求;
 @note	该接口与RunWithWidget()区别,需要自行服务框架register注册操作;
 */
-func (srv *EngService) Run() (errInfo error) {
+func (srv *EngService) Run(ch *ut.Coordinator) (errInfo error) {
 	srv.wg.Add(1)
 	go func() {
 		defer func() {
@@ -85,6 +86,10 @@ func (srv *EngService) Run() (errInfo error) {
 		}()
 		srv.aiInst = aiService{callbackInit: srv.initAction, callbackFini: srv.finiAction, callbackUser: srv.usrActions}
 		//		xsf.AddKillerCheck(SERVICE, &sigClose{srv})
+
+		// 用于控制前面python widget 初始化部分操作，那边需要拿到一些配置后才能初始化
+		srv.aiInst.Coordinator = ch
+
 		if errInfo = srv.xsfInst.Run(xsf.BootConfig{CfgMode: utils.CfgMode(-1),
 			CfgData: xsf.CfgMeta{CfgName: "", Project: "", Group: "", Service: "",
 				Version: srv.usrVersion, CompanionUrl: "", CallBack: conf.Update}}, httproto.NewServer(&srv.aiInst)); errInfo != nil {

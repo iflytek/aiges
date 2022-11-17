@@ -13,6 +13,7 @@ import (
 	"github.com/xfyun/aiges/docs"
 	"github.com/xfyun/aiges/httproto/controller"
 	"github.com/xfyun/aiges/httproto/internal"
+	"github.com/xfyun/aiges/httproto/schemas"
 	"github.com/xfyun/aiges/protocol"
 	"github.com/xfyun/uuid"
 	xsf "github.com/xfyun/xsf/server"
@@ -37,6 +38,7 @@ func NewServer(rpc xsf.UserInterface) xsf.UserInterface {
 
 func (s *Server) Init(box *xsf.ToolBox) error {
 	s.serviceName = box.Bc.CfgData.Service
+	s.si.Init(box)
 
 	addr, err := box.Cfg.GetString(s.serviceName, "http_listen")
 	if err != nil {
@@ -49,7 +51,7 @@ func (s *Server) Init(box *xsf.ToolBox) error {
 			panic("start gint http error:" + err.Error())
 		}
 	}()
-	return s.si.Init(box)
+	return err
 }
 
 var (
@@ -77,11 +79,17 @@ func init() {
 func (s *Server) startHttpServer() error {
 	// will remove in release
 	docs.SwaggerInfo.Title = "Swagger Example API"
+	aischema := schemas.GetSvcSchemaFromPython()
 	router := gin.Default()
-	router.Any("/v1/private/"+s.serviceName, s.ginHandler())
+	for _, route := range aischema.Meta.GetRoute() {
+		router.POST(route, s.ginHandler())
+	}
 	router.GET("/openapi.json", controller.GetOpenAPIJSON)
 	url := ginSwagger.URL("/openapi.json")
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(Handler, url))
+	router.Any("/", func(c *gin.Context) {
+		c.Redirect(http.StatusFound, "/swagger/index.html")
+	})
 	fmt.Println("[http listen at]: ", s.listenAddr)
 	http.ListenAndServe(s.listenAddr, router)
 	return nil

@@ -13,7 +13,7 @@ import (
 )
 
 func GetOpenAPIJSON(c *gin.Context) {
-	svc := schemas.GetSvcSchema()
+	svc := schemas.GetSvcSchemaFromPython()
 	inputSchemaJson, err := svc.InputSchema.MarshalJSON()
 	if err != nil {
 		log.Println(err.Error())
