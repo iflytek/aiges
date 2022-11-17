@@ -26,7 +26,7 @@ type enginePython struct {
 
 func (ep *enginePython) open(ch *utils.Coordinator) (errInfo error) {
 	// open 似乎没必要
-	<-ch.ConfChan
+	var a = <-ch.ConfChan
 	//logLevelStr, _ := cfg["log.level"]
 
 	logLevelStr, ok := conf.UsrCfgData["log.level"]
@@ -86,7 +86,7 @@ func (ep *enginePython) open(ch *utils.Coordinator) (errInfo error) {
 			}
 		}
 	}()
-	ch.Ch2 <- 1
+	ch.ConfChan <- a
 	return
 }
 

@@ -70,7 +70,7 @@ func (srv *aiService) Init(box *xsf.ToolBox) (err error) {
 	// 如果是python grpc模式需要阻塞下
 	if env.AIGES_PLUGIN_MODE == "python" {
 		srv.Coordinator.ConfChan <- box.Cfg
-		<-srv.Coordinator.Ch2
+		<-srv.Coordinator.ConfChan
 	}
 
 	// wrapper引擎初始化;

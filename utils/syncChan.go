@@ -8,5 +8,4 @@ import (
 
 type Coordinator struct {
 	ConfChan chan *utils.Configure
-	Ch2      chan int
 }
