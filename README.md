@@ -108,7 +108,8 @@ mnist/
     └── wrapper.py
 ```
 
-### 3. 解压加载器
+### 3. 解压加载器 [docker提供的镜像默认有AIservice，您可以用下述命令更新最新的AIservice binary]
+
 ```tar zxvf aiges_3.0-alpha11_linux_amd64.tar.gz -C mnist ```
 
 首次执行:
@@ -116,6 +117,7 @@ mnist/
 ```bash
 root@505a3a0e670c:/home/aiges# ./AIservice
 加载器运行方法:
+
 - 本地模式运行
 1: ./AIservice -init  , 初始化配置文件 aiges.toml (若存在，则不会替换)
 2: ./AIservice -m=0 , 仅用于本地模式运行
@@ -195,6 +197,7 @@ header pass list: []
 #### 5. 编写推理逻辑wrapper，以mnist项目为例
 
 下载 mnist demo:
+
 * ``` ./AIservice -mnist```
 
 默认会下载 ` https://github.com/iflytek/aiges_demo.git` 项目,并解压到当前目录 `aiges_demo`
@@ -210,7 +213,7 @@ unzip 解压到当 aiges_demo目录中即可【注意手动解压可能嵌套了
 * ``` cp -ra aiges_demo/mnist/wrapper/  ./ ```
 * ``` cp -ra aiges_demo/mnist/requirements.txt mnist/```
 * ``` pip install -r requirements.txt```
-* ``` export AIGES_PLUGIN_MODE=python``
+* ``` export AIGES_PLUGIN_MODE=python```
 * ``` export PYTHONPATH=/home/aiges/mnist/wrapper```
 * ``` 再次运行引擎  ./AIservice -m 0 -c aiges.toml  -s svcName```
 
@@ -290,7 +293,7 @@ aiService.Init: init success!
 
 ### 5. Postman调试
 
-* api地址: http://youIP:1888/v1/svcName
+* api地址: http://youIP:1888/v1/svcName [具体地址可以访问 http://youIP:1888 swagger进行查看]
 
 * post方式请求: body 部分
 
