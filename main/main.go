@@ -14,9 +14,9 @@ import (
 
 func main() {
 	flg := utils.NewFlag()
+	env.Parse()
 	flg.Parse()
 
-	env.Parse()
 	//profiler.Start(profiler.Config{
 	//	ApplicationName: "AISERVICE",
 	//	ServerAddress:   "http://172.31.98.182:44040",
@@ -80,6 +80,7 @@ func usage() {
 		"- 本地模式运行\n" +
 		"1: ./AIservice -init  , 初始化配置文件 aiges.toml (若存在，则不会替换)\n" +
 		"2: ./AIservice -m=0 , 仅用于本地模式运行\n" +
+		"3: ./AIservice -mnist , 下载mnistdemo\n" +
 		"- 配置中心模式 (开源计划删除)\n" +
 		"- 更多参数选项: 请执行 ./AIservice -h \n") // TODO usage() 完善
 	os.Exit(0)

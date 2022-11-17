@@ -5,6 +5,7 @@ import (
 	_ "embed"
 	"flag"
 	"fmt"
+	"github.com/xfyun/aiges/utils/mnist"
 	xsf "github.com/xfyun/xsf/server"
 	"os"
 )
@@ -26,11 +27,13 @@ type Flag struct {
 
 	*/
 	InitNativeCfg *bool
+	InitMnist     *bool
 }
 
 func NewFlag() Flag {
 	return Flag{
 		InitNativeCfg: flag.Bool("init", false, "init default config"),
+		InitMnist:     flag.Bool("mnist", false, "init mnist wrapper"),
 	}
 }
 
@@ -59,7 +62,16 @@ func (f *Flag) Parse() {
 		// 默认生成一个aiges.toml文件
 		fmt.Println("Generating default cfg...")
 		InitDefaultCfg()
+		os.Exit(0)
 	}
+
+	if *f.InitMnist {
+		// 默认生成一个aiges.toml文件
+		fmt.Println("Generating Mnist Demo Project...")
+		mnist.InitMnistPythonWrapper()
+		os.Exit(0)
+	}
+
 	if *xsf.Mode == 0 {
 		if err := InitDefaultCfg(); err == nil {
 			if *xsf.Cfg == "" {
