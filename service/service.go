@@ -3,6 +3,7 @@ package service
 import (
 	"fmt"
 	"github.com/xfyun/aiges/conf"
+	"github.com/xfyun/aiges/env"
 	"github.com/xfyun/aiges/frame"
 	"github.com/xfyun/aiges/instance"
 	"github.com/xfyun/aiges/protocol"
@@ -65,8 +66,12 @@ func (srv *aiService) Init(box *xsf.ToolBox) (err error) {
 		srv.tool.Log.Errorf(err.Error())
 		return
 	}
-	srv.Coordinator.ConfChan <- box.Cfg
-	<-srv.Coordinator.Ch2
+
+	// 如果是python grpc模式需要阻塞下
+	if env.AIGES_PLUGIN_MODE == "python" {
+		srv.Coordinator.ConfChan <- box.Cfg
+		<-srv.Coordinator.Ch2
+	}
 
 	// wrapper引擎初始化;
 	if srv.callbackInit != nil {

@@ -3,12 +3,14 @@
 
 package widget
 
-func NewWidget(plugin string) WidgetInner {
+func NewWidget(plugin string, ch *utils.Coordinator) WidgetInner {
 	switch plugin {
 	case "c":
 		return &WidgetC{}
 	case "python":
-		return &WidgetPython{}
+		return &WidgetPython{
+			ch: ch,
+		}
 	default:
 		usage()
 	}
