@@ -62,203 +62,325 @@
 
 参见: [👉👉👉ase-proto](https://github.com/xfyun/ase_protocol)
 
-### 开源版docker镜像
 
-#### 基础镜像
+## 准备环境
 
-**基础镜像中提供**
+python 版本请选用 3.9+ [也可以下载我们的docker镜像](https://github.com/iflytek/aiges/releases/tag/v3.0-alpha11)
 
-- 基础的编译好的 Python加载器AIService(包含支持python的libwrapper.so)， 目录结构如下
-
-  AIGES的二进制文件未AIservice， 默认放置于 容器`/home/aiges`目录
-    ```bash
-    root@e38a9aacc355:/home/aiges# pwd
-    /home/aiges
-    root@e38a9aacc355:/home/aiges# ls -l /home/aiges/
-    total 18760
-    -rwxr-xr-x 1 root root 19181688 Jun 10 15:30 AIservice
-    -rw-r--r-- 1 root root     2004 Jun 10 18:15 aiges.toml
-    drwxr-xr-x 3 root root     4096 Jun 10 15:30 include
-    drwxrwxrwx 1 root root     4096 Jun 10 15:31 library
-    drwxr--r-- 2 root root     4096 Jun 10 18:16 log
-    -rw-r--r-- 1 root root       96 Jun 10 18:15 start_test.sh
-    drwxr-xr-x 2 root root     4096 Jun 10 18:16 xsf_status
-    drwxr-xr-x 2 root root     17711057 Jun 10 18:16 xtest
-    -rw-r--r-- 1 root root     4232 Jun 10 17:54 xtest.toml
-    ```
-  其中`aiges.toml`用于本地启动测试使用
-
-- Python环境: 不推荐用户后续镜像构建修改Python版本
-
-#### 业务镜像
-
-**业务镜像一般需要用户自己编写Dockerfile构建，业务镜像中用户可以根据场景需要定制安装**
-
-- 推理运行时，如`onnxruntime`、`torchvision`等
-
-- gpu驱动，`cuda`，`cudnn`等驱动
-
-示例Dockerfile地址为
-
-* [YOLOV5](/demo/yolov5/Dockerfile)
-
-* [调用三方API](/demo/music_api/Dockerfile_v1)
-
-#### 基础镜像构建(GPU)
-
-***基础镜像仅在特殊需求时(如对cuda，python版本有要求时才需要重新构建，一般用户仅需关注构建业务镜像)***
-
-1. cuda-go-python基础镜像，用于编译aiges项目的基础镜像，参见[官方仓库](https://github.com/iflytek/aiges/releases)
-   ，本仓库引用了部分版本，存放于 [docker/gpu/cuda](docker/gpu/cuda)中
-   基础镜像当前基于 nvidia/cuda 官方的基础镜像作为base镜像 如 [cuda-10.1](docker/gpu/base/cuda-10.1)中所示: aiges基础镜像基于 ***形如 nvidia/cuda:
-   10.1-devel-ubuntu18.04*** 构建
-
-2. 基于 [cuda-10.1](docker/gpu/base/cuda-10.1) 已构建出**public.ecr.aws/iflytek-open/aiges-gpu:
-   10.1-1.17-3.9.13-ubuntu1804-v2.0.0-rc6**
-
-3. aiges: 基于 [aiges-dockerifle](docker/gpu/aiges/ubuntu1804)目录中不同CUDA版本的Dockerfile构建`aiges`基础镜像
-
-构建命令:
+如下流程可在容器环境中进行 (无需gpu):
 
 ```bash
-docker buildx build -f docker/gpu/base/cuda-10.2/Dockerfile -t artifacts.iflytek.com/docker-private/atp/cuda-go-python-base:10.2-1.17-3.9.13-ubuntu1804  . --push
+docker run -itd --name mnist2 -p 1889:1888 public.ecr.aws/iflytek-open/aiges-gpu:10.1-1.17-3.9.13-ubuntu1804-v3.0-alpha11 bash
 ```
 
-**当前支持的[cuda-go-python基础镜像列表(包含cuda-go-python编译环境)](https://github.com/iflytek/aiges/releases)**
+您也可以自己准备环境， 直接下载二进制在您自己的任何环境上运行aiges.
 
-***当前支持的[aiges基础镜像列表](https://github.com/iflytek/aiges/releases)***
 
-***构建命令***:
+### 0. 装sdk
+``` pip3 install aiges==0.5.0  -i https://pypi.python.org/simple```
 
-1. 使用buildx:
-   ```bash
-   docker buildx build  -f docker/gpu/aiges/ubuntu1804/Dockerfile . -t artifacts.iflytek.com/docker-private/atp/aiges-gpu:10.1-3.9.13-ubuntu1804
-   ```
 
-2. 使用docker build
-   ```bash
-   docker buildx build  -f docker/gpu/aiges/ubuntu1804/Dockerfile . -t artifacts.iflytek.com/docker-private/atp/aiges-gpu:10.1-3.9.13-ubuntu1804
-   ```
+### 1. 下载加载器
 
-3. 使用buildah
-   ```bash
-   buildah build  -f docker/gpu/aiges/ubuntu1804/Dockerfile . -t artifacts.iflytek.com/docker-private/atp/aiges-gpu:10.1-3.9.13-ubuntu1804
-   ```
 
-#### 业务镜像构建方法
+1. ```wget https://github.com/iflytek/aiges/releases/download/v3.0-alpha11/aiges_3.0-alpha11_linux_amd64.tar.gz```
 
-业务镜像需要基于 aiges基础镜像进行构建，用户可在此过程定制 python的依赖项目以及用户自研项目
 
-参考示例:
+## 初始化 python wrapper 项目
 
-* [YOLOV5](demo/yolo5/Dockerfile)
+通过aiges创建一个名为mnist的项目
 
-* [handpose3in1](https://github.com/berlinsaint/handpose3in1)
+```bash
+python3 -m aiges create -n mnist
+```
 
-#### 快速创建Python推理项目
+### 2. 初始项目结构
 
-* 示例已经提供gpu runtime安装方法
-* **Python加载器插件V2**
-    - 本地安装或者更新`aiges`
-       ```shell
-       # 安装aiges
-       pip install aiges -i https://pypi.python.org/simple
-       # 更新aiges
-       pip install --upgrade aiges -i https://pypi.python.org/simple
-       ```
-    - 快速开始一个Python加载器插件项目
-       ```python
-       python -m aiges create -n  "project" 
-        ```
-      该指令生成一个 "project" 文件夹，并包含`wrapper.py`的半成品
-    - 添加项目内依赖，完善`wrapper.py`的编写，完成本地调试
-        * 实现`Wrapper`类时，必须**继承**`WrapperBase`类
-        * 运行中用到的参数，将变量声明为类变量。为了模拟AIservice传递参数，在`Wrapper`类中声明一个类成员config用于初始化
+```bash
+root# tree mnist/
+mnist/
+├── Dockerfile
+├── README.md
+├── requirements.txt
+└── wrapper
+    ├── test_data
+    │   └── test.png
+    └── wrapper.py
+```
 
-        * `wrapperOnceExec`函数执行返回的类型是`Response`对象，而不是通常表示执行状态错误码的`int`类型，意味着**无论结果正常与否**，均需实例化`Response`对象并返回
-           ```python
-           res = Response()
-           ```
-            1. 未出现异常时，`Response`对象是是由一个或多个`ResponseData`对象构成的列表
-               ```python
-               l = ResponseData()
-               l.key = "output_text"
-               l.status = aiges.dto.Once
-               l.len = len(r.text.encode())
-               l.data = r.text
-               l.type = aiges.dto.TextData
-               res.list = [l]
-               # multi data: res.list = [l1， l2， l3]
-               return res
-               ```
-            2. 出现异常时，直接调用`Response`对象的`response_err`方法返回错误码
-               ```python
-               return res.response_err(ERROR_CODE)
-               ```
-    - 额外声明**用户请求**和**用户响应**两个类
-      **用户请求类**的`StringParamField`、`NumberParamField`、`BooleanParamField`和`IntegerParamField`类型模拟了`wrapperOnceExec`
-      中的`params`参数，通过`key`获取`value`
+### 3. 解压加载器
+```tar zxvf aiges_3.0-alpha11_linux_amd64.tar.gz -C mnist ```
 
-      **用户请求类**的`ImageBodyField`、`StringBodyField`和`AudioBodyField`字段模拟了`wrapperOnceExec`中的`reqdata`
-      参数，通过`reqData.get(key)`方式获取到这个 body 的结构
-         ```python
-         class UserRequest(object):
-            '''
-            定义请求类:
-            params:  params 开头的属性代表最终HTTP协议中的功能参数parameters部分， 对应的是   xtest.toml中的parameter字段
-                     params Field支持 StringParamField，
-                     NumberParamField，BooleanParamField，IntegerParamField，每个字段均支持枚举
-                     params 属性多用于协议中的控制字段，请求body字段不属于params范畴
+首次执行:
 
-            input:    input字段多用与请求数据段，即body部分，当前支持 ImageBodyField、 StringBodyField和AudioBodyField
-            '''
-            params1 = StringParamField(key="mode"， enums=["music"， "humming"]， value='humming')
+```bash
+root@505a3a0e670c:/home/aiges# ./AIservice
+加载器运行方法:
+- 本地模式运行
+1: ./AIservice -init  , 初始化配置文件 aiges.toml (若存在，则不会替换)
+2: ./AIservice -m=0 , 仅用于本地模式运行
+3: ./AIservice -mnist , 下载mnistdemo
+- 配置中心模式 (开源计划删除)
+- 更多参数选项: 请执行 ./AIservice -h
+```
 
-            input1 = AudioBodyField(key="data"， path="/home/wrapper/test.wav")
-            
-         class UserResponse(object):
-            '''
-            定义响应类:
-            accepts:  accepts代表响应中包含哪些字段， 以及数据类型
+此时项目结构如下
 
-            input:    input字段多用与请求数据段，即body部分，当前支持 ImageBodyField， StringBodyField， 和AudioBodyField
-            '''
-            accept1 = StringBodyField(key="ouput_text")
-         ```
-    - 实例化用户请求和用户响应对象
-       ```python
-       class Wrapper(WrapperBase):
-          # 实例化用户请求类和用户响应类
-          requestCls = UserRequest()
-          responseCls = UserResponse()
-          ......
-       ```
+```bash
+➜  mnist git:(master) ✗ tree -L 3 .
+.
+├── AIservice
+├── Dockerfile
+├── include
+│   ├── type.h
+│   └── wrapper.h
+├── library
+│   ├── libahsc.so
+│   ├── libIce.so.34
+│   └── libIceUtil.so.34
+├── README.md
+├── requirements.txt
+└── wrapper
+    ├── test_data
+    │   └── test.png
+    └── wrapper.py
 
-    - 声明`main`函数，实例化`Wrapper`对象，运行程序
-       ```python
-       if __name__ == '__main__':
-          m = Wrapper()
-          m.schema()
-          m.run()
-       ```
+4 directories, 11 files
+```
 
-    - 理论上用户除了上传 wrapper.py 以及相关依赖之外，还需要提供一些模型文件，这些文件比较大，一般不在Dockerfile中构建入镜像，会导致git代码库十分庞大，当前示例的的yolov5和 mmocr均在 wrapper
-      init的时候下载模型
+### 4. 配置PythonGrpc模式 初始化aiges 配置
 
-#### 服务部署
+顺序执行如下:
 
-[👉👉👉点击进入](https://iflytek.github.io/athena_website/docs/%E5%8A%A0%E8%BD%BD%E5%99%A8/%E5%88%9B%E5%BB%BAwrapper/%E6%9C%8D%E5%8A%A1%E9%83%A8%E7%BD%B2)
+*  ``` export AIGES_PLUGIN_MODE=python```
+*  ```./AIservice -init```  【会在当前目录下生成一个 aiges.toml】
 
-#### 服务化调用示例
+* ```./AIservice -m 0 -c aiges.toml  -s svcName ```
 
-* Once推理示例:
+启动引擎，此时结果如下:【注意svcName必须和aiges 的section对应,当前默认就是 svcName】
 
-![img.png](doc/once_img.png)
-***调用代码，近期开放，敬请期待***
+```bash
+root@012d31456c50:/home/aiges/mnist# ./AIservice -m 0 -c aiges.toml  -s svcName
+2022/11/15 18:22:01 widgetpy.go:26: Starting Using Python :
+config.toml version:
+2022/11/15 18:22:01 utils.NewLocalLog success. -> LOGLEVEL:debug, FILENAME:./log/aiges.log, MAXSIZE:3, MAXBACKUPS:3, MAXAGE:3
+2022/11/15 18:22:01 host2ip->ip:0.0.0.0,port:5090
+2022/11/15 18:22:01 finderSwitch:0,finderSwitchErr:<nil>
+2022/11/15 18:22:01 about to deal with hermes.
+2022/11/15 18:22:02 NewSessionManager success.
+2022/11/15 18:22:02 NewSidGenerator success.
+2022/11/15 18:22:02 fn:AbleTrace,able:false
+2022/11/15 18:22:02 about to deal finder.
+2022/11/15 18:22:02 about to deal metrics.
+2022/11/15 18:22:02 metrics is disable
+2022/11/15 18:22:02 about to deal rateLimiter.
+2022/11/15 18:22:02 about to deal vCpuManager.
+2022/11/15 18:22:02 about to deal bvtVerifier.
+2022/11/15 18:22:02 namespace not set, use default
+2022/11/15 18:22:02 bvt is disable
+header pass list: []
+2022-11-15T18:22:02.476+0800 [WARN]  python-plugin: plugin configured with a nil SecureConfig
+2022-11-15T18:22:02.477+0800 [DEBUG] python-plugin: starting plugin: path=/bin/sh args=[sh, -c, "/usr/bin/env python -m aiges.serve"]
+2022-11-15T18:22:02.478+0800 [DEBUG] python-plugin: plugin started: path=/bin/sh pid=126
+2022-11-15T18:22:02.478+0800 [DEBUG] python-plugin: waiting for RPC address: path=/bin/sh
+2022-11-15T18:22:02.653+0800 [DEBUG] python-plugin: using plugin: version=1
+2022-11-15T18:22:02.655+0800 [DEBUG] python-plugin.stdio: received EOF, stopping recv loop: err="rpc error: code = Unimplemented desc = Method not found!"
+2022-11-15T18:22:02.656+0800 [DEBUG] python-plugin.sh:  root:wrapperInit:107 - INFO:  Importing module from wrapper.py: wrapper
+2022-11-15T18:22:02.657+0800 [DEBUG] python-plugin.sh:  root:wrapperInit:119 - ERROR:  module 'wrapper' has no attribute 'Wrapper'
+2022/11/15 18:22:02 grpc.go:20: Call WrapperInit Failed...ret: 30001
+```
 
-* 流式推理demo
+这是因为我们的 wrapper还未准备好
 
-![img](https://github.com/berlinsaint/handpose3in1/blob/main/demo.gif?raw=true)
+#### 5. 编写推理逻辑wrapper，以mnist项目为例
+
+下载 mnist demo:
+* ``` ./AIservice -mnist```
+
+默认会下载 ` https://github.com/iflytek/aiges_demo.git` 项目,并解压到当前目录 `aiges_demo`
+
+如果此命令长时间没有反应，可能是因为GFW问题， 可手动下载 ```https://github.com/iflytek/aiges_demo/archive/refs/tags/v1.0.0.zip```
+
+unzip 解压到当 aiges_demo目录中即可【注意手动解压可能嵌套了一层 aiges_demo_1.0.0目录】。
+
+
+删除 当前mnist下默认生成的wrapper目录，替换上述的demo
+
+* ``` rm -r wrapper```
+* ``` cp -ra aiges_demo/mnist/wrapper/  ./ ```
+* ``` cp -ra aiges_demo/mnist/requirements.txt mnist/```
+* ``` pip install -r requirements.txt```
+* ``` export AIGES_PLUGIN_MODE=python``
+* ``` export PYTHONPATH=/home/aiges/mnist/wrapper```
+* ``` 再次运行引擎  ./AIservice -m 0 -c aiges.toml  -s svcName```
+
+标准输出如下:
+
+```bash
+2022/11/15 21:26:29 widgetpy.go:26: Starting Using Python :
+config.toml version:
+2022/11/15 21:26:29 utils.NewLocalLog success. -> LOGLEVEL:debug, FILENAME:./log/aiges.log, MAXSIZE:3, MAXBACKUPS:3, MAXAGE:3
+2022/11/15 21:26:29 host2ip->ip:0.0.0.0,port:5090
+2022/11/15 21:26:29 finderSwitch:0,finderSwitchErr:<nil>
+2022/11/15 21:26:29 about to deal with hermes.
+2022/11/15 21:26:30 NewSessionManager success.
+2022/11/15 21:26:30 NewSidGenerator success.
+2022/11/15 21:26:30 fn:AbleTrace,able:false
+2022/11/15 21:26:30 about to deal finder.
+2022/11/15 21:26:30 about to deal metrics.
+2022/11/15 21:26:30 metrics is disable
+2022/11/15 21:26:30 about to deal rateLimiter.
+2022/11/15 21:26:30 about to deal vCpuManager.
+2022/11/15 21:26:30 about to deal bvtVerifier.
+2022/11/15 21:26:30 namespace not set, use default
+2022/11/15 21:26:30 bvt is disable
+header pass list: []
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] GET    /v1/svcName               --> github.com/xfyun/aiges/httproto.(*Server).ginHandler.func1 (3 handlers)
+[GIN-debug] POST   /v1/svcName               --> github.com/xfyun/aiges/httproto.(*Server).ginHandler.func1 (3 handlers)
+[GIN-debug] PUT    /v1/svcName               --> github.com/xfyun/aiges/httproto.(*Server).ginHandler.func1 (3 handlers)
+[GIN-debug] PATCH  /v1/svcName               --> github.com/xfyun/aiges/httproto.(*Server).ginHandler.func1 (3 handlers)
+[GIN-debug] HEAD   /v1/svcName               --> github.com/xfyun/aiges/httproto.(*Server).ginHandler.func1 (3 handlers)
+2022-11-15T21:26:30.116+0800 [WARN]  python-plugin: plugin configured with a nil SecureConfig
+2022-11-15T21:26:30.116+0800 [DEBUG] python-plugin: starting plugin: path=/bin/sh args=[sh, -c, "/usr/bin/env python -m aiges.serve"]
+[GIN-debug] OPTIONS /v1/svcName               --> github.com/xfyun/aiges/httproto.(*Server).ginHandler.func1 (3 handlers)
+[GIN-debug] DELETE /v1/svcName               --> github.com/xfyun/aiges/httproto.(*Server).ginHandler.func1 (3 handlers)
+[GIN-debug] CONNECT /v1/svcName               --> github.com/xfyun/aiges/httproto.(*Server).ginHandler.func1 (3 handlers)
+[GIN-debug] TRACE  /v1/svcName               --> github.com/xfyun/aiges/httproto.(*Server).ginHandler.func1 (3 handlers)
+[GIN-debug] GET    /test.json                --> github.com/xfyun/aiges/httproto.getDemo (3 handlers)
+2022-11-15T21:26:30.116+0800 [DEBUG] python-plugin: plugin started: path=/bin/sh pid=1081
+2022-11-15T21:26:30.116+0800 [DEBUG] python-plugin: waiting for RPC address: path=/bin/sh
+[GIN-debug] GET    /swagger/*any             --> github.com/swaggo/gin-swagger.CustomWrapHandler.func1 (3 handlers)
+2022-11-15T21:26:30.242+0800 [DEBUG] python-plugin: using plugin: version=1
+2022-11-15T21:26:30.244+0800 [DEBUG] python-plugin.stdio: received EOF, stopping recv loop: err="rpc error: code = Unimplemented desc = Method not found!"
+2022-11-15T21:26:30.245+0800 [DEBUG] python-plugin.sh:  root:wrapperInit:107 - INFO:  Importing module from wrapper.py: wrapper
+2022-11-15T21:26:31.642+0800 [DEBUG] python-plugin.sh:  root:_check_path:151 - WARNING:  <class 'FileNotFoundError'>
+2022-11-15T21:26:31.643+0800 [DEBUG] python-plugin.sh:  root:wrapperInit:112 - INFO:  User Wrapper newed Success.. starting call user init functions...
+2022-11-15T21:26:31.643+0800 [DEBUG] python-plugin.sh:  root:wrapperInit:85 - INFO:  Initializing ...
+2022-11-15T21:26:31.666+0800 [DEBUG] python-plugin.sh:  root:wrapperSchema:141 - INFO:  Entering warpperSchema ...
+2022-11-15T21:26:31.672+0800 [DEBUG] python-plugin.sh:  root:test_value:233 - WARNING:  test_data/0.png not exist.. check
+2022-11-15T21:26:31.672+0800 [DEBUG] python-plugin.sh:  root:schema:434 - INFO:  Genrating Schema...
+aiService.Init: init success!
+2022/11/15 21:26:31 about to x.run
+2022/11/15 21:26:31 about init interceptor
+2022/11/15 21:26:31 success init interceptor
+2022/11/15 21:26:31 about to call grpc.NewServer(opts...),maxRecv:4194304,maxSend:4194304
+2022/11/15 21:26:31 about to call utils.RegisterXsfCallServer(x.grpcserver, srv)
+2022/11/15 21:26:31 about to call reflection.Register(x.grpcserver)
+2022/11/15 21:26:31 about to exec userCallback
+2022/11/15 21:26:31 deal with UserHighPriority
+2022/11/15 21:26:31 deal with UserNormalPriority
+2022/11/15 21:26:31 deal with UserLowPriority
+2022/11/15 21:26:31 about to call x.grpcserver.Serve
+2022/11/15 21:26:31 about to check if the grpc service([::]:5090) is started
+2022/11/15 21:26:31 grpc server([::]:5090) started successfully
+2022/11/15 21:26:31 bvtVerifierInst is disable,ignore...
+2022/11/15 21:26:31 about to call finderadapter.Register([::]:5090)
+2022/11/15 21:26:31 about to exec fcDelayInst
+2022/11/15 21:26:31 about to call fc delay task
+2022/11/15 21:26:31 blocking for grpcserver.Serve
+```
+
+默认监听 http端口是: 1888,  可从aiges.toml文件中看到
+
+### 5. Postman调试
+
+* api地址: http://youIP:1888/v1/svcName
+
+* post方式请求: body 部分
+
+```json
+ {
+	"header":{
+		"appid":"123456",
+		"uid":"39769795890",
+		"did":"SR082321940000200",
+		"imei":"8664020318693660",
+		"imsi":"4600264952729100",
+		"mac":"6c:92:bf:65:c6:14",
+		"net_type":"wifi",
+		"net_isp":"CMCC",
+		"status":3,
+		"res_id":""
+	},
+	"parameter":{
+		"svcName":{
+			"result":{
+				"encoding":"utf8",
+				"compress":"raw",
+				"format":"plain",
+                "data_type": "text"
+			}
+		}
+	},
+	"payload":{
+		"img":{
+			"encoding":"jpg",
+			"status":3,
+			"image":"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"
+		}
+		
+	}
+}
+```
+
+返回响应
+```bash
+{
+    "header": {
+        "code": 0,
+        "sid": "0d9115af-0c6b-4526-a539-05b3c8aa9cfa",
+        "status": 3
+    },
+    "payload": {
+        "result": {
+            "compress": "raw",
+            "encoding": "utf8",
+            "format": "plain",
+            "seq": "0",
+            "status": "3",
+            "text":"{\"result\": 7, \"msg\": \"\识\别\结\果\为\数\字: 7\"}"
+        }
+    }
+}
+```
+
+### 6. swagger调试mnist
+
+当前默认集成了 swagger2.0 for openapi3.0.
+
+启动后访问:
+
+```http://<yourip>:1888```
+
+如下图:
+
+![img](./doc/swagger.jpg)
+
+Try it out ! 可以复制上述 postman部分的 body进行请求。
+
+![img2](./doc/swagger2.jpg.png)
+
+可以看到识别结果返回
+
+*  至此，单独的aiges加载器完成基本运行
+
+
+由于alpha 是裁剪后，并刚刚合并了 http接口部分，很多功能还不完善，但是基本可以托管能力
+
+
+目前已知问题:
+
+* python进程退出未做处理，需要跟随父进程自动退出
+
+* 部分运行异常暂时没时间处理
+
+
 
 ## 联系我们
 
