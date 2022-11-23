@@ -53,11 +53,13 @@ func (ep *enginePython) open(ch *utils.Coordinator) (errInfo error) {
 	var err error
 	ep.rpcClient, err = ep.client.Client()
 	if err != nil {
+		ep.client.Kill()
 		log.Fatalln("Error:", err.Error())
 		return err
 	}
 	wrapper, err := ep.rpcClient.Dispense("wrapper_grpc")
 	if err != nil {
+		ep.client.Kill()
 		log.Fatalln("Error:", err.Error())
 		return err
 
@@ -65,6 +67,7 @@ func (ep *enginePython) open(ch *utils.Coordinator) (errInfo error) {
 	ep.wrapper = wrapper.(shared.PyWrapper)
 	ep.stream, err = ep.wrapper.Communicate()
 	if err != nil {
+		ep.client.Kill()
 		log.Fatalln("Error:", err.Error())
 		return err
 	}
@@ -98,11 +101,15 @@ func (ep *enginePython) close() {
 func (ep *enginePython) enginePythonInit(cfg map[string]string) (errNum int, errInfo error) {
 
 	// Init the plugin
-	ep.wrapper.WrapperInit(cfg)
-
+	err := ep.wrapper.WrapperInit(cfg)
+	if err != nil {
+		ep.client.Kill()
+		return -1, err
+	}
 	// Get schema 这里传入的参数目前无用，，实际python测那边没有用到
 	schema, err := ep.wrapper.WrapperSchema("svcName")
 	if err != nil {
+		ep.client.Kill()
 		log.Fatalln("Error:", err.Error())
 		return -1, err
 	}
@@ -136,7 +143,7 @@ func (ep *enginePython) enginePythonOnceExec(handle string, req *instance.ActMsg
 }
 
 func (ep *enginePython) enginePythonFini() (errNum int, errInfo error) {
-	log.Println("Calling Fini...")
+	log.Println("Calling Python Fini in Aiges...")
 	return
 }
 
