@@ -13,6 +13,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"time"
 )
 
 ///	wrapper适配器,提供golang至c/c++ wrapper层的数据适配及接口转换;
@@ -44,7 +45,7 @@ func (ep *enginePython) open(ch *utils.Coordinator) (errInfo error) {
 		HandshakeConfig: shared.Handshake,
 		Plugins:         shared.PluginMap,
 		SyncStdout:      os.Stdout,
-		Cmd:             exec.Command("sh", "-c", conf.PythonCmd),
+		Cmd:             exec.Command("bash", "-c", conf.PythonCmd),
 		Logger:          logger,
 		AllowedProtocols: []plugin.Protocol{
 			plugin.ProtocolGRPC},
@@ -71,17 +72,25 @@ func (ep *enginePython) open(ch *utils.Coordinator) (errInfo error) {
 		log.Fatalln("Error:", err.Error())
 		return err
 	}
-	waitc := make(chan struct{})
+	//waitc := make(chan struct{})
+	countErr := 0
 	go func() {
 		for {
 			in, err := ep.stream.Recv()
 			if err == io.EOF {
 				// read done.
-				close(waitc)
-				return
+				//close(waitc)
+				continue
 			}
 			if err != nil {
-				log.Fatalf("client Recv the response failed: %v", err)
+				countErr += 1
+				log.Printf("Client Recv the response failed: %v, retrying... %d\n", err, countErr)
+				if countErr >= 4 {
+					ep.client.Kill()
+					return
+				}
+				time.Sleep(time.Second * 5)
+				continue
 			}
 			// query handle
 			if in.Tag != "" {
@@ -104,6 +113,7 @@ func (ep *enginePython) enginePythonInit(cfg map[string]string) (errNum int, err
 	err := ep.wrapper.WrapperInit(cfg)
 	if err != nil {
 		ep.client.Kill()
+		log.Fatalf("err: %v\n", err)
 		return -1, err
 	}
 	// Get schema 这里传入的参数目前无用，，实际python测那边没有用到

@@ -17,7 +17,7 @@ func (m *GRPCClient) WrapperInit(config map[string]string) error {
 	})
 	if ret.GetRet() != 0 {
 		msg := fmt.Sprintf("Call WrapperInit Failed...ret: %d", ret.GetRet())
-		log.Fatalln(msg)
+		log.Println(msg)
 		return errors.New(msg)
 
 	}
