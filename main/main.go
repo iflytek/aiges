@@ -41,7 +41,6 @@ func main() {
 	//
 	var ch = &utils.Coordinator{
 		ConfChan: make(chan *xsfUtil.Configure),
-		Ch2:      make(chan int),
 	}
 
 	var aisrv service.EngService
