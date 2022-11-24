@@ -18,7 +18,7 @@ func SetSchemaFromPython(s string) *AISchema {
 
 		err := json.Unmarshal([]byte(s), &instance)
 		if err != nil {
-			log.Fatal("wrong schema format... ...check...")
+			log.Fatalf("wrong schema format... ...check...%s\n", err.Error())
 		}
 	})
 	return &instance
