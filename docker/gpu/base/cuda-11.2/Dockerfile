@@ -214,10 +214,11 @@ ENV PYTHON_GET_PIP_SHA256 dce095b6df9d0cc5df3dea7b7eccb0dec87da2eb78885e1c27e638
 # will cause error here
 #COPY ./docker/get-pip.py /
 
+# echo "$PYTHON_GET_PIP_SHA256 *get-pip.py"| sha256sum -c -;
 RUN set -eux; \
 	\
 	wget -O get-pip.py "$PYTHON_GET_PIP_URL"; \
-	echo "$PYTHON_GET_PIP_SHA256 *get-pip.py" | sha256sum -c -; \
+	echo "$PYTHON_GET_PIP_SHA256 *get-pip.py";  \
 	\
 	export PYTHONDONTWRITEBYTECODE=1; \
 	\

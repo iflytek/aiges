@@ -211,10 +211,12 @@ ENV PYTHON_SETUPTOOLS_VERSION 58.1.0
 ENV PYTHON_GET_PIP_URL https://bootstrap.pypa.io/get-pip.py
 ENV PYTHON_GET_PIP_SHA256 dce095b6df9d0cc5df3dea7b7eccb0dec87da2eb78885e1c27e638422c04af3a
 
+# echo "$PYTHON_GET_PIP_SHA256 *get-pip.py"| sha256sum -c -;
+
 RUN set -eux; \
 	\
 	wget -O get-pip.py "$PYTHON_GET_PIP_URL"; \
-	echo "$PYTHON_GET_PIP_SHA256 *get-pip.py" | sha256sum -c -; \
+	echo "$PYTHON_GET_PIP_SHA256 *get-pip.py" ; \
 	\
 	export PYTHONDONTWRITEBYTECODE=1; \
 	\
