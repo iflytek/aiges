@@ -31,21 +31,21 @@ jobs:
         with:
           submodules: true
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+#      - name: Configure AWS credentials
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          aws-region: us-east-1
 
-      - name: Login to Amazon Public ECR
-        uses: docker/login-action@v1
-        with:
-          registry: public.ecr.aws
-          username: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          password: ${{ secrets.AWS_ACCESS_KEY_KEY }}
-        env:
-          AWS_REGION: us-east-1
+#      - name: Login to Amazon Public ECR
+#        uses: docker/login-action@v1
+#        with:
+#          registry: public.ecr.aws
+#          username: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          password: ${{ secrets.AWS_ACCESS_KEY_KEY }}
+#        env:
+#          AWS_REGION: us-east-1
 
       - name:  Setup Python And Generate Dockerfile
         shell: bash
@@ -57,13 +57,19 @@ jobs:
           python docker/build.py generate  --all --use_github  
 
       # Set up credentials used by AWS CLI
-      - name:  CreateRepo
-        shell: bash
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run: |
-          aws ecr-public create-repository     --repository-name $AIGES_REPO || true
+#      - name:  CreateRepo
+#        shell: bash
+#        env:
+#          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#        run: |
+#          aws ecr-public create-repository     --repository-name $AIGES_REPO || true
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          username: ${{ secrets.IFLYOPENSOURCE }}
+          password: ${{ secrets.DOCKER_SECRET }}
 
       - name: Build Docker Image For AIges
         uses: docker/build-push-action@v2
@@ -72,4 +78,4 @@ jobs:
           file: ./dist/aiges/ubuntu${{ matrix.ubuntu_os }}/cuda-${{ matrix.cuda }}/Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: ${{ secrets.ECR_REGISTRY }}/${{env.AIGES_REPO}}:${{ matrix.cuda }}-${{ matrix.golang }}-${{ matrix.python }}-ubuntu${{ matrix.ubuntu_os }}-dev
+          tags: ${{ secrets.IFLYOPENSOURCE }}/${{env.AIGES_REPO}}:${{ matrix.cuda }}-${{ matrix.golang }}-${{ matrix.python }}-ubuntu${{ matrix.ubuntu_os }}-dev
