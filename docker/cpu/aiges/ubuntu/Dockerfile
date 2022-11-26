@@ -284,7 +284,7 @@ ENV PYTHON_PIP_VERSION 22.0.4
 ENV PYTHON_SETUPTOOLS_VERSION 58.1.0
 # https://github.com/pypa/get-pip
 ENV PYTHON_GET_PIP_URL https://bootstrap.pypa.io/get-pip.py
-ENV PYTHON_GET_PIP_SHA256 ba3ab8267d91fd41c58dbce08f76db99f747f716d85ce1865813842bb035524d
+ENV PYTHON_GET_PIP_SHA256 dce095b6df9d0cc5df3dea7b7eccb0dec87da2eb78885e1c27e638422c04af3a
 
 # will cause error here
 COPY ./docker/get-pip.py /
