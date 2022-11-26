@@ -66,6 +66,5 @@ jobs:
           file: ./docker/gpu/base/cuda-${{ matrix.cuda }}/Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags:
-           # - ${{ secrets.ECR_REGISTRY }}/${{env.CUDA_BASE_REPO}}:${{ matrix.cuda }}-${{ matrix.golang }}-${{ matrix.python }}-ubuntu${{ matrix.ubuntu_os }}
-            - ${{ secrets.IFLYOPENSOURCE }}/${{env.CUDA_BASE_REPO}}:${{ matrix.cuda }}-${{ matrix.golang }}-${{ matrix.python }}-ubuntu${{ matrix.ubuntu_os }}
+          tags: ${{ secrets.IFLYOPENSOURCE }}/${{env.CUDA_BASE_REPO}}:${{ matrix.cuda }}-${{ matrix.golang }}-${{ matrix.python }}-ubuntu${{ matrix.ubuntu_os }}
+# - ${{ secrets.ECR_REGISTRY }}/${{env.CUDA_BASE_REPO}}:${{ matrix.cuda }}-${{ matrix.golang }}-${{ matrix.python }}-ubuntu${{ matrix.ubuntu_os }}
