@@ -24,6 +24,10 @@ func GetOpenAPIJSON(c *gin.Context) {
 		log.Println(err.Error())
 		return
 	}
+	// ugly here
+	inputSchemaJson = []byte(strings.ReplaceAll(string(inputSchemaJson), "defaultVal", "default"))
+	outputSchemaJson = []byte(strings.ReplaceAll(string(outputSchemaJson), "defaultVal", "default"))
+
 	var inputOpenAPI openapi3.Schema
 	var outputOpenAPI openapi3.Schema
 	json.Unmarshal(inputSchemaJson, &inputOpenAPI)

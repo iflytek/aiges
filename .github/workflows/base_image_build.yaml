@@ -53,6 +53,12 @@ jobs:
           aws ecr-public create-repository     --repository-name $CUDA_BASE_REPO || true
 
 
+      - name: Log in to Docker Hub
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          username: ${{ secrets.IFLYOPENSOURCE }}
+          password: ${{ secrets.DOCKER_SECRET }}
+
       - name: Build Docker Image -cuda-base
         uses: docker/build-push-action@v2
         with:
@@ -60,4 +66,6 @@ jobs:
           file: ./docker/gpu/base/cuda-${{ matrix.cuda }}/Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: ${{ secrets.ECR_REGISTRY }}/${{env.CUDA_BASE_REPO}}:${{ matrix.cuda }}-${{ matrix.golang }}-${{ matrix.python }}-ubuntu${{ matrix.ubuntu_os }}
+          tags:
+            - ${{ secrets.ECR_REGISTRY }}/${{env.CUDA_BASE_REPO}}:${{ matrix.cuda }}-${{ matrix.golang }}-${{ matrix.python }}-ubuntu${{ matrix.ubuntu_os }}
+            - ${{ secrets.IFLYOPENSOURCE }}/${{env.CUDA_BASE_REPO}}:${{ matrix.cuda }}-${{ matrix.golang }}-${{ matrix.python }}-ubuntu${{ matrix.ubuntu_os }}
