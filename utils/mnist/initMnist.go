@@ -73,7 +73,7 @@ func InitMnistPythonWrapper() (err error) {
 	}
 
 	dst := "aiges_demo"
-	prefix := "aiges_demo-1.0.0"
+	prefix := "aiges_demo-main"
 	archive, err := zip.OpenReader(zipFile)
 	defer archive.Close()
 	fmt.Println("解压中demo压缩包...")
