@@ -14,8 +14,8 @@ import (
 	"strings"
 )
 
-var defaultMnistUrl = "https://github.com/iflytek/aiges_demo/archive/refs/tags/v1.0.0.zip"
-var md5sum = "05b2a4d0513f9cd46453eca04b8805c0"
+var defaultMnistUrl = "https://ghproxy.com/?q=https%3A%2F%2Fgithub.com%2Fiflytek%2Faiges_demo%2Farchive%2Frefs%2Fheads%2Fmain.zip"
+var md5sum = "938f93048ee06eae8eeed9ce32627111"
 var zipFile = "aiges_demo.zip"
 
 func getFileMd5(filename string) string {
