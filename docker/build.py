@@ -36,15 +36,24 @@ class Manager(cli.Application):
 
 
 class ImageTag(object):
-    def __init__(self, cuda, python="3.9.13", golang="1.17", distro="ubuntu1804"):
+    def __init__(self, cuda, python="3.9.13", golang="1.17", distro="ubuntu1804", is_conda=False):
         self.cuda = cuda
-        self.python = python
+        if python.startswith("conda-"):
+            self.python = python.lstrip("conda-")
+        else:
+            self.python = python
         self.golang = golang
         self.distro = distro
+        self.is_conda = is_conda
 
     def __str__(self):
-        return "{cuda}-{golang}-{python}-{distro}".format(cuda=self.cuda, golang=self.golang, python=self.python,
-                                                          distro=self.distro)
+        if self.is_conda:
+            return "conda-{cuda}-{golang}-{python}-{distro}".format(cuda=self.cuda, golang=self.golang,
+                                                                    python=self.python,
+                                                                    distro=self.distro)
+        else:
+            return "{cuda}-{golang}-{python}-{distro}".format(cuda=self.cuda, golang=self.golang, python=self.python,
+                                                              distro=self.distro)
 
 
 @Manager.subcommand("generate")  # type: ignore
@@ -141,10 +150,14 @@ class ManagerGenerate(Manager):
     def generate_matrix_tags(self):
         for cuda in SUPPORTED_CUDA_LIST:
             for python in SUPPORTED_PYVERSION_LIST:
+                is_conda = False
+                if python.startswith("conda"):
+                    is_conda = True
                 for golang in SUPPORTED_GOLANG_LIST:
                     for distro in SUPPORTED_DISTRO_LIST:
-                        self.matrix.append(ImageTag(cuda, python=python, golang=golang, distro=distro)
-                                           )
+                        self.matrix.append(
+                            ImageTag(cuda, python=python, golang=golang, distro=distro, is_conda=is_conda)
+                        )
 
     def generate_release_note(self):
         path = './hack/release/Note.md'
@@ -176,6 +189,10 @@ class ManagerGenerate(Manager):
         for tag in self.matrix:
             dockerfile_dir = os.path.join(TEMP_GEN_DIR, tag.distro,
                                           "cuda-" + tag.cuda)  # for now , we fixed python version and golang
+            if tag.is_conda:
+                dockerfile_dir = os.path.join(TEMP_GEN_DIR, "conda", tag.distro,
+                                              "cuda-" + tag.cuda,
+                                              tag.python)  # for now , we fixed python version and golang
             st = self.render(tag)
             if not os.path.exists(dockerfile_dir):
                 os.makedirs(dockerfile_dir)
