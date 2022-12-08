@@ -1,11 +1,11 @@
-FROM nvidia/cuda:10.1-devel-ubuntu18.04
+FROM nvidia/cuda:11.6.2-devel-ubuntu18.04
 ENV TZ=Asia/Shanghai \
     DEBIAN_FRONTEND=noninteractive
 
 LABEL maintainer="ybyang7, iflytek"
 
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
-ADD sources.list /etc/apt/sources.list
+#ADD sources.list /etc/apt/sources.list
 
 # hadolint ignore=DL3008
 RUN apt-get update -q && \

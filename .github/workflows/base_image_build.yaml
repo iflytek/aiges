@@ -12,6 +12,35 @@ env:
   CUDA_BASE_REPO: cuda-go-python-base
 
 jobs:
+  build-conda-base-image:
+    strategy:
+      matrix:
+        cuda: [ 10.1, 10.2, 11.2,11.6 ]
+        python: [ 3.6,3.7,3.8,3.9 ]
+        golang: [ 1.17 ]
+        ubuntu_os: [ 1804 ]
+    runs-on: ubuntu-latest
+    # 项目构建
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Log in to Docker Hub
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          username: ${{ secrets.IFLYOPENSOURCE }}
+          password: ${{ secrets.DOCKER_SECRET }}
+
+      - name: Build Docker Image -cuda-base
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./docker/gpu/base/conda/cuda-${{ matrix.cuda }}/Dockerfile
+          builder: ${{ steps.buildx.outputs.name }}
+          build-args: PYTHONVERSION=${{ matrix.python }}
+          push: true
+          tags: ${{ secrets.IFLYOPENSOURCE }}/${{env.CUDA_BASE_REPO}}:conda-${{ matrix.cuda }}-${{ matrix.golang }}-${{ matrix.python }}-ubuntu${{ matrix.ubuntu_os }}
   build-base-image:
     strategy:
       matrix:
@@ -26,33 +55,6 @@ jobs:
         uses: actions/checkout@v3
         with:
           submodules: true
-
-#      - name: Configure AWS credentials
-#        uses: aws-actions/configure-aws-credentials@v1
-#        with:
-#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#          aws-region: us-east-1
-
-#      - name: Login to Amazon Public ECR
-#        uses: docker/login-action@v1
-#        with:
-#          registry: public.ecr.aws
-#          username: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#          password: ${{ secrets.AWS_ACCESS_KEY_KEY }}
-#        env:
-#          AWS_REGION: us-east-1
-
-#      # Set up credentials used by AWS CLI
-#      - name:  CreateRepo
-#        shell: bash
-#        env:
-#          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#        run: |
-#          aws ecr-public create-repository     --repository-name $CUDA_BASE_REPO || true
-#
-
       - name: Log in to Docker Hub
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
         with:
@@ -63,8 +65,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: ./docker/gpu/base/cuda-${{ matrix.cuda }}/Dockerfile
+          file: ./docker/gpu/base/python3.9/cuda-${{ matrix.cuda }}/Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           push: true
           tags: ${{ secrets.IFLYOPENSOURCE }}/${{env.CUDA_BASE_REPO}}:${{ matrix.cuda }}-${{ matrix.golang }}-${{ matrix.python }}-ubuntu${{ matrix.ubuntu_os }}
-# - ${{ secrets.ECR_REGISTRY }}/${{env.CUDA_BASE_REPO}}:${{ matrix.cuda }}-${{ matrix.golang }}-${{ matrix.python }}-ubuntu${{ matrix.ubuntu_os }}
