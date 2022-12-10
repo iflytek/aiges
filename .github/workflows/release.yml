@@ -16,7 +16,7 @@ jobs:
     strategy:
       matrix:
         cuda: [10.1, 10.2, 11.2,11.6]
-        python: [3.8,3.9 ]
+        python: [3.6,3.7,3.8,3.9 ]
         golang: [1.17]
         ubuntu_os: [1804]
     runs-on: ubuntu-latest
