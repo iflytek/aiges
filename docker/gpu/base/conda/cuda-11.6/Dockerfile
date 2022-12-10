@@ -193,4 +193,5 @@ prefix: /opt/aiges " > /home/aiges/environment.yml &&  conda env create -f envir
 SHELL ["conda", "run", "-n", "aiges", "/bin/bash", "-c"]
 
 RUN echo "conda activate aiges " >> ~/.bashrc
-RUN conda install -c conda-forge cxx-compiler
+RUN conda install -c "conda-forge/label/cf202003" cxx-compiler && conda install sysroot_linux-64=2.17
+
