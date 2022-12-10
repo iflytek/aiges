@@ -7,7 +7,7 @@ log.setLevel(logging.DEBUG)
 log.addHandler(ch)
 
 SUPPORTED_DISTRO_LIST = ["ubuntu1804"]
-SUPPORTED_PYVERSION_LIST = ["3.9.13", "conda-3.6", "conda-3.7", "conda-3.8", "conda-3.9"]
+SUPPORTED_PYVERSION_LIST = ["3.9.13", "conda-3.7", "conda-3.8", "conda-3.9"]
 SUPPORTED_GOLANG_LIST = ["1.17"]
 SUPPORTED_CUDA_LIST = ["10.1", "10.2", "11.2", "11.6"]
 
