@@ -1,9 +1,6 @@
 
 name: Build Base Image
 on:
-  pull_request:
-    branches:
-      - master
   push:
     paths:
       - "docker/gpu/base/**"
