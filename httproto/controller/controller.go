@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/gin-gonic/gin"
+	"github.com/xfyun/aiges/env"
 	"github.com/xfyun/aiges/httproto/common"
 	"github.com/xfyun/aiges/httproto/schemas"
 	"log"
@@ -13,6 +14,10 @@ import (
 )
 
 func GetOpenAPIJSON(c *gin.Context) {
+	if env.AIGES_PLUGIN_MODE != "python" {
+		log.Println("C plugin Mode not support swagger schema... ")
+		return
+	}
 	svc := schemas.GetSvcSchemaFromPython()
 	inputSchemaJson, err := svc.InputSchema.MarshalJSON()
 	if err != nil {
