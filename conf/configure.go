@@ -11,6 +11,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/xfyun/aiges/frame"
+	aigesUtils "github.com/xfyun/aiges/utils"
 	"github.com/xfyun/xsf/server"
 	"github.com/xfyun/xsf/utils"
 	"io/ioutil"
@@ -238,6 +239,9 @@ func secParseGes(cfg *utils.Configure) (err error) {
 	if passfile, err := ioutil.ReadFile(localPassFile); err == nil {
 		pass := strings.Split(string(passfile), "\n")
 		HeaderPass = append(HeaderPass, pass...)
+	}
+	if !aigesUtils.In("sid", HeaderPass) {
+		HeaderPass = append(HeaderPass, "sid")
 	}
 	fmt.Println("header pass list:", HeaderPass)
 
