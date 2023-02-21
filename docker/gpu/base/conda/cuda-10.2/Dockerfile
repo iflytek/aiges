@@ -179,10 +179,9 @@ RUN set -x && \
     find /opt/conda/ -follow -type f -name '*.js.map' -delete && \
     /opt/conda/bin/conda clean -afy
 
-
 WORKDIR /home/aiges
 # Create the environment:
-RUN echo "name: aiges \n\
+RUN echo "name: base \n\
 channels: \n \
 - defaults \n\
 dependencies: \n \
@@ -190,7 +189,7 @@ dependencies: \n \
 prefix: /opt/aiges " > /home/aiges/environment.yml &&  conda env create -f environment.yml
 
 # Make RUN commands use the new environment:
-SHELL ["conda", "run", "-n", "aiges", "/bin/bash", "-c"]
+SHELL ["conda", "run", "-n", "base", "/bin/bash", "-c"]
 
-RUN echo "conda activate aiges " >> ~/.bashrc
+RUN echo "conda activate base " >> ~/.bashrc
 RUN conda install -c "conda-forge/label/cf202003" cxx-compiler && conda install sysroot_linux-64=2.17
