@@ -181,12 +181,12 @@ RUN set -x && \
 
 WORKDIR /home/aiges
 # Create the environment:
-RUN echo "name: base \n\
-channels: \n \
-- defaults \n\
-dependencies: \n \
-- python=${PYTHONVERSION} \n\
-prefix: /opt/aiges " > /home/aiges/environment.yml &&  conda env create -f environment.yml
+#RUN echo "name: base \n\
+#channels: \n \
+#- defaults \n\
+#dependencies: \n \
+#- python=${PYTHONVERSION} \n\
+#prefix: /opt/aiges " > /home/aiges/environment.yml &&  conda env create -f environment.yml
 
 # Make RUN commands use the new environment:
 SHELL ["conda", "run", "-n", "base", "/bin/bash", "-c"]
