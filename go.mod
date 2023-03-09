@@ -12,6 +12,7 @@ require (
 	github.com/gorilla/websocket v1.5.0
 	github.com/hashicorp/go-hclog v0.14.1
 	github.com/hashicorp/go-plugin v1.4.5
+	github.com/json-iterator/go v1.1.12
 	github.com/oliveagle/jsonpath v0.0.0-20180606110733-2e52cf6e6852
 	github.com/pyroscope-io/pyroscope v0.18.0
 	github.com/seeadoog/jsonschema v1.1.0
@@ -20,7 +21,7 @@ require (
 	github.com/swaggo/swag v1.8.7
 	github.com/xfyun/uuid v0.0.0-20220331052528-3a275a5702d5
 	github.com/xfyun/xsf v0.0.0-20220402010628-6507dace16c0
-	golang.org/x/net v0.2.0
+	golang.org/x/net v0.7.0
 	google.golang.org/grpc v1.32.0
 	google.golang.org/protobuf v1.28.0
 )
@@ -55,7 +56,6 @@ require (
 	github.com/invopop/yaml v0.1.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
-	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/mailru/easyjson v0.7.6 // indirect
 	github.com/mattn/go-colorable v0.1.8 // indirect
@@ -97,8 +97,8 @@ require (
 	go.uber.org/multierr v1.6.0 // indirect
 	go.uber.org/zap v1.21.0 // indirect
 	golang.org/x/crypto v0.0.0-20220214200702-86341886e292 // indirect
-	golang.org/x/sys v0.2.0 // indirect
-	golang.org/x/text v0.4.0 // indirect
+	golang.org/x/sys v0.5.0 // indirect
+	golang.org/x/text v0.7.0 // indirect
 	golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac // indirect
 	golang.org/x/tools v0.1.12 // indirect
 	google.golang.org/genproto v0.0.0-20200825200019-8632dd797987 // indirect
