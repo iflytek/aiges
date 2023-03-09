@@ -33,9 +33,8 @@ func (r *Request) ConvertToPb(serviceName string, stat protocol.LoaderInput_Sess
 	}
 	r.readParameter(in)
 	err := r.readPayload(in)
-	st, _ := sch.InputSchema.MarshalJSON()
-
-	fmt.Println(string(st))
+	//st, _ := sch.InputSchema.MarshalJSON()
+	// todo
 	//err = sch.Validate(r)
 
 	return in, err
@@ -106,6 +105,8 @@ func (r *Request) readPayload(pb *protocol.LoaderInput) error {
 			case "other":
 				pe.Meta.DataType = protocol.MetaDesc_OTHER
 				pe.Data, err = parsePayload(val)
+			case "status":
+				pe.Meta.Attribute[key] = convertStatus(val)
 			default:
 				pe.Meta.Attribute[key] = toString(val)
 			}
@@ -125,6 +126,14 @@ func getString(in map[string]interface{}, key string) string {
 	return toString(in[key])
 }
 
+func convertStatus(in interface{}) string {
+	switch i := in.(type) {
+	case float64:
+		return strconv.FormatFloat(i, 'f', 0, 64)
+	default:
+		return fmt.Sprintf("%v", i)
+	}
+}
 func toString(in interface{}) string {
 	switch i := in.(type) {
 	case nil:
