@@ -63,9 +63,9 @@ taddrs="lbv2@10.1.87.68:9095"    #不使用服务发现时候使用的默认lb�
 [fc]    #xrpc flowControl
 able = 1
 router = "sessionManager"   #路由字段，可选项为sessionManager和qpsLimiter
-max = 1                  #会话模式时代表最大的授权量，非会话模式代表间隔时间里的最大请求数
+max = 20                 #会话模式时代表最大的授权量，非会话模式代表间隔时间里的最大请求数
 ttl = 10000                  #会话模式代表会话的超时时间，非会话模式代表有效期（间隔时间）
-best = 1                   #最佳授权数
+best = 5                   #最佳授权数
 roll = 5000
 strategy = 2                 #可选值为0、1、2（缺省为0），0.代表定时上报(v1)；1.根据授权范围上报(v1)；2.基于hermes(v2)
 

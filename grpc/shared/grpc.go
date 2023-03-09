@@ -45,10 +45,51 @@ func (m *GRPCClient) WrapperSchema(id string) (*proto.Schema, error) {
 	return m.client.WrapperSchema(context.Background(), &proto.SvcId{ServiceId: id})
 }
 
+func (m *GRPCClient) WrapperCreate(userTag string, params map[string]string) (*proto.Handle, error) {
+	return m.client.WrapperCreate(context.Background(), &proto.CreateRequest{
+		Sid:    params["sid"],
+		Tag:    userTag,
+		Params: params,
+	})
+}
+
+func (m *GRPCClient) WrapperDestroy(handle string) (*proto.Ret, error) {
+	return m.client.WrapperDestroy(context.Background(), &proto.Handle{
+		Handle: handle,
+	})
+}
+
+func (m *GRPCClient) WrapperWrite(handle string, usrTag string, params map[string]string, reqData []*proto.RequestData) (*proto.Ret, error) {
+	return m.client.WrapperWrite(context.Background(), &proto.WriteMessage{
+
+		Handle: handle,
+		Req: &proto.Request{
+			Params: params,
+			List:   reqData,
+			Tag:    usrTag,
+		},
+	})
+}
+
 // Here is the gRPC server that GRPCClient talks to.
 type GRPCServer struct {
 	// This is the real implementation
 	Impl PyWrapper
+}
+
+func (m *GRPCServer) WrapperDestroy(ctx context.Context, handle *proto.Handle) (*proto.Ret, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (m *GRPCServer) WrapperCreate(ctx context.Context, request *proto.CreateRequest) (*proto.Handle, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (m *GRPCServer) WrapperWrite(ctx context.Context, message *proto.WriteMessage) (*proto.Ret, error) {
+	//TODO implement me
+	panic("implement me")
 }
 
 func (m *GRPCServer) WrapperSchema(ctx context.Context, id *proto.SvcId) (*proto.Schema, error) {

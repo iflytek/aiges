@@ -9,44 +9,82 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/golang/protobuf/proto"
+	ws "github.com/gorilla/websocket"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/xfyun/aiges/docs"
+	"github.com/xfyun/aiges/httproto/common"
+	"github.com/xfyun/aiges/httproto/conf"
 	"github.com/xfyun/aiges/httproto/controller"
+	dto "github.com/xfyun/aiges/httproto/http"
 	"github.com/xfyun/aiges/httproto/internal"
 	"github.com/xfyun/aiges/httproto/schemas"
+	"github.com/xfyun/aiges/httproto/stream"
+	"github.com/xfyun/aiges/instance"
 	"github.com/xfyun/aiges/protocol"
 	"github.com/xfyun/uuid"
 	xsf "github.com/xfyun/xsf/server"
 	"github.com/xfyun/xsf/utils"
 	"golang.org/x/net/webdav"
 	"io/fs"
+	"log"
 	"net/http"
+	"strconv"
+	"sync"
+	"time"
+)
+
+const (
+	CtxKeyClientIp = "client_ip"
+	CtxKeyKongIp   = "kong_ip"
+	CtxKeyHost     = "host"
+	Scan_interver  = 60
+)
+
+var (
+	wsUpgrader = ws.Upgrader{
+		HandshakeTimeout: 5 * time.Second,
+		CheckOrigin: func(r *http.Request) bool {
+			return true
+		},
+	}
 )
 
 type Server struct {
-	si          xsf.UserInterface
-	serviceName string
-	listenAddr  string
+	si              xsf.UserInterface
+	mngr            func() *instance.Manager
+	serviceName     string
+	schemas         *schemas.AISchema
+	listenAddr      string
+	XsfCallBackAddr string
 }
 
-func NewServer(rpc xsf.UserInterface) xsf.UserInterface {
+func NewServer(rpc xsf.UserInterface, get_mngr func() *instance.Manager) xsf.UserInterface {
 	return &Server{
 		si:         rpc,
 		listenAddr: "",
+		mngr:       get_mngr,
 	}
 }
 
 func (s *Server) Init(box *xsf.ToolBox) error {
 	s.serviceName = box.Bc.CfgData.Service
 	s.si.Init(box)
+	common.InitSidGenerator(box.NetManager.GetIp(), strconv.Itoa(box.NetManager.GetPort()), "local")
+	stream.InitSessionGroup(Scan_interver)
+
+	s.XsfCallBackAddr = fmt.Sprintf("%s:%d", box.NetManager.GetIp(), box.NetManager.GetPort())
 
 	addr, err := box.Cfg.GetString(s.serviceName, "http_listen")
 	if err != nil {
 		addr = ":"
 	}
+	isStream, err := box.Cfg.GetBool("aiges", "sessMode")
+	if err != nil {
+		isStream = false
+	}
 	s.listenAddr = addr
 	go func() {
-		err := s.startHttpServer()
+		err := s.startHttpServer(isStream)
 		if err != nil {
 			panic("start gint http error:" + err.Error())
 		}
@@ -76,17 +114,25 @@ func init() {
 		LockSystem: webdav.NewMemLS(),
 	}
 }
-func (s *Server) startHttpServer() error {
+func (s *Server) startHttpServer(isStream bool) error {
 	// will remove in release
 	docs.SwaggerInfo.Title = "Swagger Example API"
 	aischema := schemas.GetSvcSchemaFromPython()
+	s.schemas = aischema
 	router := gin.Default()
+	isWebsocket := isStream
 	for _, route := range aischema.Meta.GetRoute() {
-		router.POST(route, s.ginHandler())
+		if isWebsocket {
+			router.GET(route, s.ginHandler(isWebsocket))
+		} else {
+			router.POST(route, s.ginHandler(isWebsocket))
+
+		}
 	}
 	router.GET("/openapi.json", controller.GetOpenAPIJSON)
 	url := ginSwagger.URL("/openapi.json")
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(Handler, url))
+	router.GET("/ping", stream.Ping)
 	router.Any("/", func(c *gin.Context) {
 		c.Redirect(http.StatusFound, "/swagger/index.html")
 	})
@@ -95,11 +141,58 @@ func (s *Server) startHttpServer() error {
 	return nil
 }
 
-func (s *Server) ginHandler() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		s.ServeHTTP(c.Writer, c.Request)
+// 区分http 和websocket
+func (s *Server) ginHandler(isWebsocket bool) gin.HandlerFunc {
+	if !isWebsocket {
+		return s.HandlerHttp
 	}
+	// 初始化配置
+	conf.InitConfig()
+	return s.HandlerWs
 }
+
+// entrance ws
+func (s *Server) HandlerHttp(c *gin.Context) {
+	s.ServeHTTP(c.Writer, c.Request)
+	return
+}
+
+// entrance ws
+func (s *Server) HandlerWs(c *gin.Context) {
+	//route := c.Request.URL.Path
+
+	// 1. 获取schema
+	// 升级链接
+	conn, err := wsUpgrader.Upgrade(c.Writer, c.Request, nil)
+	if err != nil {
+		log.Printf("client(%s) request, upgrade protocol from http to websocket failed :%s", c.ClientIP(), err.Error())
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+
+	cfg := conf.GetConfInstance()
+	logger := common.GetLoggerInstance()
+	c.Set(CtxKeyClientIp, c.ClientIP())
+	//streamMode, _ := c.GetQuery("stream_mode")
+	//if streamMode == "multiplex" {
+	//	ms := NewMultipleSession()
+	//	defer ms.CloseSession()
+	//	ms.Do(ctx, sc, cfg, logger, conn)
+	//	c.Abort()
+	//	return
+	//}
+	lock := sync.Mutex{}
+	sess := stream.NewWsSession(c, s.schemas, cfg, logger, conn, &lock)
+
+	sess.XsfCallBackAddr = s.XsfCallBackAddr
+	sess.Si = s.si
+	sess.Mngr = s.mngr
+	defer sess.CloseSession()
+	stream.Handle(sess)
+	//s.ServeHTTP(c.Writer, c.Request)
+	return
+}
+
 func (s *Server) Finit() error {
 	return s.si.Finit()
 }
@@ -113,7 +206,7 @@ func (s *Server) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
 	code, sid, err := s.serveHTTP(writer, request)
 	if err != nil {
 		writer.WriteHeader(500)
-		writeResp(writer, &CommonResponse{
+		writeResp(writer, &dto.CommonResponse{
 			Header: map[string]interface{}{
 				"code":    code,
 				"sid":     sid,
@@ -128,12 +221,12 @@ func (s *Server) serveHTTP(writer http.ResponseWriter, request *http.Request) (r
 	ctx := context.Background()
 	sid = generateSID()
 	j := json.NewDecoder(request.Body)
-	req := new(Request)
+	req := new(dto.Request)
 	err = j.Decode(req)
 	if err != nil {
 		return 10000, sid, err
 	}
-	in, err := req.ConvertToPb(s.serviceName, protocol.LoaderInput_ONCE, &ctx)
+	in, err := req.ConvertToPb(s.serviceName, protocol.LoaderInput_ONCE, &ctx, 0)
 	if err != nil {
 		return 10001, sid, err
 	}
@@ -177,16 +270,11 @@ func (s *Server) serveHTTP(writer http.ResponseWriter, request *http.Request) (r
 	if output.Code != 0 {
 		return int(output.Code), sid, errors.New(output.Err)
 	}
-	writeResp(writer, outputToJson(output, sid, in.Expect))
+	writeResp(writer, dto.OutputToJson(output, sid, in.Expect))
 	return 0, sid, nil
 }
 
-type CommonResponse struct {
-	Header  map[string]interface{} `json:"header"`
-	Payload map[string]interface{} `json:"payload"`
-}
-
-func writeResp(w http.ResponseWriter, resp *CommonResponse) {
+func writeResp(w http.ResponseWriter, resp *dto.CommonResponse) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*") // 可将将 * 替换为指定的域名
 	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, UPDATE")

@@ -92,7 +92,7 @@ func (srv *EngService) Run(ch *ut.Coordinator) (errInfo error) {
 
 		if errInfo = srv.xsfInst.Run(xsf.BootConfig{CfgMode: utils.CfgMode(-1),
 			CfgData: xsf.CfgMeta{CfgName: "", Project: "", Group: "", Service: "",
-				Version: srv.usrVersion, CompanionUrl: "", CallBack: conf.Update}}, httproto.NewServer(&srv.aiInst)); errInfo != nil {
+				Version: srv.usrVersion, CompanionUrl: "", CallBack: conf.Update}}, httproto.NewServer(&srv.aiInst, srv.aiInst.GetInsMngr)); errInfo != nil {
 		}
 	}()
 	srv.wg.Wait()

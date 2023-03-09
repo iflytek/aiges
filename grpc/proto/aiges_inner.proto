@@ -6,12 +6,30 @@ service WrapperService {
   rpc wrapperInit(InitRequest) returns (Ret) {}
   rpc wrapperOnceExec(Request) returns (Response) {}
   rpc wrapperSchema(SvcId) returns (Schema) {}
+  rpc wrapperCreate(CreateRequest) returns (Handle) {}
+  rpc wrapperWrite(WriteMessage) returns (Ret) {}
+  rpc wrapperDestroy(Handle) returns (Ret) {}
   rpc testStream(stream StreamRequest) returns (stream Response) {}
   //
   // Accepts a stream of RouteNotes sent while a route is being traversed,
   // while receiving other RouteNotes (e.g. from other users).
   rpc communicate(stream Request) returns (stream Response) {}
 
+}
+message CreateRequest {
+  map<string, string> params = 1;
+  string sid = 2;
+  string tag = 3;
+}
+
+message WriteMessage {
+  Request req = 1;
+  string handle = 2;
+  string sid = 3;
+}
+message Handle {
+  string handle = 1;
+  int32 err_code = 2;
 }
 
 message  Ret {

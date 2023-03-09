@@ -236,6 +236,48 @@ func (si *ServiceInst) DataReq(input *protocol.LoaderInput, span *xsf.Span) (err
 	return
 }
 
+func (si *ServiceInst) DataRespByChan(timout uint, span *xsf.Span) (dataOut protocol.LoaderOutput, errNum int, errInfo error) {
+
+	// 服务实时读 || 音频last
+	if conf.RealTimeRead {
+		// 数据读事件; 若写入last数据则循环读取;
+		var resp ActMsg
+		if conf.WrapperAsync {
+			// 读取异步会话回调模式回写channel数据;
+			var alive bool
+			select {
+			case resp, alive = <-si.respChan:
+				if !alive {
+					errNum = 1000 // channel关闭,finish
+				}
+			default:
+			}
+			if resp.AsyncErr != nil {
+				si.tool.Log.Errorw("receive async callback error", "errInfo", resp.AsyncErr.Error(), "sid", si.instHdl)
+				errInfo = eventUsrErr(resp.AsyncCode, resp.AsyncErr)
+				return dataOut, frame.WrapperAsyncErr, errInfo
+			}
+			output, errNum, errInfo := si.outputProc(resp.DeliverData)
+			if errInfo != nil {
+				return dataOut, errNum, errInfo
+			}
+			if si.downCtrl == downAsync {
+				dataPostBack(si, &output, 0, nil)
+			} else {
+				// 发数据到
+				si.outPutData.WriteData(si.outPutId, output) // TODO 合成场景确认：fmt & enc
+				si.outPutId++
+
+			}
+			return si.DataResp(timout, span)
+		}
+	} else {
+		return
+
+	}
+	return
+}
+
 /*
 查询获取计算结果：结果数据
 1. 支持超时阻塞查询 & 非阻塞查询;
@@ -357,7 +399,7 @@ func (si *ServiceInst) outputProc(input []DataMeta) (output []buffer.DataMeta, e
 	return
 }
 
-//	异步协程: 单线程消费计算;
+// 异步协程: 单线程消费计算;
 func (si *ServiceInst) asyncCalc() {
 	errNum, errInfo := nrtCheck(si)
 	if errInfo == nil {
@@ -701,6 +743,7 @@ func (si *ServiceInst) metaTask(inputs []buffer.DataMeta) (fin bool, errNum int,
 			if si.downCtrl == downAsync {
 				dataPostBack(si, &output, 0, nil)
 			} else {
+				// 发数据到
 				si.outPutData.WriteData(si.outPutId, output) // TODO 合成场景确认：fmt & enc
 				si.outPutId++
 			}

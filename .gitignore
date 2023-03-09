@@ -4,3 +4,6 @@ docker/__pycache__/
 demo/yolov5/utils/__pycache__/
 bin/
 hack/release/Note.md
+*.pt
+./yolov5s.pt
+./log

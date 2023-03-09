@@ -6,7 +6,9 @@ import (
 	"github.com/seeadoog/jsonschema"
 	"github.com/xfyun/aiges/httproto/common"
 	"github.com/xfyun/aiges/httproto/pb"
+	"github.com/xfyun/aiges/protocol"
 	"reflect"
+	"unsafe"
 	//"git.xfyun.cn/AIaaS/webgate-ws/common"
 )
 
@@ -45,11 +47,13 @@ type AIpaas struct {
 }
 
 type Context struct {
-	SeqNo    int32
-	Session  map[string]string
-	Header   map[string]string
-	Sync     bool
-	IsStream bool
+	SeqNo        int32
+	InputSyncId  int32
+	OutPutSyncId int32
+	Session      map[string]string
+	Header       map[string]string
+	Sync         bool
+	IsStream     bool
 }
 
 func (c *Context) getSeqNo() int32 {
@@ -216,7 +220,7 @@ func OMapToStringMap(in map[string]interface{}) map[string]string {
 	return out
 }
 
-//resolve global route
+// resolve global route
 func (m Meta) resolveGlobalRoute(headerMap map[string]interface{}, ctx *Context) *pb.GlobalRoute {
 	header := OMapToStringMap(headerMap)
 	for k, v := range ctx.GetHeader() {
@@ -378,7 +382,6 @@ func (m Meta) resolveBusinessArgsAndPle(parameter map[string]interface{}, servic
 	return businessArgs, nil, nil
 }
 
-//
 func (m Meta) resolveUpCall(root map[string]interface{}, ctx *Context) (*pb.UpCall, error) {
 
 	payload, ok := root["payload"].(map[string]interface{})
@@ -442,7 +445,6 @@ func (m Meta) ResolveServerBiz(root map[string]interface{}, ctx *Context) (*pb.S
 	return biz, nil
 }
 
-//
 var dataTypeEnums = [...]string{
 	pb.MetaDesc_TEXT:  "text",
 	pb.MetaDesc_AUDIO: "audio",
@@ -508,12 +510,41 @@ func (m Meta) resolveDataListResp(datalist []*pb.GeneralData, outPutSchema *Json
 	return payload
 }
 
+func (m Meta) resolveDataListResp2(datalist []*protocol.Payload, outPutSchema *JsonElement) map[string]interface{} {
+	if len(datalist) == 0 {
+		return nil
+	}
+	payload := make(map[string]interface{})
+	for _, generalData := range datalist {
+		name := generalData.GetMeta().GetName()
+		dataType := generalData.GetMeta().GetDataType()
+		//payload[name] =
+		data := make(map[string]interface{})
+		dt := (*pb.MetaDesc_DataType)(unsafe.Pointer(&dataType))
+		data[getRespDataKeyByDataType(*dt)] = m.formatData(generalData.GetMeta().GetAttribute(), generalData.GetData())
+		attrs := outPutSchema.Get("properties").Get("payload").Get("properties").Get(name).Get("properties")
+		for key, val := range generalData.GetMeta().GetAttribute() {
+			typ, ok := attrs.Get(key).Get("type").GetAsString()
+			if ok {
+				data[key] = format(val, typ)
+			} else {
+				data[key] = val
+			}
+		}
+		payload[name] = data
+	}
+	return payload
+}
 func (m Meta) ResolveDownResponseFromServerBiz(biz *pb.ServerBiz, e *JsonElement) map[string]interface{} {
 	return m.resolveDataListResp(biz.GetDownCall().GetDataList(), e)
 }
 
 func (m Meta) ResolveUpResult(biz *pb.UpResult, e *JsonElement) map[string]interface{} {
 	return m.resolveDataListResp(biz.GetDataList(), e)
+}
+
+func (m Meta) ResolveLoadOutput(biz *protocol.LoaderOutput, e *JsonElement) map[string]interface{} {
+	return m.resolveDataListResp2(biz.GetPl(), e)
 }
 
 type AISchema struct {
@@ -550,6 +581,10 @@ func (s *AISchema) ResolveDownResponseByBiz(biz *pb.ServerBiz) map[string]interf
 
 func (s *AISchema) ResolveUpResult(biz *pb.UpResult) interface{} {
 	return s.Meta.ResolveUpResult(biz, s.SchemaOutput)
+}
+
+func (s *AISchema) ResolveLoadOutput(biz *protocol.LoaderOutput) interface{} {
+	return s.Meta.ResolveLoadOutput(biz, s.SchemaOutput)
 }
 
 func (m Meta) GetCompanion() string {

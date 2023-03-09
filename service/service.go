@@ -33,6 +33,9 @@ type aiService struct {
 	Coordinator *aigesUtils.Coordinator
 }
 
+func (srv *aiService) GetInsMngr() *instance.Manager {
+	return &InstMngr
+}
 func (srv *aiService) Init(box *xsf.ToolBox) (err error) {
 	srv.tool = box
 	srv.instMngr = &InstMngr
