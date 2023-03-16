@@ -33,6 +33,11 @@ const (
 	pprofSvcName   = "svcName"
 	pprofProxyAddr = "proxyAddr"
 
+	// websocket cfg
+	sectionWs      = "ws"
+	readTimeOut    = "readTimeout"
+	sessionTimeout = "sessionTimeout"
+
 	// wrapper cfg
 	sectionWrapper = "wrapper"
 

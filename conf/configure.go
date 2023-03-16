@@ -44,6 +44,10 @@ var (
 	StorageData              bool     = false //默认不保存数据
 	AsyncRelease             bool     = true  //是否异步释放会话
 
+	// Websocket
+	ReadTimeout     int
+	SessiontTimeout int
+
 	// pprof
 	PProfAble bool = false
 	PProfHost string
@@ -74,6 +78,10 @@ func Construct(cfg *utils.Configure) (err error) {
 	}
 	// 框架主配置
 	if err = secParseGes(cfg); err != nil {
+		return
+	}
+	// websocket 设置
+	if err = secParseWs(cfg); err != nil {
 		return
 	}
 	// pprof设置
@@ -195,6 +203,18 @@ func getUsrConfig(cfg *utils.Configure) (err error) {
 	return
 }
 
+func secParseWs(cfg *utils.Configure) (err error) {
+	ReadTimeout, err = cfg.GetInt(sectionWs, readTimeOut)
+	if err != nil {
+		ReadTimeout = 15
+	}
+	SessiontTimeout, err = cfg.GetInt(sectionWs, sessionTimeout)
+	if err != nil {
+		SessiontTimeout = 180
+	}
+
+	return err
+}
 func secParseGes(cfg *utils.Configure) (err error) {
 	EngSub, err = cfg.GetString(sectionAiges, engSub)
 	if err != nil {

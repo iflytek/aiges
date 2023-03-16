@@ -18,7 +18,9 @@ pythonPluginCmd = "/Users/yangyanbo/anaconda3/envs/aiges-python/bin/python -m ai
 "resource./msp/resource/sms/acmod_16KPowerFlt_sms_RNN.bin" = "HMM_16K"
 "resource./msp/resource/sms/wfst.bin" = "WFST"
 "log.level" = "debug"
-
+[ws]
+readTimeout = 15
+sessionTimeout = 180
 [auth]
 meterWrapperCtrl = false
 meterCtrl = false

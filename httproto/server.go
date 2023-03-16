@@ -61,7 +61,7 @@ type Server struct {
 func NewServer(rpc xsf.UserInterface, get_mngr func() *instance.Manager) xsf.UserInterface {
 	return &Server{
 		si:         rpc,
-		listenAddr: "",
+		listenAddr: ":",
 		mngr:       get_mngr,
 	}
 }

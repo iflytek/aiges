@@ -8,6 +8,7 @@ import (
 	"github.com/golang/protobuf/proto"
 	"github.com/gorilla/websocket"
 	jsoniter "github.com/json-iterator/go"
+	aiges_conf "github.com/xfyun/aiges/conf"
 	"github.com/xfyun/aiges/httproto/common"
 	"github.com/xfyun/aiges/httproto/conf"
 	dto "github.com/xfyun/aiges/httproto/http"
@@ -96,7 +97,7 @@ const (
 	CtxKeyHost     = "host"
 )
 
-func NewWsSession(ctx *gin.Context, schema *schemas.AISchema, conf *conf.Config, logger *xsf.Logger, conn *websocket.Conn, lock *sync.Mutex) *WsSession {
+func NewWsSession(ctx *gin.Context, schema *schemas.AISchema, cfg *conf.Config, logger *xsf.Logger, conn *websocket.Conn, lock *sync.Mutex) *WsSession {
 	meta := schema.Meta
 	sid := common.NewSid(meta.GetSub())
 	//s, _ := uuid.NewV4()
@@ -107,9 +108,9 @@ func NewWsSession(ctx *gin.Context, schema *schemas.AISchema, conf *conf.Config,
 	sess.Sub = meta.GetSub()
 	sess.Conn = conn
 	sess.buffer = bytePool.Get()
-	sess.SessonTimeout = conf.Session.SessionTimeout
-	sess.ReadTimeout = conf.Session.TimeoutInterver
-	//calls := conf.Server.MockService
+	sess.SessonTimeout = cfg.Session.SessionTimeout
+	sess.ReadTimeout = cfg.Session.TimeoutInterver
+	//calls := cfg.Server.MockService
 	sess.lock = lock
 	// next service
 	sess.CallService = meta.GetCallService()
@@ -129,7 +130,7 @@ func NewWsSession(ctx *gin.Context, schema *schemas.AISchema, conf *conf.Config,
 	}
 
 	sess.logger = logger
-	sess.conf = conf
+	sess.conf = cfg
 	//sess.sonar = nil
 	sess.errorCode = 0
 	sess.ServiceId = meta.GetServiceId()
@@ -141,14 +142,8 @@ func NewWsSession(ctx *gin.Context, schema *schemas.AISchema, conf *conf.Config,
 	if t := meta.GetReadTimeout(); t > 0 {
 		sess.ReadTimeout = t
 	}
-
-	if sess.ReadTimeout == 0 {
-		sess.ReadTimeout = 15
-	}
-
-	if sess.SessonTimeout == 0 {
-		sess.SessonTimeout = 180
-	}
+	sess.ReadTimeout = aiges_conf.ReadTimeout
+	sess.SessonTimeout = aiges_conf.SessiontTimeout
 	sess.firstout = 0
 	sess.lastout = 0
 	sess.firstin = 0

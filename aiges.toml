@@ -20,6 +20,10 @@ pythonPluginCmd = "/Users/yangyanbo/anaconda3/envs/aiges-python/bin/python -m ai
 "resource./msp/resource/sms/wfst.bin" = "WFST"
 "log.level" = "debug"
 
+[ws]
+readTimeout = 150
+sessionTimeout = 180
+
 [auth]
 meterWrapperCtrl = false
 meterCtrl = false
