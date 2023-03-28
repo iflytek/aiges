@@ -25,9 +25,11 @@ import (
 	xsf "github.com/xfyun/xsf/server"
 	"github.com/xfyun/xsf/utils"
 	"golang.org/x/net/webdav"
+	"io"
 	"io/fs"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"sync"
 	"time"
@@ -82,9 +84,10 @@ func (s *Server) Init(box *xsf.ToolBox) error {
 	if err != nil {
 		isStream = false
 	}
+	level, err := box.Cfg.GetString("log", "level")
 	s.listenAddr = addr
 	go func() {
-		err := s.startHttpServer(isStream)
+		err := s.startHttpServer(isStream, level)
 		if err != nil {
 			panic("start gint http error:" + err.Error())
 		}
@@ -114,12 +117,24 @@ func init() {
 		LockSystem: webdav.NewMemLS(),
 	}
 }
-func (s *Server) startHttpServer(isStream bool) error {
+func (s *Server) startHttpServer(isStream bool, level string) error {
 	// will remove in release
 	docs.SwaggerInfo.Title = "Swagger Example API"
 	aischema := schemas.GetSvcSchemaFromPython()
 	s.schemas = aischema
+	//logfile, err := os.Create("./log/http.log")
+	//if err != nil {
+	//	fmt.Println("cant 's create http.log")
+	//}
+	if level != "debug" {
+		f, _ := os.Create("log/http.log")
+		gin.DisableConsoleColor()
+		gin.DefaultWriter = io.MultiWriter(f)
+		gin.SetMode(gin.ReleaseMode)
+	}
+	//gin.DefaultWriter = io.MultiWriter(logfile)
 	router := gin.Default()
+	//router.Use(middleware.TimeoutMiddleware(180 * time.Second))
 	isWebsocket := isStream
 	for _, route := range aischema.Meta.GetRoute() {
 		if isWebsocket {
@@ -246,7 +261,6 @@ func (s *Server) serveHTTP(writer http.ResponseWriter, request *http.Request) (r
 	span := utils.NewSpan(utils.SrvSpan)
 	span.WithName(s.serviceName)
 	span.WithTag("sid", sid)
-
 	res, err := s.si.Call(xsfReq, span)
 	if err != nil {
 		return 10002, sid, err

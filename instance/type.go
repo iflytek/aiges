@@ -30,7 +30,7 @@ func checkAudioRate(rate int) (errInfo error) {
 
 const (
 	hstSessionSize    int   = 1000 // 历史会话记录维护列表大小;
-	seqBufTimeout     uint  = 1000 // 数据排序超时时间5s;
+	seqBufTimeout     uint  = 5000 // 数据排序超时时间5s;
 	seqAudSize        uint  = 500  // 输入缓冲区有序队列大小;
 	seqRltSize        uint  = 100  // 输出缓冲区有序队列大小;
 	sessTimeoutCnt    int32 = 10   // 会话超时10s;

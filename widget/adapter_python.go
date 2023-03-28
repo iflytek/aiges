@@ -54,12 +54,23 @@ func (ep *enginePython) open(ch *utils.Coordinator) (errInfo error) {
 	})
 	// Connect via RPC
 	var err error
-	ep.rpcClient, err = ep.client.Client()
+	for i := 0; i < 3; i++ {
+		ep.rpcClient, err = ep.client.Client()
+		if err != nil {
+			time.Sleep(time.Second * 5)
+			fmt.Printf("Retrying connect ...")
+			continue
+		} else {
+			break
+		}
+	}
 	if err != nil {
 		ep.client.Kill()
 		log.Fatalln("Error:", err.Error())
 		return err
+
 	}
+
 	wrapper, err := ep.rpcClient.Dispense("wrapper_grpc")
 	if err != nil {
 		ep.client.Kill()
