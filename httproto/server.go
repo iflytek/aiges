@@ -254,7 +254,7 @@ func (s *Server) serveHTTP(writer http.ResponseWriter, request *http.Request) (r
 	xsfReq.SetOp("AIIn")
 	xsfReq.SetParam("SeqNo", "1")
 	xsfReq.SetParam("version", "v2")
-	xsfReq.SetParam("waitTime", "1000")
+	xsfReq.SetParam("waitTime", "30000")
 	xsfReq.SetParam("baseId", "0")
 	xsfReq.SetHandle(sid)
 

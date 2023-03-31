@@ -685,7 +685,7 @@ func (s *WsSession) SendAIBizLocal(biz *protocol.LoaderInput, callType int) (*pr
 	xsfReq.SetOp("AIIn")
 	xsfReq.SetParam("SeqNo", strconv.Itoa(int(s.sessionContext.SeqNo)))
 	xsfReq.SetParam("version", "v2")
-	xsfReq.SetParam("waitTime", "1000")
+	xsfReq.SetParam("waitTime", "3000")
 	xsfReq.SetParam("baseId", "0")
 	xsfReq.SetHandle(s.Sid)
 	s.Handle = s.Sid
