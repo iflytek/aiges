@@ -44,8 +44,10 @@ ENV GOPROXY=https://goproxy.cn,direct
 COPY docker/repos/ubuntu1804/sources.list /etc/apt/sources.list
 {% endif %}
 RUN apt update && apt install -y build-essential vim
-RUN DEBIAN_FRONTEND=noninteractive apt update &&apt install -y libnuma-dev libboost-all-dev git vim
+RUN DEBIAN_FRONTEND=noninteractive apt update &&apt install -y libnuma-dev libboost-all-dev git vim libgl1-mesa-glx
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/aiges:/home/aiges/library
 WORKDIR /home/aiges
 COPY --from=go-builder /home/aiges/dist/aiges_linux_amd64 .
 COPY --from=cpython-builder /home/wrapper/wrapper_lib /home/aiges/library
+
+RUN pip install ifly-ailab==0.1.1 && pip config set global.index-url https://pypi.mirrors.ustc.edu.cn/simple/

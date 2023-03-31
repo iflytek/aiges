@@ -188,6 +188,7 @@ ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/aiges:/home/aiges/library:/opt/conda/
 # xtest.toml
 COPY --from=go-builder /home/aiges/dist/aiges_linux_amd64 .
 COPY --from=go-builder /home/aiges/ai_cpython_wrapper/wrapper_lib /home/aiges/library
+RUN pip install ifly-ailab==0.1.1 && pip config set global.index-url https://pypi.mirrors.ustc.edu.cn/simple/
 
 
 CMD ["sh", "-c", "./AIservice -m=0 -c=aiges.toml -s=svcName -u=http://companion.xfyun.iflytek:6868 -p=AIaaS -g=dx"]
