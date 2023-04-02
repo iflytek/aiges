@@ -139,7 +139,8 @@ ENV GOPROXY=https://goproxy.cn,direct
 RUN apt-get update && apt-get install -y libnuma-dev build-essential git sudo
 COPY . /home/aiges
 WORKDIR /home/aiges
-RUN make build-pack
+RUN make build-pack && cd aiges-xtest && make build
+
 
 # 构建ai_cpython_wrapper需要依赖python 并匹配
 
@@ -188,6 +189,10 @@ ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/aiges:/home/aiges/library:/opt/conda/
 # xtest.toml
 COPY --from=go-builder /home/aiges/dist/aiges_linux_amd64 .
 COPY --from=go-builder /home/aiges/ai_cpython_wrapper/wrapper_lib /home/aiges/library
+COPY --from=go-builder /home/aiges/aiges-xtest/bin/xtest .
+COPY --from=go-builder /home/aiges/aiges-xtest/bin/xtest.toml .
+
+
 RUN pip install ifly-ailab==0.1.1 && pip config set global.index-url https://pypi.mirrors.ustc.edu.cn/simple/
 
 

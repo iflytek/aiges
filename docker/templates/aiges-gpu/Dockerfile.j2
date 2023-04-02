@@ -15,7 +15,7 @@ WORKDIR /home/aiges
 #    cp ./cgo/header/widget/* ./output/include/ && \
 #    cp  -r ./cgo/library/* ./output/
 
-RUN make build-pack
+RUN make build-pack && cd aiges-xtest && make build
 
 FROM {{vars.registry}}/cuda-go-python-base:{{vars.tag}} as cpython-builder
 MAINTAINER ybyang7@iflytek.com
@@ -48,6 +48,9 @@ RUN DEBIAN_FRONTEND=noninteractive apt update &&apt install -y libnuma-dev libbo
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/aiges:/home/aiges/library
 WORKDIR /home/aiges
 COPY --from=go-builder /home/aiges/dist/aiges_linux_amd64 .
+COPY --from=go-builder /home/aiges/aiges-xtest/bin/xtest .
+COPY --from=go-builder /home/aiges/aiges-xtest/bin/xtest.toml .
+
 COPY --from=cpython-builder /home/wrapper/wrapper_lib /home/aiges/library
 
 RUN pip install ifly-ailab==0.1.1 && pip config set global.index-url https://pypi.mirrors.ustc.edu.cn/simple/

@@ -4,3 +4,6 @@
 [submodule "aiges_demo"]
 	path = aiges_demo
 	url = git@github.com:iflytek/aiges_demo.git
+[submodule "aiges-xtest"]
+	path = aiges-xtest
+	url = git@github.com:iflytek/aiges-xtest.git
