@@ -50,6 +50,7 @@ WORKDIR /home/aiges
 COPY --from=go-builder /home/aiges/dist/aiges_linux_amd64 .
 COPY --from=go-builder /home/aiges/aiges-xtest/bin/xtest .
 COPY --from=go-builder /home/aiges/aiges-xtest/bin/xtest.toml .
+COPY --from=go-builder /home/aiges/aiges-xtest/lib/libh264bitstream.so /home/aiges/library
 
 COPY --from=cpython-builder /home/wrapper/wrapper_lib /home/aiges/library
 
