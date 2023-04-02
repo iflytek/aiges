@@ -12,52 +12,52 @@ env:
 
 
 jobs:
-  conda-build:
-    strategy:
-      matrix:
-        cuda: [10.1, 10.2, 11.2,11.6]
-        python: [3.7,3.8,3.9 ]
-        golang: [1.17]
-        ubuntu_os: [1804]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@master
-        with:
-          submodules: true
-
-      - name: Set up Go
-        uses: actions/setup-go@master
-        with:
-          go-version: 1.17
-
-      - name: Prepare
-        id: prepare
-        run: |
-          TAG=${GITHUB_REF#refs/tags/}
-          echo ::set-output name=tag_name::${TAG}
-
-      - name:  Setup Python And Generate Dockerfile
-        shell: bash
-        run: |
-          sudo apt install -y python3-pip
-          sudo pip install jinja2 plumbum
-          python docker/build.py generate  --all --use_github  
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
-        with:
-          username: ${{ secrets.IFLYOPENSOURCE }}
-          password: ${{ secrets.DOCKER_SECRET }}
-
-      - name: Build Docker Image For AIges
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          file: ./dist/aiges/conda/ubuntu${{ matrix.ubuntu_os }}/cuda-${{ matrix.cuda }}/${{matrix.python}}/Dockerfile
-          builder: ${{ steps.buildx.outputs.name }}
-          push: true
-          tags: ${{ secrets.IFLYOPENSOURCE }}/${{env.AIGES_REPO}}:conda-${{ matrix.cuda }}-${{ matrix.golang }}-${{ matrix.python }}-ubuntu${{ matrix.ubuntu_os }}-${{ steps.prepare.outputs.tag_name }}
+#  conda-build:
+#    strategy:
+#      matrix:
+#        cuda: [10.1, 10.2, 11.2,11.6]
+#        python: [3.7,3.8,3.9 ]
+#        golang: [1.17]
+#        ubuntu_os: [1804]
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@master
+#        with:
+#          submodules: true
+#
+#      - name: Set up Go
+#        uses: actions/setup-go@master
+#        with:
+#          go-version: 1.17
+#
+#      - name: Prepare
+#        id: prepare
+#        run: |
+#          TAG=${GITHUB_REF#refs/tags/}
+#          echo ::set-output name=tag_name::${TAG}
+#
+#      - name:  Setup Python And Generate Dockerfile
+#        shell: bash
+#        run: |
+#          sudo apt install -y python3-pip
+#          sudo pip install jinja2 plumbum
+#          python docker/build.py generate  --all --use_github
+#
+#      - name: Log in to Docker Hub
+#        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+#        with:
+#          username: ${{ secrets.IFLYOPENSOURCE }}
+#          password: ${{ secrets.DOCKER_SECRET }}
+#
+#      - name: Build Docker Image For AIges
+#        uses: docker/build-push-action@v2
+#        with:
+#          context: .
+#          file: ./dist/aiges/conda/ubuntu${{ matrix.ubuntu_os }}/cuda-${{ matrix.cuda }}/${{matrix.python}}/Dockerfile
+#          builder: ${{ steps.buildx.outputs.name }}
+#          push: true
+#          tags: ${{ secrets.IFLYOPENSOURCE }}/${{env.AIGES_REPO}}:conda-${{ matrix.cuda }}-${{ matrix.golang }}-${{ matrix.python }}-ubuntu${{ matrix.ubuntu_os }}-${{ steps.prepare.outputs.tag_name }}
 
   goreleaser:
     strategy:

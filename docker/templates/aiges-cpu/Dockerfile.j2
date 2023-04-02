@@ -192,6 +192,7 @@ COPY --from=go-builder /home/aiges/ai_cpython_wrapper/wrapper_lib /home/aiges/li
 COPY --from=go-builder /home/aiges/aiges-xtest/bin/xtest .
 COPY --from=go-builder /home/aiges/aiges-xtest/bin/xtest.toml .
 COPY --from=go-builder /home/aiges/aiges-xtest/lib/libh264bitstream.so /home/aiges/library
+COPY --from=go-builder /home/aiges/aiges-xtest/lib/libh264bitstream.so.0 /home/aiges/library
 
 
 RUN pip install ifly-ailab==0.1.1 && pip config set global.index-url https://pypi.mirrors.ustc.edu.cn/simple/
