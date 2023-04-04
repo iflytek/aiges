@@ -204,15 +204,21 @@ func getUsrConfig(cfg *utils.Configure) (err error) {
 }
 
 func secParseWs(cfg *utils.Configure) (err error) {
-	ReadTimeout, err = cfg.GetInt(sectionWs, readTimeOut)
-	if err != nil {
+	sec := cfg.GetSection(sectionWs)
+	if sec != nil {
+		ReadTimeout, err = cfg.GetInt(sectionWs, readTimeOut)
+		if err != nil {
+			ReadTimeout = 15
+		}
+		SessiontTimeout, err = cfg.GetInt(sectionWs, sessionTimeout)
+		if err != nil {
+			SessiontTimeout = 180
+		}
+	} else {
 		ReadTimeout = 15
-	}
-	SessiontTimeout, err = cfg.GetInt(sectionWs, sessionTimeout)
-	if err != nil {
 		SessiontTimeout = 180
-	}
 
+	}
 	return err
 }
 func secParseGes(cfg *utils.Configure) (err error) {
