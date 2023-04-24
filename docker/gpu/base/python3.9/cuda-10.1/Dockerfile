@@ -139,6 +139,7 @@ RUN set -eux; \
     	libssl-dev \
     	libbz2-dev \
     	liblzma-dev  \
+    	libsqlite3-dev \
     ; \
 	rm -rf /var/lib/apt/lists/*
 
