@@ -40,3 +40,4 @@ ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/aiges:/home/aiges/library
 WORKDIR /home/aiges
 COPY --from=go-builder /home/aiges/dist/aiges_linux_amd64 .
 COPY --from=cpython-builder /home/wrapper/wrapper_lib /home/aiges/library
+RUN mkdir -p /home/aiges/log
