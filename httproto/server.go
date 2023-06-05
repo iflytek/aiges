@@ -76,7 +76,7 @@ func (s *Server) Init(box *xsf.ToolBox) error {
 
 	s.XsfCallBackAddr = fmt.Sprintf("%s:%d", box.NetManager.GetIp(), box.NetManager.GetPort())
 
-	addr, err := box.Cfg.GetString(s.serviceName, "http_listen")
+	addr, err := box.Cfg.GetString("wrapper", "http_listen")
 	if err != nil {
 		addr = ":"
 	}
