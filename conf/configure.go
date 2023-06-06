@@ -10,6 +10,7 @@ package conf
 import (
 	"errors"
 	"fmt"
+	"github.com/xfyun/aiges/env"
 	"github.com/xfyun/aiges/frame"
 	aigesUtils "github.com/xfyun/aiges/utils"
 	"github.com/xfyun/xsf/server"
@@ -231,6 +232,11 @@ func secParseGes(cfg *utils.Configure) (err error) {
 	if err != nil {
 		// default sync wrapper
 		WrapperAsync, err = false, nil
+	}
+
+	if env.AIGES_PLUGIN_MODE == "python" {
+		// default sync wrapper
+		WrapperAsync, err = true, nil
 	}
 
 	DelSessRt, err = cfg.GetInt(sectionAiges, sessGort) // TODO 考虑与框架fc::best合并;
