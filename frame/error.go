@@ -80,7 +80,9 @@ var (
 	ErrorInstRwTimeout    = errors.New("service read buffer timeout, session timeout")
 	ErrorOnceExecTimeout  = errors.New("service exec once request timeout")
 	ErrorInvalidOutput    = errors.New("wrapper output data invalid(key or type)")
-	ErrorPersonalIndex    = errors.New("personal index service response fail")
+	ErrorNullOutput       = errors.New("wrapper output data is nil ")
+
+	ErrorPersonalIndex = errors.New("personal index service response fail")
 
 	// Error of Aiges protocol module
 	ErrorInvalidOp                = errors.New("invalid service operation")

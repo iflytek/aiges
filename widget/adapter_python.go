@@ -102,7 +102,7 @@ func (ep *enginePython) open(ch *utils.Coordinator) (errInfo error) {
 					ep.client.Kill()
 					return
 				}
-				time.Sleep(time.Second * 5)
+				time.Sleep(time.Second * 1)
 				continue
 			}
 			// query handle

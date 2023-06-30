@@ -612,7 +612,7 @@ func (si *ServiceInst) noneSessCalc() (errNum int, errInfo error) {
 					}*/
 			if attr := si.expect[data.DataId]; attr == nil {
 				si.tool.Log.Errorw("invalid expect", "key", data.DataId, "sid", si.instHdl)
-				return frame.AigesErrorInvalidOut, frame.ErrorInvalidOutput
+				return frame.AigesErrorInvalidOut, frame.ErrorNullOutput
 			}
 			if si.expect[data.DataId].DataType != protocol.MetaDesc_DataType(data.DataType) {
 				si.tool.Log.Errorw("invalid expect type", "key", data.DataId, "type", si.expect[data.DataId].DataType, "sid", si.instHdl)
