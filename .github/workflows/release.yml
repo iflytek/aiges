@@ -62,7 +62,7 @@ jobs:
   goreleaser:
     strategy:
       matrix:
-        cuda: [10.1, 10.2, 11.2,11.6]
+        cuda: [ 11.2,11.6]
         python: [ 3.9.13 ]
         golang: [1.17]
         ubuntu_os: [1804]
