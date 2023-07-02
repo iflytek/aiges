@@ -1,4 +1,4 @@
-FROM nvidia/cuda:11.2.0-devel-ubuntu18.04
+FROM nvidia/cuda:11.2.2-devel-ubuntu18.04
 
 ENV TZ=Asia/Shanghai \
     DEBIAN_FRONTEND=noninteractive
