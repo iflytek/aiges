@@ -66,7 +66,7 @@ jobs:
         python: [ 3.9.13 ]
         golang: [1.17]
         ubuntu_os: [1804]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
       - name: Checkout
         uses: actions/checkout@master
@@ -132,7 +132,7 @@ jobs:
           tags: ${{ secrets.IFLYOPENSOURCE }}/${{env.AIGES_REPO}}:${{ matrix.cuda }}-${{ matrix.golang }}-${{ matrix.python }}-ubuntu${{ matrix.ubuntu_os }}-${{ steps.prepare.outputs.tag_name }}
 
   release:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
       - name: Checkout
         uses: actions/checkout@master
