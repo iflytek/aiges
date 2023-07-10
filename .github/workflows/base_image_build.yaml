@@ -41,7 +41,7 @@ jobs:
   build-base-image:
     strategy:
       matrix:
-        cuda: [11.2,11.6]
+        cuda: [11.2,11.6,11.7]
         python: [ 3.9.13 ]
         golang: [1.17]
         ubuntu_os: [1804]
