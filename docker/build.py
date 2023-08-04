@@ -286,7 +286,7 @@ class ManagerGenerate(Manager):
             log.info("building bussiness generating")
             self._load_aiges_buissiness_template()
             self.generate_bussiness_matrix_tags()
-            self.generate_opensource_dockerfile()
+            self.generate_bussiness_dockerfile()
 
         elif self.action == "release":
             log.info("releasing generating...")
