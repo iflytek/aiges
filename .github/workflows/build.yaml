@@ -71,7 +71,7 @@ jobs:
           username: ${{ secrets.IFLYOPENSOURCE }}
           password: ${{ secrets.DOCKER_SECRET }}
 
-      - name: Build Docker Image For AIges
+      - name: Build OpenSource Docker Image For AIges
         uses: docker/build-push-action@v2
         with:
           context: .
@@ -79,3 +79,12 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           push: true
           tags: ${{ secrets.IFLYOPENSOURCE }}/${{env.AIGES_REPO}}:${{ matrix.cuda }}-${{ matrix.golang }}-${{ matrix.python }}-ubuntu${{ matrix.ubuntu_os }}-dev
+
+      - name: Build Bussiness Docker Image For AIges
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./dist/aiges/bussiness/ubuntu${{ matrix.ubuntu_os }}/cuda-${{ matrix.cuda }}/Dockerfile
+          builder: ${{ steps.buildx.outputs.name }}
+          push: true
+          tags: ${{ secrets.IFLYOPENSOURCE }}/${{env.AIGES_REPO}}:${{ matrix.cuda }}-${{ matrix.golang }}-${{ matrix.python }}-ubuntu${{ matrix.ubuntu_os }}-bussiness-dev

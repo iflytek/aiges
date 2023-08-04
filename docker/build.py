@@ -144,15 +144,27 @@ class ManagerGenerate(Manager):
         # The templating context. This data structure is used to fill the templates.
         self.vars = {
             "registry": self.get_regsitry(),
-            "tag": self.generate_matrix_tags(),
+            "tag": self.generate_opensource_matrix_tags(),
         }
 
-    def generate_matrix_tags(self):
+    def generate_opensource_matrix_tags(self):
         for cuda in SUPPORTED_CUDA_LIST:
             for python in SUPPORTED_PYVERSION_LIST:
                 is_conda = False
                 if python.startswith("conda"):
                     is_conda = True
+                for golang in SUPPORTED_GOLANG_LIST:
+                    for distro in SUPPORTED_DISTRO_LIST:
+                        self.matrix.append(
+                            ImageTag(cuda, python=python, golang=golang, distro=distro, is_conda=is_conda)
+                        )
+
+    def generate_bussiness_matrix_tags(self):
+        for cuda in SUPPORTED_CUDA_LIST:
+            for python in SUPPORTED_PYVERSION_LIST:
+                is_conda = False
+                if python.startswith("conda"):
+                    continue
                 for golang in SUPPORTED_GOLANG_LIST:
                     for distro in SUPPORTED_DISTRO_LIST:
                         self.matrix.append(
@@ -183,11 +195,29 @@ class ManagerGenerate(Manager):
             note.write(s)
             note.close()
 
-    def generate_dockerfile(self):
+    def generate_opensource_dockerfile(self):
         if not os.path.exists(TEMP_GEN_DIR):
             os.makedirs(TEMP_GEN_DIR)
         for tag in self.matrix:
             dockerfile_dir = os.path.join(TEMP_GEN_DIR, tag.distro,
+                                          "cuda-" + tag.cuda)  # for now , we fixed python version and golang
+            if tag.is_conda:
+                dockerfile_dir = os.path.join(TEMP_GEN_DIR, "conda", tag.distro,
+                                              "cuda-" + tag.cuda,
+                                              tag.python)  # for now , we fixed python version and golang
+            st = self.render(tag)
+            if not os.path.exists(dockerfile_dir):
+                os.makedirs(dockerfile_dir)
+            with open(os.path.join(dockerfile_dir, Dockerfile), 'w') as dockerfile:
+                dockerfile.write(st)
+                dockerfile.close()
+                log.info("write %s success" % os.path.abspath(os.path.join(dockerfile_dir, Dockerfile)))
+
+    def generate_bussiness_dockerfile(self):
+        if not os.path.exists(TEMP_GEN_DIR):
+            os.makedirs(TEMP_GEN_DIR)
+        for tag in self.matrix:
+            dockerfile_dir = os.path.join(TEMP_GEN_DIR, "bussiness", tag.distro,
                                           "cuda-" + tag.cuda)  # for now , we fixed python version and golang
             if tag.is_conda:
                 dockerfile_dir = os.path.join(TEMP_GEN_DIR, "conda", tag.distro,
@@ -224,11 +254,18 @@ class ManagerGenerate(Manager):
         log.debug(f"Creating {self.output_path}")
         self.output_path.mkdir(parents=True, exist_ok=False)
 
-    def _load_template(self):
+    def _load_aiges_gpu_template(self):
         tpl = "./docker/templates/aiges-gpu/Dockerfile.j2"
         if not os.path.exists(tpl):
             raise FileNotFoundError("not found %s" % tpl)
-        log.info("load success j2 file.")
+        log.info("load success  aiges-gpu j2 file.")
+        self.template = self.template_env.from_string(open(tpl, "r").read())
+
+    def _load_aiges_buissiness_template(self):
+        tpl = "./docker/templates/aiges-bussiness/Dockerfile.j2"
+        if not os.path.exists(tpl):
+            raise FileNotFoundError("not found %s" % tpl)
+        log.info("load success aiges-bussiness j2 file.")
         self.template = self.template_env.from_string(open(tpl, "r").read())
 
     def _load_release_note(self):
@@ -240,16 +277,23 @@ class ManagerGenerate(Manager):
 
     def targeted(self):
         if self.action == "build":
-            log.info("building generating")
-            self._load_template()
-            self.generate_matrix_tags()
-            self.generate_dockerfile()
+            log.info("building opensource generating")
+            self._load_aiges_gpu_template()
+            self.generate_opensource_matrix_tags()
+            self.generate_opensource_dockerfile()
+
+        elif self.action == "build-bussiness":
+            log.info("building bussiness generating")
+            self._load_aiges_buissiness_template()
+            self.generate_bussiness_matrix_tags()
+            self.generate_opensource_dockerfile()
 
         elif self.action == "release":
             log.info("releasing generating...")
             self._load_release_note()
-            self.generate_matrix_tags()
+            self.generate_opensource_matrix_tags()
             self.generate_release_note()
+
         else:
             log.error("wrong action %s" % self.action)
 

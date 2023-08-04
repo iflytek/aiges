@@ -1,0 +1,68 @@
+FROM {{vars.registry}}/cuda-go-python-base:{{vars.tag}} as go-builder
+# 10.1-1.17-3.9.13-ubuntu1804
+MAINTAINER ybyang7@iflytek.com
+
+{% if not use_github  %}
+ENV GOPROXY=https://goproxy.cn,direct
+COPY docker/repos/ubuntu1804/sources.list /etc/apt/sources.list
+{% endif %}
+
+RUN apt-get update && apt-get install -y libnuma-dev build-essential git sudo
+COPY . /home/aiges
+WORKDIR /home/aiges
+
+#RUN mkdir -p output/include && go mod vendor && go build -v -o ./output/AIservice -gcflags "-N -l -c 10" main/main.go && \
+#    cp ./cgo/header/widget/* ./output/include/ && \
+#    cp  -r ./cgo/library/* ./output/
+
+RUN  cd aiges-xtest && make build
+
+FROM {{vars.registry}}/cuda-go-python-base:{{vars.tag}} as cpython-builder
+MAINTAINER ybyang7@iflytek.com
+{% if not use_github  %}
+ENV GOPROXY=https://goproxy.cn,direct
+COPY docker/repos/ubuntu1804/sources.list /etc/apt/sources.list
+{% endif %}
+# COPY docker/repos/ubuntu1804/sources.list /etc/apt/sources.list
+
+WORKDIR /home/loader
+RUN apt update && apt install -y build-essential vim
+
+RUN DEBIAN_FRONTEND=noninteractive apt update &&apt install -y libnuma-dev libboost-all-dev
+COPY ai_cpython_wrapper/ /home/wrapper
+
+RUN cd /home/wrapper && make
+
+#ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/aiges:/home/wrapper/wrappere_lib
+
+FROM {{vars.registry}}/cuda-go-python-base:{{vars.tag}} as final
+MAINTAINER ybyang7@iflytek.com
+ENV TZ Asia/Shanghai
+
+{% if not use_github  %}
+ENV GOPROXY=https://goproxy.cn,direct
+COPY docker/repos/ubuntu1804/sources.list /etc/apt/sources.list
+{% endif %}
+RUN apt update && apt install -y build-essential vim
+RUN DEBIAN_FRONTEND=noninteractive apt update &&apt install -y libnuma-dev libboost-all-dev git vim libgl1-mesa-glx
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/aiges:/home/aiges/library
+WORKDIR /home/aiges
+
+
+
+COPY --from=cpython-builder /home/wrapper/wrapper_lib /home/aiges/library
+RUN wget https://oss-beijing-m8.openstorage.cn/aicloud/loader/c30c0bbdd9eb2a085bcb4bf88e890fa4/aiservice_2.8.0.5.tar.gz && \
+	mkdir -p /home/aiges/tmp && \
+	tar zxvf aiservice_2.8.0.5.tar.gz  --strip-components=1 /home/aiges/tmp && \
+	cp -r  /home/aiges/tmp/lib/* /home/aiges/library/ && \
+	cp /home/aiges/tmp/AIservice /home/aiges/ && \
+	cp /home/aiges/tmp/start.sh /home/aiges/ && \
+	rm -rf /home/aiges/tmp
+
+COPY --from=go-builder /home/aiges/aiges-xtest/bin/xtest .
+COPY --from=go-builder /home/aiges/aiges-xtest/bin/xtest.toml .
+COPY --from=go-builder /home/aiges/aiges-xtest/lib/libh264bitstream.so /home/aiges/library
+COPY --from=go-builder /home/aiges/aiges-xtest/lib/libh264bitstream.so.0 /home/aiges/library
+
+
+RUN pip install aiges && pip config set global.index-url https://pypi.mirrors.ustc.edu.cn/simple/
