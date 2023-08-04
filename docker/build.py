@@ -292,6 +292,7 @@ class ManagerGenerate(Manager):
             log.info("releasing generating...")
             self._load_release_note()
             self.generate_opensource_matrix_tags()
+            self.generate_bussiness_matrix_tags()
             self.generate_release_note()
 
         else:
