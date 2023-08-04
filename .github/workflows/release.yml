@@ -135,7 +135,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: ./dist/aiges/ubuntu${{ matrix.ubuntu_os }}/cuda-${{ matrix.cuda }}/Dockerfile
+          file: ./dist/aiges/bussiness/ubuntu${{ matrix.ubuntu_os }}/cuda-${{ matrix.cuda }}/Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           push: true
           tags: ${{ secrets.IFLYOPENSOURCE }}/${{env.AIGES_REPO}}:${{ matrix.cuda }}-${{ matrix.golang }}-${{ matrix.python }}-ubuntu${{ matrix.ubuntu_os }}-bussiness-${{ steps.prepare.outputs.tag_name }}
