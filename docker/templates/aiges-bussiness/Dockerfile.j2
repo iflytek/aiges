@@ -53,7 +53,7 @@ WORKDIR /home/aiges
 COPY --from=cpython-builder /home/wrapper/wrapper_lib /home/aiges/library
 RUN wget https://oss-beijing-m8.openstorage.cn/aicloud/loader/c30c0bbdd9eb2a085bcb4bf88e890fa4/aiservice_2.8.0.5.tar.gz && \
 	mkdir -p /home/aiges/tmp && \
-	tar zxvf aiservice_2.8.0.5.tar.gz  --strip-components=1 /home/aiges/tmp && \
+	tar zxvf aiservice_2.8.0.5.tar.gz  --strip-components=1 -C /home/aiges/tmp && \
 	cp -r  /home/aiges/tmp/lib/* /home/aiges/library/ && \
 	cp /home/aiges/tmp/AIservice /home/aiges/ && \
 	cp /home/aiges/tmp/start.sh /home/aiges/ && \
