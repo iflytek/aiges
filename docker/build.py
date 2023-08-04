@@ -36,7 +36,7 @@ class Manager(cli.Application):
 
 
 class ImageTag(object):
-    def __init__(self, cuda, python="3.9.13", golang="1.17", distro="ubuntu1804", is_conda=False):
+    def __init__(self, cuda, python="3.9.13", golang="1.17", distro="ubuntu1804", is_conda=False, is_bussiness=False):
         self.cuda = cuda
         if python.startswith("conda-"):
             self.python = python.lstrip("conda-")
@@ -45,15 +45,22 @@ class ImageTag(object):
         self.golang = golang
         self.distro = distro
         self.is_conda = is_conda
+        self.is_bussiness = cuda
 
     def __str__(self):
+        bussiness = ""
+        if self.is_bussiness:
+            bussiness = "-bussiness"
+
         if self.is_conda:
-            return "conda-{cuda}-{golang}-{python}-{distro}".format(cuda=self.cuda, golang=self.golang,
-                                                                    python=self.python,
-                                                                    distro=self.distro)
+            return "conda-{cuda}-{golang}-{python}-{distro}{bussiness}".format(cuda=self.cuda, golang=self.golang,
+                                                                               python=self.python,
+                                                                               distro=self.distro,
+                                                                               bussiness=bussiness)
         else:
-            return "{cuda}-{golang}-{python}-{distro}".format(cuda=self.cuda, golang=self.golang, python=self.python,
-                                                              distro=self.distro)
+            return "{cuda}-{golang}-{python}-{distro}{bussiness}".format(cuda=self.cuda, golang=self.golang,
+                                                                         python=self.python,
+                                                                         distro=self.distro, bussiness=bussiness)
 
 
 @Manager.subcommand("generate")  # type: ignore
@@ -168,7 +175,8 @@ class ManagerGenerate(Manager):
                 for golang in SUPPORTED_GOLANG_LIST:
                     for distro in SUPPORTED_DISTRO_LIST:
                         self.matrix.append(
-                            ImageTag(cuda, python=python, golang=golang, distro=distro, is_conda=is_conda)
+                            ImageTag(cuda, python=python, golang=golang, distro=distro, is_conda=is_conda,
+                                     is_bussiness=True)
                         )
 
     def generate_release_note(self):
