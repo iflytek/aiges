@@ -45,7 +45,7 @@ class ImageTag(object):
         self.golang = golang
         self.distro = distro
         self.is_conda = is_conda
-        self.is_bussiness = cuda
+        self.is_bussiness = is_bussiness
 
     def __str__(self):
         bussiness = ""
