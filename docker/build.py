@@ -186,7 +186,7 @@ class ManagerGenerate(Manager):
         base_images_list = [
             release_line_format.format(registry=self.get_regsitry(), tag=str(tag), python=tag.python, cuda=tag.cuda,
                                        distro=tag.distro, repo='cuda-go-python-base', git_tag="")
-            for tag in self.matrix]
+            if not tag.is_bussiness else tag for tag in self.matrix]
         log.info(base_images_list)
         aiges_images_list = [
             release_line_format.format(registry=self.get_regsitry(), tag=str(tag), python=tag.python, cuda=tag.cuda,

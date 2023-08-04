@@ -138,7 +138,7 @@ jobs:
           file: ./dist/aiges/ubuntu${{ matrix.ubuntu_os }}/cuda-${{ matrix.cuda }}/Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: ${{ secrets.IFLYOPENSOURCE }}/${{env.AIGES_REPO}}:${{ matrix.cuda }}-${{ matrix.golang }}-${{ matrix.python }}-ubuntu${{ matrix.ubuntu_os }}-${{ steps.prepare.outputs.tag_name }}-bussiness
+          tags: ${{ secrets.IFLYOPENSOURCE }}/${{env.AIGES_REPO}}:${{ matrix.cuda }}-${{ matrix.golang }}-${{ matrix.python }}-ubuntu${{ matrix.ubuntu_os }}-bussiness-${{ steps.prepare.outputs.tag_name }}
 
 
   release:
