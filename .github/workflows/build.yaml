@@ -55,7 +55,7 @@ jobs:
           ls
           pwd
           python docker/build.py generate  --all --use_github  
-          python docker/build.py generate  --action build-bussiness  --all --use_github 
+          python docker/build.py generate  --action build-bussiness   --use_github 
 
       # Set up credentials used by AWS CLI
 #      - name:  CreateRepo

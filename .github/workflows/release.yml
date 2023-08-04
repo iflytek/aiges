@@ -106,7 +106,7 @@ jobs:
           sudo apt install -y python3-pip
           sudo pip install jinja2 plumbum
           python docker/build.py generate  --all --use_github  
-          python docker/build.py generate  --action build-bussiness --all --use_github
+          python docker/build.py generate  --action build-bussiness  --use_github
 # Set up credentials used by AWS CLI
 #      - name:  CreateRepo
 #        shell: bash
