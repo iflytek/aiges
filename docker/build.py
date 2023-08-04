@@ -231,6 +231,10 @@ class ManagerGenerate(Manager):
                 dockerfile_dir = os.path.join(TEMP_GEN_DIR, "conda", tag.distro,
                                               "cuda-" + tag.cuda,
                                               tag.python)  # for now , we fixed python version and golang
+            # 这里依赖的基础镜像并没有bussness版本
+            tag.is_bussiness = False
+            # ugly here
+
             st = self.render(tag)
             if not os.path.exists(dockerfile_dir):
                 os.makedirs(dockerfile_dir)
