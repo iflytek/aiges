@@ -45,7 +45,6 @@ const (
 	eventAppid   string = "appid"
 	dataSrc      string = "dataSrc"
 	dataHttp     string = "http"
-	dataHttpUrl  string = "url"
 	dataS3       string = "s3"
 	dataS3Access string = "access"
 	dataS3Secret string = "secret"

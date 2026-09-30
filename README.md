@@ -63,6 +63,10 @@
 参见: [👉👉👉ase-proto](https://github.com/xfyun/ase_protocol)
 
 
+## 输入数据安全变更
+
+AIGES 不再支持通过 `dataSrc: "http"` 和 `url` 下载推理输入。此类请求会返回错误码 `10009`，不会发起下载请求；请由调用方获取数据后，按接口协议直接上传数据。该限制同时适用于会话和非会话模式。原 `httpRetry` 配置已移除。
+
 ## 准备环境
 
 python 版本请选用 3.9+ [也可以下载我们的docker镜像](https://github.com/iflytek/aiges/releases/tag/v3.0-alpha11)

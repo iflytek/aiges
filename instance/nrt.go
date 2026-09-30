@@ -183,22 +183,13 @@ func nrtCheck(inst *ServiceInst) (errNum int, errInfo error) {
 
 // 非实时上行数据补齐
 func nrtDataFill(bufData *[]buffer.DataMeta) (errNum int, errInfo error) {
-	// check if data need to download from http/s3.
+	// Reject HTTP URL inputs instead of downloading inference data.
 	for k, _ := range *bufData {
 		ds, exist := (*bufData)[k].Desc.Attribute[dataSrc]
 		if exist {
 			switch string(ds) {
 			case dataHttp:
-				url, _ := (*bufData)[k].Desc.Attribute[dataHttpUrl]
-				if len(url) == 0 {
-					return frame.AigesErrorInvalidData, errors.New("input invalid http url")
-				}
-
-				// download from http, return err if download fail
-				(*bufData)[k].Data, errNum, errInfo = storage.HttpDownload(string(url))
-				if errInfo != nil {
-					return frame.AigesErrorInvalidData, errInfo
-				}
+				return frame.AigesErrorInvalidData, errors.New("http input data source is no longer supported; send data directly")
 			case dataS3:
 				access, _ := (*bufData)[k].Desc.Attribute[dataS3Access]
 				secret, _ := (*bufData)[k].Desc.Attribute[dataS3Secret]
