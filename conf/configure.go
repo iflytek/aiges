@@ -37,7 +37,6 @@ var (
 	DelSessRt                int              // 会话管理器异步处理协程数;
 	RealTimeRead             bool             // 引擎同步读接口：是否实时读(写事件last读 || 边写边读);
 	WrapperAsync             bool             // 插件同步或异步模式：false同步, true异步;
-	HttpRetry                int      = 1     // http下载重试,缺省3次
 	GrayLabel                bool             // 集群节点灰度状态标记
 	WrapperTrace             bool             // 插件回调trace日志开关
 	HeaderPass               []string         // 可放行至wrapper的header参数
@@ -249,10 +248,6 @@ func secParseGes(cfg *utils.Configure) (err error) {
 	if err != nil {
 		// 缺省：实时读/实时返回
 		RealTimeRead, err = true, nil
-	}
-	// http download retry times
-	if retry, err := cfg.GetInt(sectionAiges, httpRetry); err == nil {
-		HttpRetry = retry
 	}
 
 	WrapperTrace, err = cfg.GetBool(sectionAiges, wrapperTrace)

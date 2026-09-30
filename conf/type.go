@@ -9,7 +9,6 @@ const (
 	sessGort                 = "sessDelGt"
 	usrCfgName               = "usrCfg"
 	realTimeRlt              = "realTimeRlt"
-	httpRetry                = "httpRetry"
 	grayMark                 = "gray"
 	wrapperTrace             = "wrapperTrace"
 	headerPass               = "headerPass"
